@@ -1,14 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
-import axios from "axios";
-import localforage from "localforage";
-import API_BASE_URL from "./apiConfig";
+import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import Navbar from '../Components/Navbar';
 import { 
   FaBed, 
-  FaSpa, 
   FaUtensils, 
   FaWifi, 
-  FaSwimmingPool, 
   FaStar,
   FaCalendarAlt,
   FaUser,
@@ -19,10 +15,7 @@ import {
   FaInstagram,
   FaTwitter,
   FaFacebookF,
-  FaHome,
   FaConciergeBell,
-  FaInfoCircle,
-  FaSearch,
   FaUsers,
   FaCheckCircle
 } from 'react-icons/fa';
@@ -35,19 +28,6 @@ const mountainView = 'https://images.unsplash.com/photo-1519681393784-d120267933
 const logoImage = '../Assets/logoimg.png';
 
 function HomeScreen() {
-  const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const navigate = useNavigate();
-
-  // Create refs for each section
-  const homeRef = useRef(null);
-  const roomsRef = useRef(null);
-  const servicesRef = useRef(null);
-  const aboutRef = useRef(null);
-  const contactRef = useRef(null);
-  const enquiryRef = useRef(null);
-
   const [enquiryData, setEnquiryData] = useState({
     fullName: '',
     email: '',
@@ -58,37 +38,6 @@ function HomeScreen() {
     checkOut: '',
     guests: '1'
   });
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = await localforage.getItem('token');
-        if (token) {
-          const response = await axios.get(`${API_BASE_URL}/user/profile`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setUserData(response.data);
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleLogout = async () => {
-    await localforage.removeItem('token');
-    navigate('/login');
-  };
 
   const handleEnquirySubmit = (e) => {
     e.preventDefault();
@@ -113,117 +62,13 @@ function HomeScreen() {
     }));
   };
 
-  // Smooth scroll function
-  const scrollToSection = (ref) => {
-    if (ref && ref.current) {
-      const navbarHeight = 80; // Height of your navbar
-      const elementPosition = ref.current.offsetTop;
-      const offsetPosition = elementPosition - navbarHeight;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  // Handler functions for each section
-  const scrollToHome = () => scrollToSection(homeRef);
-  const scrollToRooms = () => scrollToSection(roomsRef);
-  const scrollToServices = () => scrollToSection(servicesRef);
-  const scrollToAbout = () => scrollToSection(aboutRef);
-  const scrollToContact = () => scrollToSection(contactRef);
-  const scrollToEnquiry = () => scrollToSection(enquiryRef);
-
-  if (loading) {
-    return (
-      <div style={styles.loadingContainer}>
-        <div style={styles.loader}>
-          <div style={styles.loaderCircle}></div>
-          <p style={styles.loadingText}>Loading Luxury Experience...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div style={styles.container}>
-      {/* Navigation Header */}
-      <nav style={{
-        ...styles.navbar,
-        backgroundColor: isScrolled ? 'rgba(10, 10, 10, 0.98)' : 'transparent',
-        backdropFilter: isScrolled ? 'blur(20px)' : 'none',
-        padding: isScrolled ? '1rem 0' : '1.5rem 0'
-      }}>
-        <div style={styles.navContainer}>
-          <div style={styles.logo}>
-            <img src={logoImage} alt="JS Rooms Logo" style={styles.logoImage} />
-            <span style={styles.logoText}>JS Rooms</span>
-          </div>
-          
-          <div style={styles.navLinks}>
-            {userData ? (
-              <>
-                <div style={styles.userWelcome}>
-                  <FaUser style={styles.userIcon} />
-                  <span style={styles.welcomeText}>Welcome, {userData.name?.split(' ')[0]}</span>
-                </div>
-                <Link to="/dashboard" style={styles.navLink}>
-                  <FaHome style={styles.navIcon} />
-                  <span>Dashboard</span>
-                </Link>
-                <button onClick={handleLogout} style={styles.logoutBtn}>
-                  <span>Logout</span>
-                </button>
-              </>
-            ) : (
-              <>
-                {/* Home - scrolls to top */}
-                <button onClick={scrollToHome} style={styles.navLinkBtn}>
-                  <FaHome style={styles.navIcon} />
-                  <span>Home</span>
-                </button>
-                
-
-                    {/* Services - scrolls to services section */}
-                <button onClick={scrollToServices} style={styles.navLinkBtn}>
-                  <FaConciergeBell style={styles.navIcon} />
-                  <span>Services</span>
-                </button>
-
-
-            {/* Rooms - scrolls to rooms section */}
-                <button onClick={scrollToRooms} style={styles.navLinkBtn}>
-                  <FaBed style={styles.navIcon} />
-                  <span>Rooms</span>
-                </button>
-                
-          
-                
-                {/* About - scrolls to about section */}
-                <button onClick={scrollToAbout} style={styles.navLinkBtn}>
-                  <FaInfoCircle style={styles.navIcon} />
-                  <span>About</span>
-                </button>
-                
-                {/* Contact - scrolls to contact section */}
-                <button onClick={scrollToContact} style={styles.navLinkBtn}>
-                  <FaPhone style={styles.navIcon} />
-                  <span>Contact</span>
-                </button>
-                
-                <Link to="/search" style={styles.searchBtn}>
-                  <FaSearch style={styles.searchIcon} />
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main style={styles.mainContent}>
         {/* Hero Section - Home */}
-        <section ref={homeRef} style={styles.heroSection}>
+        <section style={styles.heroSection}>
           <div style={styles.heroContent}>
             <div style={styles.heroText}>
               <span style={styles.heroBadge}>LUXURY REDEFINED</span>
@@ -236,20 +81,20 @@ function HomeScreen() {
                 Premium accommodations with breathtaking views and Luxury Services.
               </p>
               <div style={styles.heroButtons}>
-                <Link to="/book" style={styles.primaryBtn}>
+                <Link to="/rooms" style={styles.primaryBtn}>
                   <FaCalendarAlt style={{ marginRight: '10px' }} />
                   <span>Book Your Stay</span>
                 </Link>
-                <button onClick={scrollToEnquiry} style={styles.secondaryBtn}>
+                <Link to="/contact" style={styles.secondaryBtn}>
                   <span>Plan Your Stay</span>
-                </button>
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
         {/* Features Section - Services */}
-        <section ref={servicesRef} style={styles.featuresSection}>
+        <section style={styles.featuresSection}>
           <div style={styles.sectionHeader}>
             <span style={styles.sectionSubtitle}>EXCLUSIVE Services</span>
             <h2 style={styles.sectionTitle}>Premium Experiences</h2>
@@ -289,7 +134,7 @@ function HomeScreen() {
         </section>
 
         {/* Rooms Showcase */}
-        <section ref={roomsRef} style={styles.roomsSection}>
+        <section style={styles.roomsSection}>
           <div style={styles.sectionHeader}>
             <span style={styles.sectionSubtitle}>ACCOMMODATIONS</span>
             <h2 style={styles.sectionTitle}>Our Premium Rooms</h2>
@@ -300,7 +145,7 @@ function HomeScreen() {
               <div style={styles.roomImageContainer}>
                 <img src={luxurySuite} alt="Deluxe Suite" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
-                  <span style={styles.roomPrice}>$299/night</span>
+                  <span style={styles.roomPrice}>₹299/night</span>
                 </div>
               </div>
               <div style={styles.roomContent}>
@@ -330,7 +175,7 @@ function HomeScreen() {
               <div style={styles.roomImageContainer}>
                 <img src={diningArea} alt="Executive Room" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
-                  <span style={styles.roomPrice}>$199/night</span>
+                  <span style={styles.roomPrice}>₹199/night</span>
                 </div>
               </div>
               <div style={styles.roomContent}>
@@ -366,7 +211,7 @@ function HomeScreen() {
         </section>
 
         {/* Experience Section - About */}
-        <section ref={aboutRef} style={styles.experienceSection}>
+        <section style={styles.experienceSection}>
           <div style={styles.experienceContent}>
             <div style={styles.experienceText}>
               <span style={styles.experienceBadge}>THE EXPERIENCE</span>
@@ -403,7 +248,7 @@ function HomeScreen() {
         </section>
 
         {/* Premium Enquiry Form */}
-        <section ref={enquiryRef} id="enquiry" style={styles.enquirySection}>
+        <section id="enquiry" style={styles.enquirySection}>
           <div style={styles.enquiryContainer}>
             <div style={styles.enquiryGrid}>
               {/* Left Column - Form Header & Info */}
@@ -492,7 +337,7 @@ function HomeScreen() {
                         name="phone"
                         value={enquiryData.phone}
                         onChange={handleInputChange}
-                        placeholder="+1 (555) 123-4567"
+                        placeholder="+91"
                         style={styles.formInput}
                         required
                       />
@@ -592,19 +437,19 @@ function HomeScreen() {
               Book your stay at JS Rooms and discover luxury redefined.
             </p>
             <div style={styles.ctaButtons}>
-              <Link to="/book" style={styles.ctaPrimaryBtn}>
+              <Link to="/rooms" style={styles.ctaPrimaryBtn}>
                 <span>Book Now</span>
               </Link>
-              <button onClick={scrollToEnquiry} style={styles.ctaSecondaryBtn}>
+              <Link to="/contact" style={styles.ctaSecondaryBtn}>
                 <span>Plan Your Stay</span>
-              </button>
+              </Link>
             </div>
           </div>
         </section>
       </main>
 
       {/* Footer - Contact Section */}
-      <footer ref={contactRef} style={styles.footer}>
+      <footer style={styles.footer}>
         <div style={styles.footerMain}>
           <div style={styles.footerColumn}>
             <div style={styles.footerLogo}>
@@ -630,15 +475,15 @@ function HomeScreen() {
           
           <div style={styles.footerColumn}>
             <h4 style={styles.footerTitle}>Quick Links</h4>
-            <button onClick={scrollToRooms} style={styles.footerLinkBtn}>
+            <Link to="/rooms" style={styles.footerLink}>
               Rooms & Suites
-            </button>
-            <Link to="/dining" style={styles.footerLink}>
+            </Link>
+            <Link to="/services" style={styles.footerLink}>
               Dining
             </Link>
-            <button onClick={scrollToServices} style={styles.footerLinkBtn}>
+            <Link to="/services" style={styles.footerLink}>
               Services
-            </button>
+            </Link>
             <Link to="/gallery" style={styles.footerLink}>
               Gallery
             </Link>
@@ -652,7 +497,7 @@ function HomeScreen() {
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
-              <span>+1 (555) 123-4567</span>
+              <span>+918947382799</span>
             </div>
             <div style={styles.contactItem}>
               <FaEnvelope style={styles.contactIcon} />
@@ -688,173 +533,32 @@ const styles = {
     overflowX: 'hidden',
   },
   
-  loadingContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    background: 'linear-gradient(135deg, #0A0A0A 0%, #2D2D2D 100%)',
-  },
-  
-  loader: {
-    textAlign: 'center',
-    color: 'white',
-  },
-  
-  loaderCircle: {
-    width: '50px',
-    height: '50px',
-    border: '3px solid rgba(255,255,255,0.2)',
-    borderTop: '3px solid #D4AF37',
-    borderRadius: '50%',
-    animation: 'spin 1s linear infinite',
-    margin: '0 auto 20px',
-  },
-  
-  loadingText: {
-    fontSize: '16px',
-    fontWeight: '300',
-    letterSpacing: '1px',
-  },
-  
-  // Navigation
-  navbar: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1000,
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-  },
-  
-  navContainer: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '0 1.5rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  
-  logo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-  },
-  
-  logoImage: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '10px',
-    objectFit: 'cover',
-  },
-  
-  logoText: {
-    fontSize: '1.4rem',
-    fontWeight: '700',
-    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-    letterSpacing: '-0.5px',
-  },
-  
-  navLinks: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1.5rem',
-  },
-  
-  userWelcome: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    color: 'white',
-    fontSize: '14px',
-  },
-  
-  userIcon: {
-    fontSize: '14px',
-    opacity: 0.8,
-  },
-  
-  navLinkBtn: {
-    background: 'none',
-    border: 'none',
-    color: 'white',
-    fontSize: '14px',
-    fontWeight: '500',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    padding: '8px 12px',
-    borderRadius: '8px',
-    transition: 'all 0.2s ease',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-  },
-  
-  navLink: {
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '14px',
-    fontWeight: '500',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    padding: '8px 12px',
-    borderRadius: '8px',
-    transition: 'all 0.2s ease',
-  },
-  
-  navIcon: {
-    fontSize: '14px',
-    opacity: 0.8,
-  },
-  
-  searchBtn: {
-    padding: '8px',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.3s ease',
-    textDecoration: 'none',
-  },
-  
-  searchIcon: {
-    color: 'white',
-    fontSize: '16px',
-  },
-  
-  logoutBtn: {
-    padding: '8px 20px',
-    background: 'transparent',
-    color: 'white',
-    border: '1px solid rgba(255,255,255,0.2)',
-    borderRadius: '20px',
-    fontWeight: '500',
-    cursor: 'pointer',
-    fontSize: '14px',
-    transition: 'all 0.3s ease',
-  },
-  
   mainContent: {
     flex: 1,
   },
   
-  // Hero Section
-  heroSection: {
-    height: '90vh',
-    minHeight: '600px',
-    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.8)), url(${heroBackground})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 1.5rem',
-  },
+// Then remove ALL marginTop from heroSection:
+heroSection: {
+  height: '90vh',
+  minHeight: '600px',
+  backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.8)), url(${heroBackground})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  display: 'flex',
+  alignItems: 'center',
+  padding: '0 1.5rem', // No margin or padding-top needed
+},
+
+container: {
+  minHeight: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+  backgroundColor: '#FAF9F7',
+  color: '#1A1A1A',
+  overflowX: 'hidden',
+  paddingTop: '80px', // Add padding-top here to push everything down
+},
   
   heroContent: {
     maxWidth: '1200px',
@@ -1532,20 +1236,6 @@ const styles = {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-  },
-  
-  footerLinkBtn: {
-    color: '#999',
-    textDecoration: 'none',
-    fontSize: '14px',
-    marginBottom: '10px',
-    transition: 'all 0.3s ease',
-    textAlign: 'left',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    padding: 0,
   },
   
   contactItem: {
