@@ -52,19 +52,19 @@ const AboutScreen = () => {
 
   const testimonials = [
     {
-      text: "JS Rooms exceeded all our expectations. The attention to detail, exceptional service, and beautiful accommodations made our anniversary celebration truly unforgettable.",
+      text: "JS ROOMS exceeded all our expectations. The attention to detail, exceptional service, and beautiful accommodations made our anniversary celebration truly unforgettable.",
       author: "Sarah & Michael Johnson",
       location: "New York, USA",
       rating: 5
     },
     {
-      text: "From the moment we arrived, we felt like royalty. The staff went above and beyond to ensure our comfort, and the spa treatments were absolutely divine.",
+      text: "From the moment we arrived, we felt like royalty. The staff went above and beyond to ensure our comfort, and the room amenities were absolutely divine.",
       author: "Anita Desai",
       location: "Mumbai, India",
       rating: 5
     },
     {
-      text: "The perfect blend of luxury and sustainability. Beautiful property, incredible food, and a team that genuinely cares about creating magical experiences.",
+      text: "The perfect blend of luxury and sustainability. Beautiful property, incredible amenities, and a team that genuinely cares about creating magical experiences.",
       author: "David Chen",
       location: "Singapore",
       rating: 5
@@ -82,7 +82,7 @@ const AboutScreen = () => {
             <span style={styles.heroBadge}>OUR STORY</span>
             <h1 style={styles.heroTitle}>Where Luxury Meets Authenticity</h1>
             <p style={styles.heroSubtitle}>
-              Discover the story behind JS Rooms - a journey of passion, excellence, and unwavering commitment to creating extraordinary experiences.
+              Discover the story behind JS ROOMS - a journey of passion, excellence, and unwavering commitment to creating extraordinary experiences.
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ const AboutScreen = () => {
               <span style={styles.sectionBadge}>FOUNDED IN 2018</span>
               <h2 style={styles.sectionTitle}>Our Journey</h2>
               <p style={styles.storyDescription}>
-                JS Rooms was born from a vision to create a hospitality experience that seamlessly blends luxury with authenticity. 
+                JS ROOMS was born from a vision to create a hospitality experience that seamlessly blends luxury with authenticity. 
                 Founded by hospitality veterans with a passion for excellence, we set out to redefine what it means to provide 
                 exceptional service in the modern era.
               </p>
@@ -125,7 +125,7 @@ const AboutScreen = () => {
                 our core values of personalized service, attention to detail, and genuine care for every guest who walks through our doors.
               </p>
               <p style={styles.storyDescription}>
-                Today, JS Rooms stands as a testament to our commitment to excellence, sustainability, and creating memories 
+                Today, JS ROOMS stands as a testament to our commitment to excellence, sustainability, and creating memories 
                 that last a lifetime. Every corner of our property tells a story, and every team member is dedicated to 
                 making your story with us truly special.
               </p>
@@ -195,54 +195,12 @@ const AboutScreen = () => {
         </div>
       </section>
 
-      {/* Sustainability Section */}
-      <section style={styles.sustainabilitySection}>
-        <div style={styles.sustainabilityContainer}>
-          <div style={styles.sustainabilityContent}>
-            <div style={styles.sustainabilityText}>
-              <span style={styles.sectionBadge}>SUSTAINABILITY</span>
-              <h2 style={styles.sectionTitle}>Our Commitment to the Environment</h2>
-              <p style={styles.sustainabilityDescription}>
-                At JS Rooms, we believe luxury and sustainability go hand in hand. We're committed to minimizing our 
-                environmental impact while providing exceptional experiences for our guests.
-              </p>
-              <div style={styles.sustainabilityFeatures}>
-                <div style={styles.sustainabilityFeature}>
-                  <FaLeaf style={styles.featureIcon} />
-                  <div>
-                    <h4 style={styles.featureTitle}>Renewable Energy</h4>
-                    <p style={styles.featureText}>100% renewable energy sources power our operations</p>
-                  </div>
-                </div>
-                <div style={styles.sustainabilityFeature}>
-                  <FaLeaf style={styles.featureIcon} />
-                  <div>
-                    <h4 style={styles.featureTitle}>Local Sourcing</h4>
-                    <p style={styles.featureText}>Supporting local farmers and suppliers for fresh, sustainable ingredients</p>
-                  </div>
-                </div>
-                <div style={styles.sustainabilityFeature}>
-                  <FaLeaf style={styles.featureIcon} />
-                  <div>
-                    <h4 style={styles.featureTitle}>Waste Reduction</h4>
-                    <p style={styles.featureText}>Comprehensive recycling and waste minimization programs</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div style={styles.sustainabilityImage}>
-              <img src={aboutImages.sustainability} alt="Sustainability" style={styles.sustainabilityImg} />
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section style={styles.ctaSection}>
         <div style={styles.ctaContent}>
-          <h2 style={styles.ctaTitle}>Experience the JS Rooms Difference</h2>
+          <h2 style={styles.ctaTitle}>Experience the JS ROOMS Difference</h2>
           <p style={styles.ctaText}>
-            Join our family of satisfied guests and discover what makes JS Rooms truly special.
+            Join our family of satisfied guests and discover what makes JS ROOMS truly special.
           </p>
           <div style={styles.ctaButtons}>
             <Link to="/rooms" style={styles.ctaBtn}>

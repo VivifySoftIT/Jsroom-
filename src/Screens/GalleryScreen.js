@@ -20,121 +20,64 @@ const galleryImages = [
     id: 1,
     url: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
     category: 'rooms',
-    title: 'Deluxe Suite',
-    description: 'Spacious luxury suite with mountain views',
-    featured: true
-  },
-  {
-    id: 2,
-    url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'dining',
-    title: 'Fine Dining Restaurant',
-    description: 'Award-winning culinary experience',
+    title: 'Double AC Room',
+    description: 'Spacious double bedroom with city views',
     featured: true
   },
   {
     id: 3,
-    url: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'spa',
-    title: 'Luxury Spa',
-    description: 'Rejuvenating wellness treatments',
+    url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    category: 'amenities',
+    title: 'Fitness Center',
+    description: 'State-of-the-art gym facilities',
+    featured: false
+  },{
+    id: 4,
+    url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    category: 'rooms',
+    title: 'Triple AC Room',
+    description: 'Spacious triple bedroom with modern amenities',
     featured: false
   },
   {
-    id: 4,
-    url: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'amenities',
-    title: 'Infinity Pool',
-    description: 'Rooftop pool with city views',
-    featured: true
-  },
-  {
     id: 5,
-    url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
     category: 'rooms',
-    title: 'Presidential Suite',
-    description: 'Ultimate luxury accommodation',
+    title: 'Single Non-AC Room',
+    description: 'Comfortable single bedroom with natural ventilation',
     featured: false
   },
   {
     id: 6,
-    url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'exterior',
-    title: 'Mountain Views',
-    description: 'Breathtaking natural surroundings',
-    featured: true
+    url: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    category: 'rooms',
+    title: 'Double Non-AC Room',
+    description: 'Cozy double bedroom with ceiling fans',
+    featured: false
   },
   {
     id: 7,
-    url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
     category: 'rooms',
-    title: 'Executive Room',
-    description: 'Perfect for business travelers',
+    title: 'Triple Non-AC Room',
+    description: 'Affordable triple bedroom accommodation',
     featured: false
   },
   {
     id: 8,
-    url: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
     category: 'rooms',
-    title: 'Luxury Suite Living',
-    description: 'Elegant living spaces',
-    featured: false
-  },
-  {
-    id: 9,
-    url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'rooms',
-    title: 'Family Room',
-    description: 'Spacious family accommodation',
+    title: 'Single AC Room',
+    description: 'Modern single bedroom with air conditioning',
     featured: false
   },
   {
     id: 10,
-    url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'rooms',
-    title: 'Standard Room',
-    description: 'Comfortable and well-appointed',
-    featured: false
-  },
-  {
-    id: 11,
-    url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'amenities',
-    title: 'Concierge Service',
-    description: '24/7 personalized assistance',
-    featured: false
-  },
-  {
-    id: 12,
-    url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'events',
-    title: 'Event Spaces',
-    description: 'Perfect for special occasions',
-    featured: true
-  },
-  {
-    id: 13,
-    url: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'amenities',
-    title: 'Luxury Transportation',
-    description: 'Premium travel services',
-    featured: false
-  },
-  {
-    id: 14,
     url: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
     category: 'exterior',
     title: 'Hotel Exterior',
     description: 'Stunning architectural design',
     featured: true
-  },
-  {
-    id: 15,
-    url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'dining',
-    title: 'Bar & Lounge',
-    description: 'Sophisticated cocktail experience',
-    featured: false
   }
 ];
 
@@ -143,25 +86,20 @@ const GalleryScreen = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
 
   const categories = [
     { id: 'all', name: 'All Photos', count: galleryImages.length },
-    { id: 'rooms', name: 'Rooms & Suites', count: galleryImages.filter(img => img.category === 'rooms').length },
-    { id: 'dining', name: 'Dining', count: galleryImages.filter(img => img.category === 'dining').length },
-    { id: 'spa', name: 'Spa & Wellness', count: galleryImages.filter(img => img.category === 'spa').length },
+    { id: 'rooms', name: 'Rooms', count: galleryImages.filter(img => img.category === 'rooms').length },
     { id: 'amenities', name: 'Amenities', count: galleryImages.filter(img => img.category === 'amenities').length },
-    { id: 'exterior', name: 'Exterior & Views', count: galleryImages.filter(img => img.category === 'exterior').length },
-    { id: 'events', name: 'Events', count: galleryImages.filter(img => img.category === 'events').length }
+    { id: 'exterior', name: 'Exterior & Views', count: galleryImages.filter(img => img.category === 'exterior').length }
   ];
 
   const filteredImages = galleryImages.filter(image => {
     const matchesCategory = selectedCategory === 'all' || image.category === selectedCategory;
     const matchesSearch = image.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       image.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFeatured = !showFeaturedOnly || image.featured;
     
-    return matchesCategory && matchesSearch && matchesFeatured;
+    return matchesCategory && matchesSearch;
   });
 
   const openLightbox = (image) => {
@@ -219,18 +157,6 @@ const GalleryScreen = () => {
       {/* Filters Section */}
       <section style={styles.filtersSection}>
         <div style={styles.filtersContainer}>
-          {/* Search Bar */}
-          <div style={styles.searchContainer}>
-            <FaSearch style={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Search photos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={styles.searchInput}
-            />
-          </div>
-
           {/* Category Filters */}
           <div style={styles.categoryFilters}>
             {categories.map(category => (
@@ -246,24 +172,11 @@ const GalleryScreen = () => {
               </button>
             ))}
           </div>
-
-          {/* Featured Filter */}
-          <div style={styles.featuredFilter}>
-            <label style={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={showFeaturedOnly}
-                onChange={(e) => setShowFeaturedOnly(e.target.checked)}
-                style={styles.checkbox}
-              />
-              <span style={styles.checkboxText}>Featured Only</span>
-            </label>
-          </div>
         </div>
       </section>
 
       {/* Featured Gallery Section */}
-      {!showFeaturedOnly && selectedCategory === 'all' && (
+      {selectedCategory === 'all' && (
         <section style={styles.featuredSection}>
           <div style={styles.featuredContainer}>
             <h2 style={styles.featuredTitle}>Featured Photos</h2>
@@ -312,11 +225,6 @@ const GalleryScreen = () => {
                     {image.featured && (
                       <span style={styles.featuredBadge}>Featured</span>
                     )}
-                  </div>
-                  <div style={styles.galleryActions}>
-                    <button style={styles.expandBtn}>
-                      <FaExpand />
-                    </button>
                   </div>
                 </div>
               </div>
@@ -380,7 +288,7 @@ const GalleryScreen = () => {
             <span style={styles.tourBadge}>VIRTUAL EXPERIENCE</span>
             <h2 style={styles.tourTitle}>Take a Virtual Tour</h2>
             <p style={styles.tourDescription}>
-              Experience JS Rooms from the comfort of your home with our immersive 360° virtual tour. 
+              Experience JS ROOMS from the comfort of your home with our immersive 360° virtual tour. 
               Explore our rooms, amenities, and facilities in stunning detail.
             </p>
             <div style={styles.tourFeatures}>
@@ -420,7 +328,7 @@ const GalleryScreen = () => {
       {/* CTA Section */}
       <section style={styles.ctaSection}>
         <div style={styles.ctaContent}>
-          <h2 style={styles.ctaTitle}>Ready to Experience JS Rooms?</h2>
+          <h2 style={styles.ctaTitle}>Ready to Experience JS ROOMS?</h2>
           <p style={styles.ctaText}>
             Book your stay and experience the luxury and comfort you've seen in our gallery.
           </p>
@@ -826,17 +734,17 @@ heroSection: {
 
   closeBtn: {
     position: 'absolute',
-    top: '-50px',
-    right: '0',
+    top: '20px',
+    right: '20px',
     width: '40px',
     height: '40px',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(0,0,0,0.7)',
     border: 'none',
     borderRadius: '50%',
     color: 'white',
     fontSize: '20px',
     cursor: 'pointer',
-    zIndex: 10,
+    zIndex: 1000,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

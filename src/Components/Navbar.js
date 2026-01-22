@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { 
-  FaHome, FaBed, FaConciergeBell, FaImages, FaInfoCircle, 
+  FaHome, FaBed, FaImages, FaInfoCircle, 
   FaPhone, FaCalendarAlt, FaUser, FaBars, FaTimes 
 } from 'react-icons/fa';
 import localforage from "localforage";
@@ -80,7 +80,7 @@ const Navbar = () => {
         <Link to="/home" style={styles.logo} onClick={closeMobileMenu}>
           <div style={styles.logoIcon}>JS</div>
           <div>
-            <div style={styles.logoText}>JS Rooms</div>
+            <div style={styles.logoText}>JS ROOMS</div>
             <div style={styles.logoSubtext}>LUXURY HOTEL</div>
           </div>
         </Link>
@@ -111,16 +111,6 @@ const Navbar = () => {
             <span>Rooms</span>
           </Link>
           <Link 
-            to="/services" 
-            style={{
-              ...styles.navLink,
-              color: isActive('/services') ? '#D4AF37' : 'white'
-            }}
-          >
-            <FaConciergeBell style={styles.navIcon} />
-            <span>Services</span>
-          </Link>
-          <Link 
             to="/gallery" 
             style={{
               ...styles.navLink,
@@ -149,6 +139,16 @@ const Navbar = () => {
           >
             <FaPhone style={styles.navIcon} />
             <span>Contact</span>
+          </Link>
+          <Link 
+            to="/feedback" 
+            style={{
+              ...styles.navLink,
+              color: isActive('/feedback') ? '#D4AF37' : 'white'
+            }}
+          >
+            <FaUser style={styles.navIcon} />
+            <span>Feedback</span>
           </Link>
 
           {userData ? (
@@ -213,17 +213,6 @@ const Navbar = () => {
               <span>Rooms</span>
             </Link>
             <Link 
-              to="/services" 
-              style={{
-                ...styles.mobileNavLink,
-                color: isActive('/services') ? '#D4AF37' : 'white'
-              }} 
-              onClick={closeMobileMenu}
-            >
-              <FaConciergeBell style={styles.mobileNavIcon} />
-              <span>Services</span>
-            </Link>
-            <Link 
               to="/gallery" 
               style={{
                 ...styles.mobileNavLink,
@@ -255,6 +244,17 @@ const Navbar = () => {
             >
               <FaPhone style={styles.mobileNavIcon} />
               <span>Contact</span>
+            </Link>
+            <Link 
+              to="/feedback" 
+              style={{
+                ...styles.mobileNavLink,
+                color: isActive('/feedback') ? '#D4AF37' : 'white'
+              }} 
+              onClick={closeMobileMenu}
+            >
+              <FaUser style={styles.mobileNavIcon} />
+              <span>Feedback</span>
             </Link>
             
             {userData ? (

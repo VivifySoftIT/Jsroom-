@@ -44,7 +44,9 @@ const BookingScreen = () => {
       cardNumber: '',
       expiryDate: '',
       cvv: '',
-      cardholderName: ''
+      cardholderName: '',
+      paymentType: 'full', // 'full' or 'advance'
+      advancePercentage: 30 // 30% advance payment
     }
   });
 
@@ -54,42 +56,42 @@ const BookingScreen = () => {
   const rooms = [
     {
       id: 1,
-      name: 'Presidential Suite',
-      price: 599,
-      originalPrice: 699,
-      image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-      size: '120 m²',
-      guests: 4,
-      beds: '1 King + 1 Queen',
-      rating: 4.9,
-      amenities: ['Free WiFi', 'Smart TV', 'Mini Bar', 'Room Service', 'AC', 'Coffee Machine'],
-      features: ['Private Balcony', 'Jacuzzi', 'Butler Service', 'City View']
+      name: 'Single AC Room',
+      price: 299,
+      originalPrice: 349,
+      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+      size: '25 m²',
+      guests: 1,
+      beds: '1 Single Bed',
+      rating: 4.7,
+      amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
+      features: ['City View', 'Study Table', 'Modern Bathroom', 'Air Conditioning']
     },
     {
       id: 2,
-      name: 'Deluxe Suite',
-      price: 299,
-      originalPrice: 349,
+      name: 'Double AC Room',
+      price: 499,
+      originalPrice: 549,
       image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-      size: '65 m²',
-      guests: 3,
-      beds: '1 King',
+      size: '35 m²',
+      guests: 2,
+      beds: '1 Double Bed',
       rating: 4.8,
       amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
-      features: ['Mountain View', 'Private Balcony', 'Fireplace', 'Seating Area']
+      features: ['City View', 'Seating Area', 'Modern Bathroom', 'Air Conditioning']
     },
     {
       id: 3,
-      name: 'Executive Room',
-      price: 199,
-      originalPrice: 229,
-      image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+      name: 'Triple AC Room',
+      price: 699,
+      originalPrice: 749,
+      image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
       size: '45 m²',
-      guests: 2,
-      beds: '1 Queen',
-      rating: 4.7,
+      guests: 3,
+      beds: '3 Single Beds',
+      rating: 4.6,
       amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
-      features: ['City View', 'Work Desk', 'Executive Lounge Access', 'Premium Bedding']
+      features: ['City View', 'Large Space', 'Modern Bathroom', 'Air Conditioning']
     }
   ];
 
@@ -111,11 +113,23 @@ const BookingScreen = () => {
     const roomTotal = selectedRoomData.price * nights * bookingData.rooms;
     const taxes = roomTotal * 0.12; // 12% tax
     const serviceFee = 50;
+    const grandTotal = roomTotal + taxes + serviceFee;
+    
+    // Calculate payment amounts based on payment type
+    const paymentAmount = bookingData.paymentInfo.paymentType === 'advance' 
+      ? grandTotal * (bookingData.paymentInfo.advancePercentage / 100)
+      : grandTotal;
+    
+    const remainingAmount = grandTotal - paymentAmount;
+    
     return {
       subtotal: roomTotal,
       taxes: taxes,
       serviceFee: serviceFee,
-      total: roomTotal + taxes + serviceFee
+      total: grandTotal,
+      paymentAmount: paymentAmount,
+      remainingAmount: remainingAmount,
+      isAdvancePayment: bookingData.paymentInfo.paymentType === 'advance'
     };
   };
 
@@ -175,7 +189,7 @@ const BookingScreen = () => {
             </div>
             <h1 style={styles.successTitle}>Booking Confirmed!</h1>
             <p style={styles.successMessage}>
-              Thank you for choosing JS Rooms. Your reservation has been confirmed and 
+              Thank you for choosing JS ROOMS. Your reservation has been confirmed and 
               a confirmation email has been sent to your email address.
             </p>
             <div style={styles.bookingDetails}>
@@ -199,6 +213,20 @@ const BookingScreen = () => {
               <div style={styles.detailRow}>
                 <span>Total Amount:</span>
                 <strong>₹{calculateTotal().total.toFixed(2)}</strong>
+              </div>
+              <div style={styles.detailRow}>
+                <span>Amount Paid:</span>
+                <strong>₹{calculateTotal().paymentAmount.toFixed(2)}</strong>
+              </div>
+              {calculateTotal().isAdvancePayment && (
+                <div style={styles.detailRow}>
+                  <span>Remaining Amount:</span>
+                  <strong>₹{calculateTotal().remainingAmount.toFixed(2)} (Due at check-in)</strong>
+                </div>
+              )}
+              <div style={styles.detailRow}>
+                <span>Payment Status:</span>
+                <strong>{calculateTotal().isAdvancePayment ? 'Advance Paid' : 'Fully Paid'}</strong>
               </div>
             </div>
             <div style={styles.successActions}>
@@ -462,6 +490,79 @@ const BookingScreen = () => {
                   </div>
                 </div>
 
+                {/* Payment Type Selection */}
+                <div style={styles.paymentTypeSection}>
+                  <h3 style={styles.sectionTitle}>Choose Payment Option</h3>
+                  <div style={styles.paymentOptions}>
+                    <div 
+                      style={{
+                        ...styles.paymentOption,
+                        ...(bookingData.paymentInfo.paymentType === 'full' ? styles.paymentOptionActive : {})
+                      }}
+                      onClick={() => handleInputChange('paymentInfo', 'paymentType', 'full')}
+                    >
+                      <div style={styles.paymentOptionHeader}>
+                        <input
+                          type="radio"
+                          name="paymentType"
+                          checked={bookingData.paymentInfo.paymentType === 'full'}
+                          onChange={() => handleInputChange('paymentInfo', 'paymentType', 'full')}
+                          style={styles.radioInput}
+                        />
+                        <div>
+                          <h4 style={styles.paymentOptionTitle}>Pay Full Amount</h4>
+                          <p style={styles.paymentOptionDesc}>Pay the complete amount now</p>
+                        </div>
+                      </div>
+                      <div style={styles.paymentOptionAmount}>
+                        <span style={styles.paymentAmount}>₹{calculateTotal().total.toFixed(2)}</span>
+                        <span style={styles.paymentLabel}>Total Amount</span>
+                      </div>
+                    </div>
+
+                    <div 
+                      style={{
+                        ...styles.paymentOption,
+                        ...(bookingData.paymentInfo.paymentType === 'advance' ? styles.paymentOptionActive : {})
+                      }}
+                      onClick={() => handleInputChange('paymentInfo', 'paymentType', 'advance')}
+                    >
+                      <div style={styles.paymentOptionHeader}>
+                        <input
+                          type="radio"
+                          name="paymentType"
+                          checked={bookingData.paymentInfo.paymentType === 'advance'}
+                          onChange={() => handleInputChange('paymentInfo', 'paymentType', 'advance')}
+                          style={styles.radioInput}
+                        />
+                        <div>
+                          <h4 style={styles.paymentOptionTitle}>Pay Advance ({bookingData.paymentInfo.advancePercentage}%)</h4>
+                          <p style={styles.paymentOptionDesc}>Pay advance now, remaining at check-in</p>
+                        </div>
+                      </div>
+                      <div style={styles.paymentOptionAmount}>
+                        <span style={styles.paymentAmount}>₹{calculateTotal().paymentAmount.toFixed(2)}</span>
+                        <span style={styles.paymentLabel}>Advance Payment</span>
+                        <span style={styles.remainingAmount}>
+                          Remaining: ₹{calculateTotal().remainingAmount.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {bookingData.paymentInfo.paymentType === 'advance' && (
+                    <div style={styles.advanceNote}>
+                      <FaCheckCircle style={styles.noteIcon} />
+                      <div>
+                        <p style={styles.noteText}>
+                          <strong>Advance Payment Policy:</strong> You'll pay ₹{calculateTotal().paymentAmount.toFixed(2)} now to secure your booking. 
+                          The remaining amount of ₹{calculateTotal().remainingAmount.toFixed(2)} will be collected at check-in.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div style={styles.formGrid}>
                   <div style={styles.formGroup}>
                     <label style={styles.label}>
@@ -556,6 +657,28 @@ const BookingScreen = () => {
                     <div style={styles.confirmationRow}>
                       <span>Phone:</span>
                       <strong>{bookingData.guestInfo.phone}</strong>
+                    </div>
+                  </div>
+
+                  <div style={styles.confirmationSection}>
+                    <h3>Payment Details</h3>
+                    <div style={styles.confirmationRow}>
+                      <span>Payment Type:</span>
+                      <strong>{bookingData.paymentInfo.paymentType === 'full' ? 'Full Payment' : `Advance Payment (${bookingData.paymentInfo.advancePercentage}%)`}</strong>
+                    </div>
+                    <div style={styles.confirmationRow}>
+                      <span>Amount to Pay Now:</span>
+                      <strong>₹{calculateTotal().paymentAmount.toFixed(2)}</strong>
+                    </div>
+                    {calculateTotal().isAdvancePayment && (
+                      <div style={styles.confirmationRow}>
+                        <span>Remaining at Check-in:</span>
+                        <strong>₹{calculateTotal().remainingAmount.toFixed(2)}</strong>
+                      </div>
+                    )}
+                    <div style={styles.confirmationRow}>
+                      <span>Total Booking Amount:</span>
+                      <strong>₹{calculateTotal().total.toFixed(2)}</strong>
                     </div>
                   </div>
                 </div>
@@ -661,6 +784,26 @@ const BookingScreen = () => {
                   <span>Total Amount:</span>
                   <span>₹{calculateTotal().total.toFixed(2)}</span>
                 </div>
+                
+                {/* Payment Amount Display */}
+                {currentStep >= 3 && (
+                  <>
+                    <div style={styles.paymentSummary}>
+                      <div style={styles.paymentRow}>
+                        <span style={styles.paymentLabel}>
+                          {calculateTotal().isAdvancePayment ? 'Advance Payment:' : 'Payment Amount:'}
+                        </span>
+                        <span style={styles.paymentAmountText}>₹{calculateTotal().paymentAmount.toFixed(2)}</span>
+                      </div>
+                      {calculateTotal().isAdvancePayment && (
+                        <div style={styles.remainingRow}>
+                          <span>Remaining at Check-in:</span>
+                          <span>₹{calculateTotal().remainingAmount.toFixed(2)}</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
 
               <div style={styles.summaryFeatures}>
@@ -1029,6 +1172,110 @@ const styles = {
     margin: 0,
   },
 
+  // Payment Type Selection
+  paymentTypeSection: {
+    marginBottom: '2rem',
+  },
+
+  paymentOptions: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '1rem',
+    marginBottom: '1.5rem',
+  },
+
+  paymentOption: {
+    border: '2px solid #E5E5E5',
+    borderRadius: '8px',
+    padding: '1rem',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    minHeight: '120px',
+  },
+
+  paymentOptionActive: {
+    borderColor: '#D4AF37',
+    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+  },
+
+  paymentOptionHeader: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '0.5rem',
+    marginBottom: '0.5rem',
+  },
+
+  radioInput: {
+    marginTop: '2px',
+    accentColor: '#D4AF37',
+    transform: 'scale(1.2)',
+  },
+
+  paymentOptionTitle: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    color: '#1A1A1A',
+    margin: '0 0 0.25rem 0',
+  },
+
+  paymentOptionDesc: {
+    fontSize: '12px',
+    color: '#666',
+    margin: 0,
+  },
+
+  paymentOptionAmount: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+
+  paymentAmount: {
+    fontSize: '1.1rem',
+    fontWeight: '700',
+    color: '#D4AF37',
+  },
+
+  paymentLabel: {
+    fontSize: '10px',
+    color: '#666',
+    marginTop: '2px',
+  },
+
+  remainingAmount: {
+    fontSize: '10px',
+    color: '#999',
+    marginTop: '2px',
+  },
+
+  advanceNote: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '1rem',
+    padding: '1rem',
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderRadius: '10px',
+    border: '1px solid rgba(16, 185, 129, 0.2)',
+  },
+
+  noteIcon: {
+    fontSize: '16px',
+    color: '#10B981',
+    marginTop: '2px',
+    flexShrink: 0,
+  },
+
+  noteText: {
+    fontSize: '14px',
+    color: '#1A1A1A',
+    margin: 0,
+    lineHeight: '1.5',
+  },
+
   // Confirmation
   confirmationDetails: {
     display: 'flex',
@@ -1234,6 +1481,38 @@ const styles = {
     color: '#1A1A1A',
     borderTop: '2px solid #D4AF37',
     marginTop: '1rem',
+  },
+
+  // Payment Summary
+  paymentSummary: {
+    marginTop: '1rem',
+    padding: '1rem',
+    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+    borderRadius: '8px',
+    border: '1px solid rgba(212, 175, 55, 0.3)',
+  },
+
+  paymentRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '0.5rem',
+  },
+
+  paymentAmountText: {
+    fontSize: '18px',
+    fontWeight: '700',
+    color: '#D4AF37',
+  },
+
+  remainingRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    fontSize: '14px',
+    color: '#666',
+    paddingTop: '0.5rem',
+    borderTop: '1px solid rgba(212, 175, 55, 0.2)',
   },
 
   summaryFeatures: {

@@ -15,15 +15,15 @@ import {
   FaInstagram,
   FaTwitter,
   FaFacebookF,
-  FaConciergeBell,
+  FaUserTie,
   FaUsers,
   FaCheckCircle
 } from 'react-icons/fa';
 
 // Import images
 const heroBackground = 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80';
-const luxurySuite = 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
-const diningArea = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
+const singleRoom = 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
+const doubleRoom = 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
 const mountainView = 'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
 const logoImage = '../Assets/logoimg.png';
 
@@ -61,7 +61,7 @@ function HomeScreen() {
       [name]: value
     }));
   };
-
+ 
   return (
     <div style={styles.container}>
       <Navbar />
@@ -75,10 +75,10 @@ function HomeScreen() {
               <h1 style={styles.heroTitle}>
                 Experience Elegance
                 <br />
-                At JS Rooms
+                At JS ROOMS
               </h1>
               <p style={styles.heroSubtitle}>
-                Premium accommodations with breathtaking views and Luxury Services.
+                Premium accommodations with breathtaking views and luxury amenities.
               </p>
               <div style={styles.heroButtons}>
                 <Link to="/rooms" style={styles.primaryBtn}>
@@ -93,10 +93,10 @@ function HomeScreen() {
           </div>
         </section>
 
-        {/* Features Section - Services */}
+        {/* Features Section */}
         <section style={styles.featuresSection}>
           <div style={styles.sectionHeader}>
-            <span style={styles.sectionSubtitle}>EXCLUSIVE Services</span>
+            <span style={styles.sectionSubtitle}>EXCLUSIVE AMENITIES</span>
             <h2 style={styles.sectionTitle}>Premium Experiences</h2>
           </div>
           
@@ -105,19 +105,19 @@ function HomeScreen() {
               <div style={styles.featureIconContainer}>
                 <FaBed style={styles.featureIcon} />
               </div>
-              <h3 style={styles.featureTitle}>Luxury Suites</h3>
+              <h3 style={styles.featureTitle}>Comfortable Rooms</h3>
               <p style={styles.featureDescription}>
-                Elegant rooms with premium Services  
+                Elegant rooms with premium amenities
               </p>
             </div>
             
             <div style={styles.featureCard}>
               <div style={styles.featureIconContainer}>
-                <FaUtensils style={styles.featureIcon} />
+                <FaWifi style={styles.featureIcon} />
               </div>
-              <h3 style={styles.featureTitle}>Fine Dining</h3>
+              <h3 style={styles.featureTitle}>Free WiFi</h3>
               <p style={styles.featureDescription}>
-                Gourmet cuisine by award-winning chefs using local ingredients
+                High-speed internet connectivity throughout the property
               </p>
             </div>
             
@@ -143,15 +143,15 @@ function HomeScreen() {
           <div style={styles.roomsGrid}>
             <div style={styles.roomCard}>
               <div style={styles.roomImageContainer}>
-                <img src={luxurySuite} alt="Deluxe Suite" style={styles.roomImage} />
+                <img src={doubleRoom} alt="Double Room" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
-                  <span style={styles.roomPrice}>₹299/night</span>
+                  <span style={styles.roomPrice}>₹499/night</span>
                 </div>
               </div>
               <div style={styles.roomContent}>
-                <h3 style={styles.roomTitle}>Deluxe Suite</h3>
+                <h3 style={styles.roomTitle}>Double AC Room</h3>
                 <p style={styles.roomDescription}>
-                  Spacious suite with panoramic mountain views and private balcony
+                  Spacious double bedroom perfect for couples with city views
                 </p>
                 <div style={styles.roomFeatures}>
                   <span style={styles.roomFeature}>65 m²</span>
@@ -173,15 +173,15 @@ function HomeScreen() {
             
             <div style={styles.roomCard}>
               <div style={styles.roomImageContainer}>
-                <img src={diningArea} alt="Executive Room" style={styles.roomImage} />
+                <img src={singleRoom} alt="Single Room" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
-                  <span style={styles.roomPrice}>₹199/night</span>
+                  <span style={styles.roomPrice}>₹299/night</span>
                 </div>
               </div>
               <div style={styles.roomContent}>
-                <h3 style={styles.roomTitle}>Executive Room</h3>
+                <h3 style={styles.roomTitle}>Single AC Room</h3>
                 <p style={styles.roomDescription}>
-                  Comfortable room with premium Services and stunning views
+                  Comfortable room with premium amenities and stunning views
                 </p>
                 <div style={styles.roomFeatures}>
                   <span style={styles.roomFeature}>45 m²</span>
@@ -219,7 +219,7 @@ function HomeScreen() {
                 Crafting Unforgettable Memories
               </h2>
               <p style={styles.experienceDescription}>
-                At JS Rooms, luxury is found in the details. Our dedicated team ensures 
+                At JS ROOMS, luxury is found in the details. Our dedicated team ensures 
                 every aspect of your stay exceeds expectations with personalized service.
               </p>
               <div style={styles.experienceStats}>
@@ -264,7 +264,7 @@ function HomeScreen() {
                 
                 <div style={styles.enquiryBenefits}>
                   <div style={styles.benefitCard}>
-                    <FaConciergeBell style={styles.benefitIcon} />
+                    <FaUserTie style={styles.benefitIcon} />
                     <div>
                       <h4 style={styles.benefitTitle}>Personalized Service</h4>
                       <p style={styles.benefitText}>Tailored recommendations based on your preferences</p>
@@ -356,8 +356,9 @@ function HomeScreen() {
                         required
                       >
                         <option value="">Select room type</option>
-                        <option value="deluxe">Deluxe Suite - $299/night</option>
-                        <option value="executive">Executive Room - $199/night</option>
+                        <option value="single">Single Room - ₹299/night</option>
+                        <option value="double">Double Room - ₹499/night</option>
+                        <option value="triple">Triple Room - ₹699/night</option>
                       </select>
                     </div>
                   </div>
@@ -405,7 +406,7 @@ function HomeScreen() {
                   
                   <div style={styles.formGroup}>
                     <label style={styles.formLabel}>
-                      <FaConciergeBell style={styles.inputIcon} />
+                      <FaUser style={styles.inputIcon} />
                       Special Requests
                     </label>
                     <textarea 
@@ -434,7 +435,7 @@ function HomeScreen() {
           <div style={styles.ctaContent}>
             <h2 style={styles.ctaTitle}>Ready for an Unforgettable Experience?</h2>
             <p style={styles.ctaText}>
-              Book your stay at JS Rooms and discover luxury redefined.
+              Book your stay at JS ROOMS and discover luxury redefined.
             </p>
             <div style={styles.ctaButtons}>
               <Link to="/rooms" style={styles.ctaPrimaryBtn}>
@@ -453,7 +454,7 @@ function HomeScreen() {
         <div style={styles.footerMain}>
           <div style={styles.footerColumn}>
             <div style={styles.footerLogo}>
-              <span style={styles.footerLogoText}>JS Rooms</span>
+              <span style={styles.footerLogoText}>JS ROOMS</span>
               <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
             </div>
             <p style={styles.footerDescription}>
@@ -476,13 +477,13 @@ function HomeScreen() {
           <div style={styles.footerColumn}>
             <h4 style={styles.footerTitle}>Quick Links</h4>
             <Link to="/rooms" style={styles.footerLink}>
-              Rooms & Suites
+              Rooms
             </Link>
-            <Link to="/services" style={styles.footerLink}>
-              Dining
+            <Link to="/gallery" style={styles.footerLink}>
+              Gallery
             </Link>
-            <Link to="/services" style={styles.footerLink}>
-              Services
+            <Link to="/about" style={styles.footerLink}>
+              About Us
             </Link>
             <Link to="/gallery" style={styles.footerLink}>
               Gallery
@@ -508,13 +509,8 @@ function HomeScreen() {
         
         <div style={styles.footerBottom}>
           <p style={styles.copyright}>
-            © {new Date().getFullYear()} JS Rooms Luxury Lodge. All rights reserved.
+            © 2026 JS ROOMS Luxury Lodge. All rights reserved.
           </p>
-          <div style={styles.footerLinks}>
-            <Link to="/privacy" style={styles.bottomLink}>Privacy</Link>
-            <Link to="/terms" style={styles.bottomLink}>Terms</Link>
-            <Link to="/cookies" style={styles.bottomLink}>Cookies</Link>
-          </div>
         </div>
       </footer>
     </div>
@@ -635,7 +631,7 @@ container: {
   
   // Features Section
   featuresSection: {
-    padding: '5rem 1.5rem',
+    padding: '3rem 1.5rem',
     backgroundColor: '#FAF9F7',
   },
   
@@ -711,7 +707,7 @@ container: {
   
   // Rooms Section
   roomsSection: {
-    padding: '5rem 1.5rem',
+    padding: '3rem 1.5rem',
     backgroundColor: 'white',
   },
   
@@ -831,7 +827,7 @@ container: {
   
   // Experience Section
   experienceSection: {
-    padding: '5rem 1.5rem',
+    padding: '3rem 1.5rem',
     backgroundColor: '#0A0A0A',
     color: 'white',
   },
@@ -910,7 +906,7 @@ container: {
   
   // Premium Enquiry Section
   enquirySection: {
-    padding: '5rem 1.5rem',
+    padding: '3rem 1.5rem',
     backgroundColor: '#FAF9F7',
   },
   
@@ -1089,8 +1085,8 @@ container: {
   
   // CTA Section
   ctaSection: {
-    padding: '5rem 1.5rem',
-    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)), url(${diningArea})`,
+    padding: '3rem 1.5rem',
+    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)), url(${mountainView})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     textAlign: 'center',
@@ -1269,6 +1265,8 @@ container: {
   copyright: {
     fontSize: '13px',
     color: '#999',
+    textAlign: 'center',
+    margin: 0,
   },
   
   footerLinks: {

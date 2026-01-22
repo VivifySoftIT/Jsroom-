@@ -35,13 +35,13 @@ const DashboardScreen = () => {
     memberSince: '2023',
     loyaltyPoints: 2450,
     totalStays: 8,
-    favoriteRoom: 'Deluxe Suite'
+    favoriteRoom: 'Double AC Room'
   });
 
   const [bookings, setBookings] = useState([
     {
       id: 'JSR-ABC123',
-      roomName: 'Presidential Suite',
+      roomName: 'Triple AC Room',
       roomImage: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
       checkIn: '2024-02-15',
       checkOut: '2024-02-18',
@@ -53,7 +53,7 @@ const DashboardScreen = () => {
     },
     {
       id: 'JSR-DEF456',
-      roomName: 'Deluxe Suite',
+      roomName: 'Double AC Room',
       roomImage: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
       checkIn: '2024-01-10',
       checkOut: '2024-01-12',
@@ -65,7 +65,7 @@ const DashboardScreen = () => {
     },
     {
       id: 'JSR-GHI789',
-      roomName: 'Executive Room',
+      roomName: 'Single AC Room',
       roomImage: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
       checkIn: '2023-12-20',
       checkOut: '2023-12-23',
@@ -364,10 +364,9 @@ const DashboardScreen = () => {
                         <div style={styles.preferenceField}>
                           <label style={styles.fieldLabel}>Preferred Room Type</label>
                           <select style={styles.selectInput} value={preferences.roomType}>
-                            <option value="standard">Standard Room</option>
-                            <option value="executive">Executive Room</option>
-                            <option value="suite">Suite</option>
-                            <option value="presidential">Presidential Suite</option>
+                            <option value="single">Single Room</option>
+                            <option value="double">Double Room</option>
+                            <option value="triple">Triple Room</option>
                           </select>
                         </div>
                         <div style={styles.preferenceField}>
@@ -559,14 +558,14 @@ const DashboardScreen = () => {
                         <button style={styles.redeemBtn}>Redeem</button>
                       </div>
                       <div style={styles.rewardCard}>
-                        <h4 style={styles.rewardTitle}>Spa Treatment</h4>
-                        <p style={styles.rewardDescription}>60-minute relaxation massage</p>
+                        <h4 style={styles.rewardTitle}>Late Checkout</h4>
+                        <p style={styles.rewardDescription}>Extended checkout until 2 PM</p>
                         <div style={styles.rewardPoints}>800 points</div>
                         <button style={styles.redeemBtn}>Redeem</button>
                       </div>
                       <div style={styles.rewardCard}>
-                        <h4 style={styles.rewardTitle}>Dining Credit</h4>
-                        <p style={styles.rewardDescription}>₹1000 restaurant credit</p>
+                        <h4 style={styles.rewardTitle}>Free Night Stay</h4>
+                        <p style={styles.rewardDescription}>One complimentary night stay</p>
                         <div style={styles.rewardPoints}>1000 points</div>
                         <button style={styles.redeemBtn}>Redeem</button>
                       </div>

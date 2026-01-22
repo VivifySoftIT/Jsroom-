@@ -81,7 +81,7 @@ const AdminLoginScreen = () => {
             </div>
             <div>
               <h1 style={styles.title}>Admin Portal</h1>
-              <p style={styles.subtitle}>JS Rooms Hotel Management</p>
+              <p style={styles.subtitle}>JS ROOMS Hotel Management</p>
             </div>
           </div>
         </div>
@@ -153,7 +153,7 @@ const AdminLoginScreen = () => {
 
         <div style={styles.footer}>
           <p style={styles.footerText}>
-            Secure admin access for JS Rooms Hotel Management System
+            Secure admin access for JS ROOMS Hotel Management System
           </p>
         </div>
       </div>

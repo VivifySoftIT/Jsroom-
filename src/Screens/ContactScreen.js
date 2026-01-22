@@ -75,8 +75,8 @@ const ContactScreen = () => {
     {
       icon: FaMapMarkerAlt,
       title: 'Address',
-      details: ['123 Luxury Lane', 'Mountain View, CA 94040', 'United States'],
-      description: 'Located in the heart of the city'
+      details: ['123 Anna Salai', 'Chennai, Tamil Nadu 600002', 'India'],
+      description: 'Located in the heart of Chennai'
     },
     {
       icon: FaClock,
@@ -107,13 +107,6 @@ const ContactScreen = () => {
       email: 'guestservices@jsrooms.com',
       hours: '6 AM - 11 PM',
       description: 'Assistance during your stay and special requests'
-    },
-    {
-      name: 'Events & Meetings',
-      phone: '+91 894 738 2801',
-      email: 'events@jsrooms.com',
-      hours: '9 AM - 6 PM',
-      description: 'Corporate events, weddings, and private functions'
     }
   ];
 
@@ -126,7 +119,7 @@ const ContactScreen = () => {
         <div style={styles.heroContent}>
           <div style={styles.heroText}>
             <span style={styles.heroBadge}>GET IN TOUCH</span>
-            <h1 style={styles.heroTitle}>Contact JS Rooms</h1>
+            <h1 style={styles.heroTitle}>Contact JS ROOMS</h1>
             <p style={styles.heroSubtitle}>
               We're here to help make your stay exceptional. Reach out to us for reservations, inquiries, or assistance.
             </p>
@@ -332,9 +325,9 @@ const ContactScreen = () => {
               <div style={styles.mapAddress}>
                 <FaMapMarkerAlt style={styles.mapIcon} />
                 <div>
-                  <div style={styles.addressLine}>123 Luxury Lane</div>
-                  <div style={styles.addressLine}>Mountain View, CA 94040</div>
-                  <div style={styles.addressLine}>United States</div>
+                  <div style={styles.addressLine}>123 Anna Salai</div>
+                  <div style={styles.addressLine}>Chennai, Tamil Nadu 600002</div>
+                  <div style={styles.addressLine}>India</div>
                 </div>
               </div>
               <div style={styles.mapActions}>
@@ -358,7 +351,7 @@ const ContactScreen = () => {
       {/* CTA Section */}
       <section style={styles.ctaSection}>
         <div style={styles.ctaContent}>
-          <h2 style={styles.ctaTitle}>Ready to Experience JS Rooms?</h2>
+          <h2 style={styles.ctaTitle}>Ready to Experience JS ROOMS?</h2>
           <p style={styles.ctaText}>
             Don't wait - book your luxury stay today and discover what makes us special.
           </p>

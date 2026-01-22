@@ -5,9 +5,7 @@ import {
   FaBed, 
   FaUsers, 
   FaCalendarAlt, 
-  FaDollarSign,
   FaChartLine,
-  FaStar,
   FaCheckCircle,
   FaClock,
   FaExclamationTriangle,
@@ -16,13 +14,17 @@ import {
   FaTimes,
   FaEye,
   FaEdit,
-  FaPlus
+  FaPlus,
+  FaFilter
 } from 'react-icons/fa';
+import AdminBookingsComponent from '../Components/AdminBookingsComponent';
+import AdminRoomsComponent from '../Components/AdminRoomsComponent';
 
 const AdminDashboardScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [adminUser, setAdminUser] = useState(null);
+  const [statsFilter, setStatsFilter] = useState('today'); // today, week, month
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,18 +47,43 @@ const AdminDashboardScreen = () => {
   };
 
   // Mock data - Replace with actual API calls
-  const dashboardStats = {
-    totalRooms: 24,
-    availableRooms: 18,
-    occupiedRooms: 6,
-    totalBookings: 156,
-    todayCheckIns: 8,
-    todayCheckOuts: 5,
-    totalRevenue: 125000,
-    monthlyRevenue: 45000,
-    averageRating: 4.8,
-    totalGuests: 342
+  const getDashboardStats = (filter) => {
+    const baseStats = {
+      today: {
+        totalRooms: 24,
+        availableRooms: 18,
+        occupiedRooms: 6,
+        totalBookings: 8,
+        todayCheckIns: 8,
+        todayCheckOuts: 5,
+        totalRevenue: 15000,
+        monthlyRevenue: 15000
+      },
+      week: {
+        totalRooms: 24,
+        availableRooms: 18,
+        occupiedRooms: 6,
+        totalBookings: 45,
+        todayCheckIns: 45,
+        todayCheckOuts: 38,
+        totalRevenue: 85000,
+        monthlyRevenue: 85000
+      },
+      month: {
+        totalRooms: 24,
+        availableRooms: 18,
+        occupiedRooms: 6,
+        totalBookings: 156,
+        todayCheckIns: 156,
+        todayCheckOuts: 142,
+        totalRevenue: 325000,
+        monthlyRevenue: 325000
+      }
+    };
+    return baseStats[filter];
   };
+
+  const dashboardStats = getDashboardStats(statsFilter);
 
   const recentBookings = [
     {
@@ -95,8 +122,6 @@ const AdminDashboardScreen = () => {
     { id: 'overview', label: 'Overview', icon: FaHome },
     { id: 'bookings', label: 'Bookings', icon: FaCalendarAlt },
     { id: 'rooms', label: 'Room Management', icon: FaBed },
-    { id: 'guests', label: 'Guest Management', icon: FaUsers },
-    { id: 'analytics', label: 'Analytics', icon: FaChartLine },
   ];
 
   const getStatusColor = (status) => {
@@ -134,7 +159,7 @@ const AdminDashboardScreen = () => {
           <div style={styles.logo}>
             <div style={styles.logoIcon}>JS</div>
             <div>
-              <div style={styles.logoText}>JS Rooms</div>
+              <div style={styles.logoText}>JS ROOMS</div>
               <div style={styles.logoSubtext}>ADMIN PANEL</div>
             </div>
           </div>
@@ -202,6 +227,28 @@ const AdminDashboardScreen = () => {
         <div style={styles.content}>
           {activeTab === 'overview' && (
             <>
+              {/* Filter Section */}
+              <div style={styles.filterSection}>
+                <div style={styles.filterContainer}>
+                  <FaFilter style={styles.filterIcon} />
+                  <span style={styles.filterLabel}>Show stats for:</span>
+                  <div style={styles.filterButtons}>
+                    {['today', 'week', 'month'].map(filter => (
+                      <button
+                        key={filter}
+                        onClick={() => setStatsFilter(filter)}
+                        style={{
+                          ...styles.filterBtn,
+                          ...(statsFilter === filter ? styles.filterBtnActive : {})
+                        }}
+                      >
+                        {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               {/* Stats Cards */}
               <div style={styles.statsGrid}>
                 <div style={styles.statCard}>
@@ -225,33 +272,20 @@ const AdminDashboardScreen = () => {
                     <div style={styles.statNumber}>{dashboardStats.totalBookings}</div>
                     <div style={styles.statLabel}>Total Bookings</div>
                     <div style={styles.statSubtext}>
-                      {dashboardStats.todayCheckIns} check-ins today
+                      {statsFilter === 'today' ? 'today' : `this ${statsFilter}`}
                     </div>
                   </div>
                 </div>
 
                 <div style={styles.statCard}>
                   <div style={styles.statIcon}>
-                    <FaDollarSign />
+                    <FaChartLine />
                   </div>
                   <div style={styles.statContent}>
                     <div style={styles.statNumber}>₹{dashboardStats.totalRevenue.toLocaleString()}</div>
                     <div style={styles.statLabel}>Total Revenue</div>
                     <div style={styles.statSubtext}>
-                      ₹{dashboardStats.monthlyRevenue.toLocaleString()} this month
-                    </div>
-                  </div>
-                </div>
-
-                <div style={styles.statCard}>
-                  <div style={styles.statIcon}>
-                    <FaStar />
-                  </div>
-                  <div style={styles.statContent}>
-                    <div style={styles.statNumber}>{dashboardStats.averageRating}</div>
-                    <div style={styles.statLabel}>Average Rating</div>
-                    <div style={styles.statSubtext}>
-                      {dashboardStats.totalGuests} total guests
+                      {statsFilter === 'today' ? 'today' : `this ${statsFilter}`}
                     </div>
                   </div>
                 </div>
@@ -279,7 +313,6 @@ const AdminDashboardScreen = () => {
                         <th style={styles.th}>Check-in</th>
                         <th style={styles.th}>Status</th>
                         <th style={styles.th}>Amount</th>
-                        <th style={styles.th}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -302,16 +335,6 @@ const AdminDashboardScreen = () => {
                               </div>
                             </td>
                             <td style={styles.td}>₹{booking.amount}</td>
-                            <td style={styles.td}>
-                              <div style={styles.actionButtons}>
-                                <button style={styles.actionBtn}>
-                                  <FaEye />
-                                </button>
-                                <button style={styles.actionBtn}>
-                                  <FaEdit />
-                                </button>
-                              </div>
-                            </td>
                           </tr>
                         );
                       })}
@@ -331,10 +354,9 @@ const AdminDashboardScreen = () => {
                   New Booking
                 </button>
               </div>
-              <div style={styles.comingSoon}>
-                <h3>Booking Management</h3>
-                <p>Complete booking management interface coming soon...</p>
-              </div>
+              
+              {/* Booking Management Component */}
+              <AdminBookingsComponent />
             </div>
           )}
 
@@ -342,39 +364,10 @@ const AdminDashboardScreen = () => {
             <div style={styles.section}>
               <div style={styles.sectionHeader}>
                 <h2 style={styles.sectionTitle}>Room Management</h2>
-                <button style={styles.addBtn}>
-                  <FaPlus style={styles.btnIcon} />
-                  Add Room
-                </button>
               </div>
-              <div style={styles.comingSoon}>
-                <h3>Room Management</h3>
-                <p>Room management interface coming soon...</p>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'guests' && (
-            <div style={styles.section}>
-              <div style={styles.sectionHeader}>
-                <h2 style={styles.sectionTitle}>Guest Management</h2>
-              </div>
-              <div style={styles.comingSoon}>
-                <h3>Guest Management</h3>
-                <p>Guest management interface coming soon...</p>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'analytics' && (
-            <div style={styles.section}>
-              <div style={styles.sectionHeader}>
-                <h2 style={styles.sectionTitle}>Analytics & Reports</h2>
-              </div>
-              <div style={styles.comingSoon}>
-                <h3>Analytics Dashboard</h3>
-                <p>Analytics and reporting interface coming soon...</p>
-              </div>
+              
+              {/* Room Management Component */}
+              <AdminRoomsComponent />
             </div>
           )}
         </div>
@@ -754,6 +747,56 @@ const styles = {
     padding: '3rem',
     textAlign: 'center',
     color: '#666',
+  },
+
+  // Filter Section
+  filterSection: {
+    backgroundColor: 'white',
+    padding: '1rem 2rem',
+    borderRadius: '12px',
+    border: '1px solid #E5E5E5',
+    marginBottom: '2rem',
+  },
+
+  filterContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+  },
+
+  filterIcon: {
+    color: '#D4AF37',
+    fontSize: '16px',
+  },
+
+  filterLabel: {
+    fontSize: '14px',
+    fontWeight: '500',
+    color: '#1A1A1A',
+  },
+
+  filterButtons: {
+    display: 'flex',
+    gap: '0.5rem',
+  },
+
+  filterBtn: {
+    padding: '6px 12px',
+    border: '1px solid #E5E5E5',
+    borderRadius: '6px',
+    backgroundColor: 'white',
+    color: '#666',
+    fontSize: '12px',
+    fontWeight: '500',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    fontFamily: 'inherit',
+  },
+
+  filterBtnActive: {
+    backgroundColor: '#D4AF37',
+    color: '#1A1A1A',
+    borderColor: '#D4AF37',
   },
 };
 
