@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import apiService from '../services/apiService';
-import config from '../config/apiConfig';
 import { 
   FaSearch, 
   FaFilter, 
@@ -15,7 +13,11 @@ import {
   FaTimes,
   FaImage,
   FaSave,
-  FaUpload
+  FaUpload,
+  FaSpinner,
+  FaExclamationTriangle,
+  FaWifi,
+  FaPlug
 } from 'react-icons/fa';
 
 const AdminRoomsComponent = () => {
@@ -26,270 +28,230 @@ const AdminRoomsComponent = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState('view'); // view, edit, add
+  const [modalMode, setModalMode] = useState('view');
   const [formData, setFormData] = useState({});
   const [imagePreview, setImagePreview] = useState([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
-  const [apiStatus, setApiStatus] = useState('loading'); // 'loading', 'success', 'fallback'
+  const [loading, setLoading] = useState({
+    categories: false,
+    rooms: false
+  });
+  const [error, setError] = useState(null);
 
-  // Fetch categories from API
+  // ✅ Mock data
+  const mockCategories = [
+    { categoryId: 1, categoryName: 'Standard' },
+    { categoryId: 2, categoryName: 'Deluxe' },
+    { categoryId: 3, categoryName: 'Suite' },
+    { categoryId: 4, categoryName: 'Executive' },
+    { categoryId: 5, categoryName: 'Presidential' }
+  ];
+
+  const mockRooms = [
+    {
+      id: 1,
+      roomNumber: '101',
+      category: 'Standard',
+      description: 'Comfortable standard room with modern amenities and city views.',
+      price: 2999,
+      originalPrice: 3499,
+      size: '25 m²',
+      maxGuests: 2,
+      bedConfiguration: '1 Double Bed',
+      floor: 1,
+      view: 'City View',
+      status: 'available',
+      acType: 'ac',
+      popular: true,
+      rating: { average: 4.7, count: 89 },
+      images: [{
+        url: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+        alt: 'Standard Room',
+        isPrimary: true
+      }],
+      amenities: ['Free WiFi', 'TV', 'AC', 'Room Service', 'Mini Bar'],
+      lastCleaned: '2024-01-22',
+      lastMaintenance: '2024-01-15',
+      createdAt: '2023-06-15',
+      updatedAt: '2024-01-20'
+    },
+    {
+      id: 2,
+      roomNumber: '205',
+      category: 'Deluxe',
+      description: 'Spacious deluxe room with ocean view and premium amenities.',
+      price: 4999,
+      originalPrice: 5499,
+      size: '35 m²',
+      maxGuests: 2,
+      bedConfiguration: '1 King Bed',
+      floor: 2,
+      view: 'Ocean View',
+      status: 'occupied',
+      acType: 'ac',
+      popular: false,
+      rating: { average: 4.8, count: 124 },
+      images: [{
+        url: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+        alt: 'Deluxe Room',
+        isPrimary: true
+      }],
+      amenities: ['Free WiFi', 'Smart TV', 'Mini Bar', 'AC', 'Balcony', 'Room Service'],
+      lastCleaned: '2024-01-21',
+      lastMaintenance: '2024-01-10',
+      createdAt: '2023-06-15',
+      updatedAt: '2024-01-18'
+    },
+    {
+      id: 3,
+      roomNumber: '301',
+      category: 'Suite',
+      description: 'Luxurious suite with separate living area and premium services.',
+      price: 7999,
+      originalPrice: 8499,
+      size: '50 m²',
+      maxGuests: 3,
+      bedConfiguration: '1 King Bed + 1 Single Bed',
+      floor: 3,
+      view: 'Garden View',
+      status: 'available',
+      acType: 'ac',
+      popular: true,
+      rating: { average: 4.9, count: 156 },
+      images: [{
+        url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+        alt: 'Suite Room',
+        isPrimary: true
+      }],
+      amenities: ['Free WiFi', 'Smart TV', 'Mini Bar', 'AC', 'Jacuzzi', 'Room Service', 'Kitchenette'],
+      lastCleaned: '2024-01-23',
+      lastMaintenance: '2024-01-18',
+      createdAt: '2023-06-15',
+      updatedAt: '2024-01-22'
+    },
+    {
+      id: 4,
+      roomNumber: '402',
+      category: 'Executive',
+      description: 'Executive room with workspace and premium business amenities.',
+      price: 5999,
+      originalPrice: 6499,
+      size: '40 m²',
+      maxGuests: 2,
+      bedConfiguration: '1 King Bed',
+      floor: 4,
+      view: 'City View',
+      status: 'maintenance',
+      acType: 'ac',
+      popular: false,
+      rating: { average: 4.6, count: 92 },
+      images: [{
+        url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+        alt: 'Executive Room',
+        isPrimary: true
+      }],
+      amenities: ['Free WiFi', 'Smart TV', 'Work Desk', 'AC', 'Coffee Machine', 'Room Service'],
+      lastCleaned: '2024-01-20',
+      lastMaintenance: '2024-01-22',
+      createdAt: '2023-06-15',
+      updatedAt: '2024-01-22'
+    },
+    {
+      id: 5,
+      roomNumber: '505',
+      category: 'Presidential',
+      description: 'Ultimate luxury presidential suite with panoramic city views and butler service.',
+      price: 14999,
+      originalPrice: 15999,
+      size: '85 m²',
+      maxGuests: 4,
+      bedConfiguration: '1 King Bed + 2 Single Beds',
+      floor: 5,
+      view: 'Panoramic City View',
+      status: 'available',
+      acType: 'ac',
+      popular: true,
+      rating: { average: 4.9, count: 45 },
+      images: [{
+        url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+        alt: 'Presidential Suite',
+        isPrimary: true
+      }],
+      amenities: ['Free WiFi', 'Smart TV', 'Mini Bar', 'AC', 'Jacuzzi', 'Butler Service', 'Kitchen', 'Living Room', 'Dining Area'],
+      lastCleaned: '2024-01-23',
+      lastMaintenance: '2024-01-20',
+      createdAt: '2023-06-15',
+      updatedAt: '2024-01-22'
+    },
+    {
+      id: 6,
+      roomNumber: '102',
+      category: 'Standard',
+      description: 'Standard room with garden view, perfect for budget travelers.',
+      price: 2799,
+      originalPrice: 3299,
+      size: '22 m²',
+      maxGuests: 2,
+      bedConfiguration: '2 Single Beds',
+      floor: 1,
+      view: 'Garden View',
+      status: 'available',
+      acType: 'ac',
+      popular: false,
+      rating: { average: 4.3, count: 67 },
+      images: [{
+        url: 'https://images.unsplash.com/photo-1631049309555-4c8b2a3e51f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+        alt: 'Standard Room Garden View',
+        isPrimary: true
+      }],
+      amenities: ['Free WiFi', 'TV', 'AC', 'Room Service'],
+      lastCleaned: '2024-01-22',
+      lastMaintenance: '2024-01-10',
+      createdAt: '2023-06-15',
+      updatedAt: '2024-01-21'
+    }
+  ];
+
+  // ✅ Initialize data on component mount
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoadingCategories(true);
-        setApiStatus('loading');
-        console.log('AdminRoomsComponent: Starting to fetch categories...');
-        const categoriesResponse = await apiService.getCategories();
-        console.log('AdminRoomsComponent: Received categories response:', categoriesResponse);
-        
-        // Extract data and source from response
-        const categoriesData = categoriesResponse.data || categoriesResponse;
-        const dataSource = categoriesResponse.source || 'unknown';
-        
-        setCategories(categoriesData);
-        
-        // Set API status based on data source
-        setApiStatus(dataSource === 'api' ? 'success' : 'fallback');
-        
-        if (config.ENABLE_LOGGING) {
-          console.log(`AdminRoomsComponent: Using ${dataSource} data:`, categoriesData);
-        }
-        
-      } catch (error) {
-        console.error('AdminRoomsComponent: Failed to fetch categories:', error);
-        setApiStatus('fallback');
-        // Set fallback categories from config
-        setCategories(config.FALLBACK_CATEGORIES);
-      } finally {
-        setIsLoadingCategories(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  // Mock comprehensive room data
-  useEffect(() => {
-    const mockRooms = [
-      {
-        id: 1,
-        roomNumber: '101',
-        category: 'single',
-        description: 'Comfortable single bedroom with modern amenities and city views.',
-        price: 299,
-        originalPrice: 349,
-        size: '25 m²',
-        maxGuests: 1,
-        bedConfiguration: '1 Single Bed',
-        floor: 1,
-        view: 'city',
-        status: 'available',
-        acType: 'ac',
-        popular: true,
-        rating: {
-          average: 4.7,
-          count: 89
-        },
-        images: [
-          {
-            url: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-            alt: 'Room 101 - Single AC Room',
-            isPrimary: true
-          },
-          {
-            url: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-            alt: 'Room 101 - Bedroom View',
-            isPrimary: false
-          }
-        ],
-        amenities: [
-          { name: 'Free WiFi', icon: 'FaWifi', category: 'technology' },
-          { name: 'Smart TV', icon: 'FaTv', category: 'entertainment' },
-          { name: 'Mini Fridge', icon: 'FaCoffee', category: 'comfort' },
-          { name: 'Room Service', icon: 'FaCheckCircle', category: 'basic' },
-          { name: 'AC', icon: 'FaSnowflake', category: 'comfort' },
-          { name: 'Coffee Machine', icon: 'FaCoffee', category: 'comfort' }
-        ],
-        detailedAmenities: {
-          popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Air Conditioning', '24-hour Room Service'],
-          roomFeatures: ['Charging Points', 'Chair', 'Study Table'],
-          mediaEntertainment: ['TV'],
-          bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-          otherFacilities: ['Newspaper']
-        },
-        lastCleaned: '2024-01-22',
-        lastMaintenance: '2024-01-15',
-        createdAt: '2023-06-15',
-        updatedAt: '2024-01-20'
-      },
-      {
-        id: 2,
-        roomNumber: '205',
-        category: 'double',
-        description: 'Spacious double bedroom perfect for couples with elegant furnishings.',
-        price: 499,
-        originalPrice: 549,
-        size: '35 m²',
-        maxGuests: 2,
-        bedConfiguration: '1 Double Bed',
-        floor: 2,
-        view: 'city',
-        status: 'occupied',
-        acType: 'ac',
-        popular: false,
-        rating: {
-          average: 4.8,
-          count: 124
-        },
-        images: [
-          {
-            url: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-            alt: 'Room 205 - Double AC Room',
-            isPrimary: true
-          },
-          {
-            url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-            alt: 'Room 205 - Living Area',
-            isPrimary: false
-          }
-        ],
-        amenities: [
-          { name: 'Free WiFi', icon: 'FaWifi', category: 'technology' },
-          { name: 'Smart TV', icon: 'FaTv', category: 'entertainment' },
-          { name: 'Mini Fridge', icon: 'FaCoffee', category: 'comfort' },
-          { name: 'Room Service', icon: 'FaCheckCircle', category: 'basic' },
-          { name: 'AC', icon: 'FaSnowflake', category: 'comfort' }
-        ],
-        detailedAmenities: {
-          popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Air Conditioning'],
-          roomFeatures: ['Charging Points', 'Chair', 'Centre Table', 'Wardrobe'],
-          mediaEntertainment: ['TV'],
-          bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-          otherFacilities: ['Newspaper']
-        },
-        lastCleaned: '2024-01-21',
-        lastMaintenance: '2024-01-10',
-        createdAt: '2023-06-15',
-        updatedAt: '2024-01-18'
-      },
-      {
-        id: 3,
-        roomNumber: '302',
-        category: 'triple',
-        description: 'Large triple bedroom ideal for families or groups with three comfortable beds.',
-        price: 699,
-        originalPrice: 749,
-        size: '45 m²',
-        maxGuests: 3,
-        bedConfiguration: '3 Single Beds',
-        floor: 3,
-        view: 'city',
-        status: 'maintenance',
-        acType: 'non-ac',
-        popular: true,
-        rating: {
-          average: 4.6,
-          count: 156
-        },
-        images: [
-          {
-            url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-            alt: 'Room 302 - Triple Non-AC Room',
-            isPrimary: true
-          }
-        ],
-        amenities: [
-          { name: 'Free WiFi', icon: 'FaWifi', category: 'technology' },
-          { name: 'Smart TV', icon: 'FaTv', category: 'entertainment' },
-          { name: 'Mini Fridge', icon: 'FaCoffee', category: 'comfort' },
-          { name: 'Room Service', icon: 'FaCheckCircle', category: 'basic' },
-          { name: 'Fan', icon: 'FaSnowflake', category: 'comfort' }
-        ],
-        detailedAmenities: {
-          popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Ceiling Fan'],
-          roomFeatures: ['Charging Points', 'Chairs', 'Centre Table', 'Large Wardrobe'],
-          mediaEntertainment: ['TV'],
-          bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-          otherFacilities: ['Newspaper']
-        },
-        lastCleaned: '2024-01-20',
-        lastMaintenance: '2024-01-22',
-        createdAt: '2023-06-15',
-        updatedAt: '2024-01-22'
-      },
-      {
-        id: 4,
-        roomNumber: '150',
-        category: 'double',
-        description: 'Comfortable double bedroom with natural ventilation and garden views.',
-        price: 399,
-        originalPrice: 449,
-        size: '35 m²',
-        maxGuests: 2,
-        bedConfiguration: '1 Double Bed',
-        floor: 1,
-        view: 'garden',
-        status: 'available',
-        acType: 'non-ac',
-        popular: false,
-        rating: {
-          average: 4.5,
-          count: 203
-        },
-        images: [
-          {
-            url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-            alt: 'Room 150 - Double Non-AC Room',
-            isPrimary: true
-          }
-        ],
-        amenities: [
-          { name: 'Free WiFi', icon: 'FaWifi', category: 'technology' },
-          { name: 'Smart TV', icon: 'FaTv', category: 'entertainment' },
-          { name: 'Mini Fridge', icon: 'FaCoffee', category: 'comfort' },
-          { name: 'Room Service', icon: 'FaCheckCircle', category: 'basic' },
-          { name: 'Fan', icon: 'FaSnowflake', category: 'comfort' }
-        ],
-        detailedAmenities: {
-          popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Ceiling Fan'],
-          roomFeatures: ['Charging Points', 'Chair', 'Centre Table', 'Garden View'],
-          mediaEntertainment: ['TV'],
-          bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-          otherFacilities: ['Newspaper']
-        },
-        lastCleaned: '2024-01-22',
-        lastMaintenance: '2024-01-12',
-        createdAt: '2023-06-15',
-        updatedAt: '2024-01-19'
-      }
-    ];
+    // Simulate loading delay
+    setLoading({ categories: true, rooms: true });
     
-    setRooms(mockRooms);
-    setFilteredRooms(mockRooms);
+    setTimeout(() => {
+      setCategories(mockCategories);
+      setRooms(mockRooms);
+      setFilteredRooms(mockRooms);
+      setLoading({ categories: false, rooms: false });
+    }, 500);
   }, []);
 
-  // Filter rooms
+  // ✅ Filter rooms based on search and category
   useEffect(() => {
     let filtered = rooms;
 
     if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter(room =>
-        room.roomNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        room.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        room.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (room.acType === 'ac' ? 'ac' : 'non-ac').includes(searchTerm.toLowerCase())
+        (room.roomNumber && room.roomNumber.toLowerCase().includes(searchLower)) ||
+        (room.category && room.category.toLowerCase().includes(searchLower)) ||
+        (room.description && room.description.toLowerCase().includes(searchLower)) ||
+        (room.view && room.view.toLowerCase().includes(searchLower))
       );
     }
 
     if (categoryFilter !== 'all') {
-      filtered = filtered.filter(room => room.category === categoryFilter);
+      filtered = filtered.filter(room => 
+        room.category && room.category.toLowerCase() === categoryFilter.toLowerCase()
+      );
     }
 
     setFilteredRooms(filtered);
   }, [searchTerm, categoryFilter, rooms]);
 
+  // ✅ Status color helper
   const getStatusColor = (status) => {
-    switch (status) {
+    if (!status) return '#6B7280';
+    
+    switch (status.toLowerCase()) {
       case 'available': return '#10B981';
       case 'occupied': return '#F59E0B';
       case 'maintenance': return '#EF4444';
@@ -299,6 +261,7 @@ const AdminRoomsComponent = () => {
     }
   };
 
+  // ✅ CRUD Operations
   const handleViewRoom = (room) => {
     setSelectedRoom(room);
     setModalMode('view');
@@ -307,7 +270,13 @@ const AdminRoomsComponent = () => {
 
   const handleEditRoom = (room) => {
     setSelectedRoom(room);
-    setFormData(room);
+    setFormData({
+      ...room,
+      category: room.category || 'Standard',
+      acType: room.acType || 'ac',
+      status: room.status || 'available',
+      amenities: room.amenities || []
+    });
     setImagePreview(room.images || []);
     setModalMode('edit');
     setShowModal(true);
@@ -315,7 +284,7 @@ const AdminRoomsComponent = () => {
 
   const handleAddRoom = () => {
     setSelectedRoom(null);
-    const defaultCategory = categories.length > 0 ? categories[0].categoryName.toLowerCase() : 'standard';
+    const defaultCategory = categories.length > 0 ? categories[0].categoryName : 'Standard';
     setFormData({
       roomNumber: '',
       category: defaultCategory,
@@ -326,9 +295,9 @@ const AdminRoomsComponent = () => {
       maxGuests: 1,
       bedConfiguration: '',
       floor: 1,
-      view: 'city',
+      view: 'City View',
       status: 'available',
-      acType: 'ac', // ac or non-ac
+      acType: 'ac',
       popular: false,
       amenities: [],
       images: []
@@ -339,27 +308,45 @@ const AdminRoomsComponent = () => {
   };
 
   const handleDeleteRoom = (roomId) => {
-    if (window.confirm('Are you sure you want to delete this room?')) {
-      setRooms(prev => prev.filter(room => room.id !== roomId));
+    if (!window.confirm('Are you sure you want to delete this room?')) {
+      return;
     }
+    
+    setRooms(prev => prev.filter(room => room.id !== roomId));
+    alert('Room deleted successfully');
   };
 
   const handleSaveRoom = () => {
-    if (modalMode === 'add') {
-      const newRoom = {
-        ...formData,
-        id: Date.now(),
-        rating: { average: 0, count: 0 },
-        createdAt: new Date().toISOString().split('T')[0],
-        updatedAt: new Date().toISOString().split('T')[0]
-      };
-      setRooms(prev => [...prev, newRoom]);
-    } else if (modalMode === 'edit') {
-      setRooms(prev => prev.map(room =>
-        room.id === selectedRoom.id ? { ...formData, updatedAt: new Date().toISOString().split('T')[0] } : room
-      ));
+    try {
+      if (modalMode === 'add') {
+        const newRoom = {
+          ...formData,
+          id: Date.now(),
+          rating: { average: 0, count: 0 },
+          images: imagePreview,
+          createdAt: new Date().toISOString().split('T')[0],
+          updatedAt: new Date().toISOString().split('T')[0],
+          lastCleaned: new Date().toISOString().split('T')[0],
+          lastMaintenance: new Date().toISOString().split('T')[0]
+        };
+        setRooms(prev => [...prev, newRoom]);
+        alert('Room added successfully');
+      } else if (modalMode === 'edit') {
+        setRooms(prev => prev.map(room =>
+          room.id === selectedRoom.id ? { 
+            ...formData, 
+            images: imagePreview,
+            updatedAt: new Date().toISOString().split('T')[0] 
+          } : room
+        ));
+        alert('Room updated successfully');
+      }
+      
+      closeModal();
+    } catch (err) {
+      console.error('Error saving room:', err);
+      alert('Failed to save room. Please try again.');
     }
-    closeModal();
   };
 
   const closeModal = () => {
@@ -381,21 +368,18 @@ const AdminRoomsComponent = () => {
     const files = Array.from(event.target.files);
     if (files.length > 0) {
       const newImages = [];
-      let processedCount = 0;
-
+      
       files.forEach((file, index) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const imageUrl = e.target.result;
           newImages.push({
             url: imageUrl,
-            alt: `Room ${formData.roomNumber || 'Image'} - ${index + 1}`,
-            isPrimary: index === 0 // First image is primary
+            alt: `Room ${formData.roomNumber || 'Image'} ${index + 1}`,
+            isPrimary: imagePreview.length === 0 && index === 0
           });
           
-          processedCount++;
-          if (processedCount === files.length) {
-            // All images processed
+          if (newImages.length === files.length) {
             const updatedImages = [...imagePreview, ...newImages];
             setImagePreview(updatedImages);
             setFormData(prev => ({
@@ -411,7 +395,6 @@ const AdminRoomsComponent = () => {
 
   const removeImage = (indexToRemove) => {
     const updatedImages = imagePreview.filter((_, index) => index !== indexToRemove);
-    // If we removed the primary image, make the first remaining image primary
     if (updatedImages.length > 0 && imagePreview[indexToRemove]?.isPrimary) {
       updatedImages[0].isPrimary = true;
     }
@@ -434,6 +417,363 @@ const AdminRoomsComponent = () => {
     }));
   };
 
+  // ✅ Loading skeleton
+  const RoomCardSkeleton = () => (
+    <div style={styles.roomCard}>
+      <div style={{ ...styles.roomImageContainer, backgroundColor: '#E5E7EB' }}></div>
+      <div style={styles.roomContent}>
+        <div style={styles.roomHeader}>
+          <div style={{ width: '60%', height: '24px', backgroundColor: '#E5E7EB', borderRadius: '4px' }}></div>
+          <div style={{ width: '30%', height: '20px', backgroundColor: '#E5E7EB', borderRadius: '4px' }}></div>
+        </div>
+        <div style={{ width: '100%', height: '16px', backgroundColor: '#E5E7EB', borderRadius: '4px', marginBottom: '8px' }}></div>
+        <div style={{ width: '80%', height: '16px', backgroundColor: '#E5E7EB', borderRadius: '4px', marginBottom: '16px' }}></div>
+        <div style={{ width: '40%', height: '24px', backgroundColor: '#E5E7EB', borderRadius: '4px' }}></div>
+      </div>
+    </div>
+  );
+
+  // ✅ Render Edit/Add Modal Form
+  const renderFormModal = () => {
+    const isEdit = modalMode === 'edit';
+    const isAdd = modalMode === 'add';
+    const title = isEdit ? 'Edit Room' : isAdd ? 'Add New Room' : 'View Room';
+
+    return (
+      <div style={styles.modalOverlay} onClick={closeModal}>
+        <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div style={styles.modalHeader}>
+            <h2 style={styles.modalTitle}>{title}</h2>
+            <button onClick={closeModal} style={styles.closeBtn}>
+              <FaTimes />
+            </button>
+          </div>
+          
+          <div style={styles.modalBody}>
+            <div style={styles.formGrid}>
+              {/* Basic Information */}
+              <div style={styles.formSection}>
+                <h3 style={styles.sectionTitle}>Basic Information</h3>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Room Number*</label>
+                  <input
+                    type="text"
+                    value={formData.roomNumber || ''}
+                    onChange={(e) => handleInputChange('roomNumber', e.target.value)}
+                    style={styles.input}
+                    placeholder="e.g., 101, 202A"
+                    disabled={modalMode === 'view'}
+                  />
+                </div>
+                
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Category*</label>
+                  <select
+                    value={formData.category || 'Standard'}
+                    onChange={(e) => handleInputChange('category', e.target.value)}
+                    style={styles.select}
+                    disabled={modalMode === 'view'}
+                  >
+                    {categories.map(category => (
+                      <option key={category.categoryId} value={category.categoryName}>
+                        {category.categoryName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div style={styles.formRow}>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Floor*</label>
+                    <input
+                      type="number"
+                      value={formData.floor || 1}
+                      onChange={(e) => handleInputChange('floor', parseInt(e.target.value))}
+                      style={styles.input}
+                      min="1"
+                      max="50"
+                      disabled={modalMode === 'view'}
+                    />
+                  </div>
+                  
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Max Guests*</label>
+                    <input
+                      type="number"
+                      value={formData.maxGuests || 1}
+                      onChange={(e) => handleInputChange('maxGuests', parseInt(e.target.value))}
+                      style={styles.input}
+                      min="1"
+                      max="10"
+                      disabled={modalMode === 'view'}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Room Details */}
+              <div style={styles.formSection}>
+                <h3 style={styles.sectionTitle}>Room Details</h3>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Bed Configuration*</label>
+                  <input
+                    type="text"
+                    value={formData.bedConfiguration || ''}
+                    onChange={(e) => handleInputChange('bedConfiguration', e.target.value)}
+                    style={styles.input}
+                    placeholder="e.g., 1 King Bed, 2 Single Beds"
+                    disabled={modalMode === 'view'}
+                  />
+                </div>
+                
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Room Size</label>
+                  <input
+                    type="text"
+                    value={formData.size || ''}
+                    onChange={(e) => handleInputChange('size', e.target.value)}
+                    style={styles.input}
+                    placeholder="e.g., 25 m², 35 sq ft"
+                    disabled={modalMode === 'view'}
+                  />
+                </div>
+                
+                <div style={styles.formRow}>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>View</label>
+                    <select
+                      value={formData.view || 'City View'}
+                      onChange={(e) => handleInputChange('view', e.target.value)}
+                      style={styles.select}
+                      disabled={modalMode === 'view'}
+                    >
+                      <option value="City View">City View</option>
+                      <option value="Ocean View">Ocean View</option>
+                      <option value="Garden View">Garden View</option>
+                      <option value="Mountain View">Mountain View</option>
+                      <option value="Pool View">Pool View</option>
+                      <option value="No View">No View</option>
+                    </select>
+                  </div>
+                  
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>AC Type</label>
+                    <select
+                      value={formData.acType || 'ac'}
+                      onChange={(e) => handleInputChange('acType', e.target.value)}
+                      style={styles.select}
+                      disabled={modalMode === 'view'}
+                    >
+                      <option value="ac">AC</option>
+                      <option value="non-ac">Non-AC</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pricing */}
+              <div style={styles.formSection}>
+                <h3 style={styles.sectionTitle}>Pricing</h3>
+                <div style={styles.formRow}>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Current Price* (₹)</label>
+                    <input
+                      type="number"
+                      value={formData.price || 0}
+                      onChange={(e) => handleInputChange('price', parseFloat(e.target.value))}
+                      style={styles.input}
+                      min="0"
+                      step="100"
+                      disabled={modalMode === 'view'}
+                    />
+                  </div>
+                  
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Original Price (₹)</label>
+                    <input
+                      type="number"
+                      value={formData.originalPrice || 0}
+                      onChange={(e) => handleInputChange('originalPrice', parseFloat(e.target.value))}
+                      style={styles.input}
+                      min="0"
+                      step="100"
+                      disabled={modalMode === 'view'}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Status & Features */}
+              <div style={styles.formSection}>
+                <h3 style={styles.sectionTitle}>Status & Features</h3>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Status*</label>
+                  <select
+                    value={formData.status || 'available'}
+                    onChange={(e) => handleInputChange('status', e.target.value)}
+                    style={styles.select}
+                    disabled={modalMode === 'view'}
+                  >
+                    <option value="available">Available</option>
+                    <option value="occupied">Occupied</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="cleaning">Cleaning</option>
+                    <option value="out-of-order">Out of Order</option>
+                  </select>
+                </div>
+                
+                <div style={styles.checkboxGroup}>
+                  <label style={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={formData.popular || false}
+                      onChange={(e) => handleInputChange('popular', e.target.checked)}
+                      style={styles.checkbox}
+                      disabled={modalMode === 'view'}
+                    />
+                    Mark as Popular Room
+                  </label>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div style={styles.formSection}>
+                <h3 style={styles.sectionTitle}>Description</h3>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Room Description*</label>
+                  <textarea
+                    value={formData.description || ''}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    style={styles.textarea}
+                    rows="4"
+                    placeholder="Describe the room features, amenities, and special characteristics..."
+                    disabled={modalMode === 'view'}
+                  />
+                </div>
+              </div>
+
+              {/* Amenities */}
+              <div style={styles.formSection}>
+                <h3 style={styles.sectionTitle}>Amenities</h3>
+                <div style={styles.checkboxRow}>
+                  {['Free WiFi', 'TV', 'Smart TV', 'AC', 'Room Service', 'Mini Bar', 'Balcony', 'Jacuzzi', 'Kitchenette', 'Work Desk', 'Coffee Machine', 'Butler Service'].map(amenity => (
+                    <div key={amenity} style={styles.checkboxGroup}>
+                      <label style={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
+                          checked={(formData.amenities || []).includes(amenity)}
+                          onChange={(e) => {
+                            const currentAmenities = formData.amenities || [];
+                            if (e.target.checked) {
+                              handleInputChange('amenities', [...currentAmenities, amenity]);
+                            } else {
+                              handleInputChange('amenities', currentAmenities.filter(a => a !== amenity));
+                            }
+                          }}
+                          style={styles.checkbox}
+                          disabled={modalMode === 'view'}
+                        />
+                        {amenity}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Images Upload */}
+              <div style={styles.formSection}>
+                <h3 style={styles.sectionTitle}>Room Images</h3>
+                <div style={styles.imageUploadSection}>
+                  {imagePreview.length > 0 ? (
+                    <div style={styles.imageGrid}>
+                      {imagePreview.map((image, index) => (
+                        <div key={index} style={styles.imagePreviewContainer}>
+                          <img src={image.url} alt={image.alt} style={styles.imagePreview} />
+                          {image.isPrimary && (
+                            <div style={styles.primaryBadge}>Primary</div>
+                          )}
+                          {modalMode !== 'view' && (
+                            <div style={styles.imageActions}>
+                              {!image.isPrimary && (
+                                <button
+                                  onClick={() => setPrimaryImage(index)}
+                                  style={styles.setPrimaryBtn}
+                                >
+                                  Set Primary
+                                </button>
+                              )}
+                              <button
+                                onClick={() => removeImage(index)}
+                                style={styles.removeImageBtn}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={styles.uploadPlaceholder}>
+                      <FaImage style={styles.uploadIcon} />
+                      <p style={styles.uploadText}>No images uploaded yet</p>
+                    </div>
+                  )}
+                  
+                  {modalMode !== 'view' && (
+                    <div style={styles.uploadArea}>
+                      <label style={styles.uploadBtn}>
+                        <FaUpload style={styles.btnIcon} />
+                        Upload Images
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleImageUpload}
+                          style={styles.hiddenInput}
+                        />
+                      </label>
+                      <p style={styles.uploadText}>
+                        Upload room images (JPG, PNG). First image will be set as primary.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style={styles.modalFooter}>
+            {modalMode === 'view' ? (
+              <div style={styles.modalActions}>
+                <button onClick={() => handleEditRoom(selectedRoom)} style={styles.editModalBtn}>
+                  <FaEdit style={styles.btnIcon} />
+                  Edit Room
+                </button>
+                <button onClick={closeModal} style={styles.cancelBtn}>
+                  Close
+                </button>
+              </div>
+            ) : (
+              <div style={styles.modalActions}>
+                <button onClick={closeModal} style={styles.cancelBtn}>
+                  Cancel
+                </button>
+                <button onClick={handleSaveRoom} style={styles.saveBtn}>
+                  <FaSave style={styles.btnIcon} />
+                  {isEdit ? 'Update Room' : 'Add Room'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ✅ Check loading states
+  const isLoading = loading.categories || loading.rooms;
+
   return (
     <div style={styles.container}>
       {/* Header Controls */}
@@ -447,6 +787,7 @@ const AdminRoomsComponent = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={styles.searchInput}
+              disabled={isLoading}
             />
           </div>
           <div style={styles.filterContainer}>
@@ -455,11 +796,9 @@ const AdminRoomsComponent = () => {
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
               style={styles.filterSelect}
-              disabled={isLoadingCategories}
+              disabled={isLoading}
             >
-              <option value="all">
-                {isLoadingCategories ? 'Loading Categories...' : 'All Categories'}
-              </option>
+              <option value="all">All Categories</option>
               {categories.map(category => (
                 <option key={category.categoryId} value={category.categoryName.toLowerCase()}>
                   {category.categoryName}
@@ -467,573 +806,183 @@ const AdminRoomsComponent = () => {
               ))}
             </select>
           </div>
-          
-          {/* API Status Indicator */}
-          {apiStatus !== 'loading' && (
-            <div style={styles.apiStatusContainer}>
-              <div style={{
-                ...styles.apiStatusIndicator,
-                backgroundColor: apiStatus === 'success' ? '#10B981' : '#F59E0B'
-              }}>
-                <span style={styles.apiStatusText}>
-                  {apiStatus === 'success' ? 'API Connected' : 'Using Fallback Data'}
-                </span>
-              </div>
-            </div>
-          )}
         </div>
         <div style={styles.headerRight}>
-          <button onClick={handleAddRoom} style={styles.addBtn}>
+          <button onClick={handleAddRoom} style={styles.addBtn} disabled={isLoading}>
             <FaPlus style={styles.btnIcon} />
             Add New Room
           </button>
         </div>
       </div>
 
-      {/* Rooms Grid */}
-      <div style={styles.roomsGrid}>
-        {filteredRooms.map(room => (
-          <div key={room.id} style={styles.roomCard}>
-            {room.popular && (
-              <div style={styles.popularBadge}>
-                <FaStar style={styles.starIcon} />
-                Popular
-              </div>
-            )}
-            
-            <div style={styles.roomImageContainer}>
-              <img 
-                src={room.images[0]?.url || 'https://via.placeholder.com/300x200'} 
-                alt={room.name} 
-                style={styles.roomImage} 
-              />
-              <div style={styles.statusOverlay}>
-                <div style={{
-                  ...styles.statusBadge,
-                  backgroundColor: getStatusColor(room.status),
-                  color: 'white'
-                }}>
-                  {room.status}
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.roomContent}>
-              <div style={styles.roomHeader}>
-                <h3 style={styles.roomName}>
-                  {room.category.charAt(0).toUpperCase() + room.category.slice(1)} Room
-                  {room.acType === 'ac' ? ' (AC)' : ' (Non-AC)'}
-                </h3>
-                <div style={styles.roomNumber}>#{room.roomNumber}</div>
-              </div>
-
-              <div style={styles.roomSpecs}>
-                <div style={styles.specItem}>
-                  <FaBed style={styles.specIcon} />
-                  <span>{room.bedConfiguration}</span>
-                </div>
-                <div style={styles.specItem}>
-                  <FaUsers style={styles.specIcon} />
-                  <span>Max {room.maxGuests}</span>
-                </div>
-                <div style={styles.specItem}>
-                  <span style={styles.roomSize}>{room.size}</span>
-                </div>
-              </div>
-
-              <div style={styles.roomStats}>
-                <div style={styles.statItem}>
-                  <FaStar style={styles.ratingIcon} />
-                  <span>{room.rating.average} ({room.rating.count})</span>
-                </div>
-              </div>
-
-              <div style={styles.priceInfo}>
-                <span style={styles.currentPrice}>₹{room.price}</span>
-                {room.originalPrice > room.price && (
-                  <span style={styles.originalPrice}>₹{room.originalPrice}</span>
-                )}
-                <span style={styles.perNight}>/night</span>
-              </div>
-
-              <div style={styles.roomActions}>
-                <button 
-                  onClick={() => handleViewRoom(room)}
-                  style={styles.viewBtn}
-                >
-                  <FaEye style={styles.btnIcon} />
-                  View
-                </button>
-                <button 
-                  onClick={() => handleEditRoom(room)}
-                  style={styles.editBtn}
-                >
-                  <FaEdit style={styles.btnIcon} />
-                  Edit
-                </button>
-                <button 
-                  onClick={() => handleDeleteRoom(room.id)}
-                  style={styles.deleteBtn}
-                >
-                  <FaTrash style={styles.btnIcon} />
-                  Delete
-                </button>
-              </div>
-            </div>
+      {/* Stats Summary */}
+      <div style={styles.statsRow}>
+        <div style={styles.statItem}>
+          <div style={styles.statNumber}>{rooms.length}</div>
+          <div style={styles.statLabel}>Total Rooms</div>
+        </div>
+        <div style={styles.statItem}>
+          <div style={styles.statNumber}>
+            {rooms.filter(r => r.status === 'available').length}
           </div>
-        ))}
+          <div style={styles.statLabel}>Available</div>
+        </div>
+        <div style={styles.statItem}>
+          <div style={styles.statNumber}>
+            {rooms.filter(r => r.status === 'occupied').length}
+          </div>
+          <div style={styles.statLabel}>Occupied</div>
+        </div>
+        <div style={styles.statItem}>
+          <div style={styles.statNumber}>
+            {rooms.filter(r => r.popular).length}
+          </div>
+          <div style={styles.statLabel}>Popular</div>
+        </div>
       </div>
 
-      {filteredRooms.length === 0 && (
-        <div style={styles.noResults}>
-          <h3>No rooms found</h3>
-          <p>Try adjusting your search or filter criteria.</p>
-        </div>
-      )}
+      {/* Rooms Grid */}
+      <div style={styles.roomsGrid}>
+        {isLoading ? (
+          // Show loading skeletons
+          Array.from({ length: 6 }).map((_, index) => (
+            <RoomCardSkeleton key={`skeleton-${index}`} />
+          ))
+        ) : filteredRooms.length > 0 ? (
+          filteredRooms.map(room => (
+            <div key={room.id} style={styles.roomCard}>
+              {room.popular && (
+                <div style={styles.popularBadge}>
+                  <FaStar style={styles.starIcon} />
+                  Popular
+                </div>
+              )}
+              
+              <div style={styles.roomImageContainer}>
+                <img 
+                  src={room.images?.[0]?.url || 'https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=Room+Image'} 
+                  alt={room.roomNumber || 'Room'} 
+                  style={styles.roomImage}
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=Room+Image';
+                  }}
+                />
+                <div style={styles.statusOverlay}>
+                  <div style={{
+                    ...styles.statusBadge,
+                    backgroundColor: getStatusColor(room.status),
+                    color: 'white'
+                  }}>
+                    {room.status || 'N/A'}
+                  </div>
+                </div>
+              </div>
 
-      {/* Room Details/Edit Modal */}
-      {showModal && (
-        <div style={styles.modalOverlay} onClick={closeModal}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <h2 style={styles.modalTitle}>
-                {modalMode === 'add' ? 'Add New Room' : 
-                 modalMode === 'edit' ? 'Edit Room' : 'Room Details'}
-              </h2>
-              <button onClick={closeModal} style={styles.closeBtn}>
-                <FaTimes />
+              <div style={styles.roomContent}>
+                <div style={styles.roomHeader}>
+                  <h3 style={styles.roomName}>
+                    {room.category || 'Room'} {room.acType === 'ac' ? '(AC)' : '(Non-AC)'}
+                  </h3>
+                  <div style={styles.roomNumber}>#{room.roomNumber}</div>
+                </div>
+
+                <p style={styles.roomDescription}>
+                  {room.description || 'No description available'}
+                </p>
+
+                <div style={styles.roomSpecs}>
+                  <div style={styles.specItem}>
+                    <FaBed style={styles.specIcon} />
+                    <span>{room.bedConfiguration || 'N/A'}</span>
+                  </div>
+                  <div style={styles.specItem}>
+                    <FaUsers style={styles.specIcon} />
+                    <span>Max {room.maxGuests || 1}</span>
+                  </div>
+                  <div style={styles.specItem}>
+                    <span style={styles.roomSize}>{room.size || 'N/A'}</span>
+                  </div>
+                </div>
+
+                {room.rating && (
+                  <div style={styles.roomRating}>
+                    <FaStar style={styles.ratingIcon} />
+                    <span style={styles.ratingText}>
+                      {room.rating.average.toFixed(1)} ({room.rating.count} reviews)
+                    </span>
+                  </div>
+                )}
+
+                <div style={styles.priceInfo}>
+                  <span style={styles.currentPrice}>₹{(room.price || 0).toLocaleString()}</span>
+                  {room.originalPrice > room.price && (
+                    <span style={styles.originalPrice}>₹{(room.originalPrice || 0).toLocaleString()}</span>
+                  )}
+                  <span style={styles.perNight}>/night</span>
+                </div>
+
+                <div style={styles.roomActions}>
+                  <button 
+                    onClick={() => handleViewRoom(room)}
+                    style={styles.viewBtn}
+                  >
+                    <FaEye style={styles.btnIcon} />
+                    View
+                  </button>
+                  <button 
+                    onClick={() => handleEditRoom(room)}
+                    style={styles.editBtn}
+                  >
+                    <FaEdit style={styles.btnIcon} />
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteRoom(room.id)}
+                    style={styles.deleteBtn}
+                  >
+                    <FaTrash style={styles.btnIcon} />
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div style={styles.noResults}>
+            <h3>No rooms found</h3>
+            <p>Try adjusting your search or filter criteria.</p>
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                style={styles.clearSearchBtn}
+              >
+                Clear Search
               </button>
-            </div>
-
-            <div style={styles.modalBody}>
-              {modalMode === 'view' && selectedRoom && (
-                <div style={styles.viewMode}>
-                  <div style={styles.roomImageSection}>
-                    <div style={styles.imageGallery}>
-                      {selectedRoom.images && selectedRoom.images.length > 0 ? (
-                        selectedRoom.images.map((image, index) => (
-                          <div key={index} style={styles.galleryImageContainer}>
-                            <img 
-                              src={image.url} 
-                              alt={image.alt} 
-                              style={styles.modalRoomImage}
-                            />
-                            {image.isPrimary && (
-                              <div style={styles.primaryImageBadge}>Primary</div>
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <div style={styles.noImagePlaceholder}>
-                          <FaImage style={styles.noImageIcon} />
-                          <p>No images available</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={styles.detailsGrid}>
-                    <div style={styles.detailSection}>
-                      <h3 style={styles.sectionTitle}>Basic Information</h3>
-                      <div style={styles.detailsList}>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Room Number:</span>
-                          <span style={styles.detailValue}>{selectedRoom.roomNumber}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Category:</span>
-                          <span style={styles.detailValue}>{selectedRoom.category}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>AC Type:</span>
-                          <span style={styles.detailValue}>{selectedRoom.acType === 'ac' ? 'AC' : 'Non-AC'}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Floor:</span>
-                          <span style={styles.detailValue}>{selectedRoom.floor}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Size:</span>
-                          <span style={styles.detailValue}>{selectedRoom.size}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Max Guests:</span>
-                          <span style={styles.detailValue}>{selectedRoom.maxGuests}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Bed Configuration:</span>
-                          <span style={styles.detailValue}>{selectedRoom.bedConfiguration}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>View:</span>
-                          <span style={styles.detailValue}>{selectedRoom.view}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={styles.detailSection}>
-                      <h3 style={styles.sectionTitle}>Pricing & Status</h3>
-                      <div style={styles.detailsList}>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Current Price:</span>
-                          <span style={styles.detailValue}>₹{selectedRoom.price}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Original Price:</span>
-                          <span style={styles.detailValue}>₹{selectedRoom.originalPrice}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Status:</span>
-                          <span style={{
-                            ...styles.statusBadge,
-                            backgroundColor: `${getStatusColor(selectedRoom.status)}20`,
-                            color: getStatusColor(selectedRoom.status)
-                          }}>
-                            {selectedRoom.status}
-                          </span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Popular:</span>
-                          <span style={styles.detailValue}>{selectedRoom.popular ? 'Yes' : 'No'}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={styles.detailSection}>
-                      <h3 style={styles.sectionTitle}>Performance</h3>
-                      <div style={styles.detailsList}>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Average Rating:</span>
-                          <span style={styles.detailValue}>{selectedRoom.rating.average}/5</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Total Reviews:</span>
-                          <span style={styles.detailValue}>{selectedRoom.rating.count}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={styles.detailSection}>
-                      <h3 style={styles.sectionTitle}>Maintenance</h3>
-                      <div style={styles.detailsList}>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Last Cleaned:</span>
-                          <span style={styles.detailValue}>{selectedRoom.lastCleaned}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Last Maintenance:</span>
-                          <span style={styles.detailValue}>{selectedRoom.lastMaintenance}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Created:</span>
-                          <span style={styles.detailValue}>{selectedRoom.createdAt}</span>
-                        </div>
-                        <div style={styles.detailItem}>
-                          <span style={styles.detailLabel}>Last Updated:</span>
-                          <span style={styles.detailValue}>{selectedRoom.updatedAt}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={styles.descriptionSection}>
-                    <h3 style={styles.sectionTitle}>Description</h3>
-                    <p style={styles.description}>{selectedRoom.description}</p>
-                  </div>
-
-                  <div style={styles.amenitiesSection}>
-                    <h3 style={styles.sectionTitle}>Amenities</h3>
-                    <div style={styles.amenitiesList}>
-                      {selectedRoom.amenities.map((amenity, index) => (
-                        <div key={index} style={styles.amenityItem}>
-                          <FaCheckCircle style={styles.checkIcon} />
-                          <span>{amenity.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {(modalMode === 'edit' || modalMode === 'add') && (
-                <div style={styles.editMode}>
-                  <div style={styles.formGrid}>
-                    {/* Image Upload Section */}
-                    <div style={styles.imageUploadSection}>
-                      <h3 style={styles.sectionTitle}>Room Images</h3>
-                      <div style={styles.imageUploadContainer}>
-                        
-                        {/* Display existing images */}
-                        {imagePreview.length > 0 && (
-                          <div style={styles.imageGrid}>
-                            {imagePreview.map((image, index) => (
-                              <div key={index} style={styles.imagePreviewContainer}>
-                                <img 
-                                  src={image.url} 
-                                  alt={image.alt} 
-                                  style={styles.imagePreview} 
-                                />
-                                {image.isPrimary && (
-                                  <div style={styles.primaryBadge}>Primary</div>
-                                )}
-                                <div style={styles.imageActions}>
-                                  {!image.isPrimary && (
-                                    <button
-                                      type="button"
-                                      onClick={() => setPrimaryImage(index)}
-                                      style={styles.setPrimaryBtn}
-                                      title="Set as primary image"
-                                    >
-                                      Set Primary
-                                    </button>
-                                  )}
-                                  <button
-                                    type="button"
-                                    onClick={() => removeImage(index)}
-                                    style={styles.removeImageBtn}
-                                    title="Remove image"
-                                  >
-                                    ×
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Upload new images */}
-                        <div style={styles.uploadArea}>
-                          <div style={styles.uploadPlaceholder}>
-                            <FaImage style={styles.uploadIcon} />
-                            <p style={styles.uploadText}>
-                              {imagePreview.length === 0 ? 'Upload Room Images' : 'Add More Images'}
-                            </p>
-                            <label htmlFor="imageUpload" style={styles.uploadBtn}>
-                              <FaUpload style={styles.btnIcon} />
-                              Choose Images
-                            </label>
-                          </div>
-                        </div>
-
-                        <input
-                          id="imageUpload"
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={handleImageUpload}
-                          style={styles.hiddenInput}
-                        />
-                      </div>
-                    </div>
-
-                    <div style={styles.formSection}>
-                      <h3 style={styles.sectionTitle}>Basic Information</h3>
-                      <div style={styles.formRow}>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Room Number</label>
-                          <input
-                            type="text"
-                            value={formData.roomNumber || ''}
-                            onChange={(e) => handleInputChange('roomNumber', e.target.value)}
-                            style={styles.input}
-                            placeholder="Enter room number"
-                          />
-                        </div>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Category</label>
-                          <select
-                            value={formData.category || ''}
-                            onChange={(e) => handleInputChange('category', e.target.value)}
-                            style={styles.select}
-                            disabled={isLoadingCategories}
-                          >
-                            <option value="">
-                              {isLoadingCategories ? 'Loading Categories...' : 'Select Category'}
-                            </option>
-                            {categories.map(category => (
-                              <option key={category.categoryId} value={category.categoryName.toLowerCase()}>
-                                {category.categoryName}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div style={styles.formRow}>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>AC Type</label>
-                          <select
-                            value={formData.acType || 'ac'}
-                            onChange={(e) => handleInputChange('acType', e.target.value)}
-                            style={styles.select}
-                          >
-                            <option value="ac">AC</option>
-                            <option value="non-ac">Non-AC</option>
-                          </select>
-                        </div>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Floor</label>
-                          <input
-                            type="number"
-                            value={formData.floor || 1}
-                            onChange={(e) => handleInputChange('floor', parseInt(e.target.value))}
-                            style={styles.input}
-                            min="1"
-                          />
-                        </div>
-                      </div>
-                      <div style={styles.formGroup}>
-                        <label style={styles.label}>Description</label>
-                        <textarea
-                          value={formData.description || ''}
-                          onChange={(e) => handleInputChange('description', e.target.value)}
-                          style={styles.textarea}
-                          rows="3"
-                          placeholder="Enter room description"
-                        />
-                      </div>
-                    </div>
-
-                    <div style={styles.formSection}>
-                      <h3 style={styles.sectionTitle}>Room Details</h3>
-                      <div style={styles.formRow}>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Size</label>
-                          <input
-                            type="text"
-                            value={formData.size || ''}
-                            onChange={(e) => handleInputChange('size', e.target.value)}
-                            style={styles.input}
-                            placeholder="e.g., 45 m²"
-                          />
-                        </div>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Max Guests</label>
-                          <input
-                            type="number"
-                            value={formData.maxGuests || 1}
-                            onChange={(e) => handleInputChange('maxGuests', parseInt(e.target.value))}
-                            style={styles.input}
-                            min="1"
-                            max="10"
-                          />
-                        </div>
-                      </div>
-                      <div style={styles.formRow}>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Bed Configuration</label>
-                          <input
-                            type="text"
-                            value={formData.bedConfiguration || ''}
-                            onChange={(e) => handleInputChange('bedConfiguration', e.target.value)}
-                            style={styles.input}
-                            placeholder="e.g., 1 King + 1 Queen"
-                          />
-                        </div>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>View</label>
-                          <select
-                            value={formData.view || 'city'}
-                            onChange={(e) => handleInputChange('view', e.target.value)}
-                            style={styles.select}
-                          >
-                            <option value="city">City</option>
-                            <option value="ocean">Ocean</option>
-                            <option value="garden">Garden</option>
-                            <option value="pool">Pool</option>
-                            <option value="courtyard">Courtyard</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={styles.formSection}>
-                      <h3 style={styles.sectionTitle}>Pricing & Settings</h3>
-                      <div style={styles.formRow}>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Current Price (₹)</label>
-                          <input
-                            type="number"
-                            value={formData.price || 0}
-                            onChange={(e) => handleInputChange('price', parseFloat(e.target.value))}
-                            style={styles.input}
-                            min="0"
-                          />
-                        </div>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Original Price (₹)</label>
-                          <input
-                            type="number"
-                            value={formData.originalPrice || 0}
-                            onChange={(e) => handleInputChange('originalPrice', parseFloat(e.target.value))}
-                            style={styles.input}
-                            min="0"
-                          />
-                        </div>
-                      </div>
-                      <div style={styles.formRow}>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Status</label>
-                          <select
-                            value={formData.status || 'available'}
-                            onChange={(e) => handleInputChange('status', e.target.value)}
-                            style={styles.select}
-                          >
-                            <option value="available">Available</option>
-                            <option value="occupied">Occupied</option>
-                            <option value="maintenance">Maintenance</option>
-                            <option value="cleaning">Cleaning</option>
-                            <option value="out-of-order">Out of Order</option>
-                          </select>
-                        </div>
-                        <div style={styles.formGroup}>
-                          <div style={styles.checkboxRow}>
-                            <label style={styles.checkboxLabel}>
-                              <input
-                                type="checkbox"
-                                checked={formData.popular || false}
-                                onChange={(e) => handleInputChange('popular', e.target.checked)}
-                                style={styles.checkbox}
-                              />
-                              Popular Room
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div style={styles.modalFooter}>
-              {modalMode === 'view' && (
-                <button 
-                  onClick={() => handleEditRoom(selectedRoom)}
-                  style={styles.editModalBtn}
-                >
-                  <FaEdit style={styles.btnIcon} />
-                  Edit Room
-                </button>
-              )}
-              {(modalMode === 'edit' || modalMode === 'add') && (
-                <div style={styles.modalActions}>
-                  <button onClick={closeModal} style={styles.cancelBtn}>
-                    Cancel
-                  </button>
-                  <button onClick={handleSaveRoom} style={styles.saveBtn}>
-                    <FaSave style={styles.btnIcon} />
-                    {modalMode === 'add' ? 'Add Room' : 'Save Changes'}
-                  </button>
-                </div>
-              )}
-            </div>
+            )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Modal for View/Edit/Add */}
+      {showModal && renderFormModal()}
+
+      {/* Inject CSS animations */}
+      <style>
+        {`
+          @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
-};
-
+}
 const styles = {
   container: {
     backgroundColor: '#F8F9FA',
