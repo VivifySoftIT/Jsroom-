@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import dataService from '../services/dataService';
 import { 
   FaBed, 
   FaWifi, 
@@ -22,193 +23,177 @@ import {
   FaChair,
   FaTable,
   FaFire,
-  FaHotTub
+  FaHotTub,
+  FaImage,
+  FaChevronLeft,
+  FaChevronRight
 } from 'react-icons/fa';
-
-// Room images from Unsplash
-const roomImages = {
-  single: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-  double: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-  triple: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80'
-};
 
 const RoomsScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const rooms = [
-    {
-      id: 1,
-      name: 'Single AC Room',
-      category: 'single',
-      price: 299,
-      originalPrice: 349,
-      image: roomImages.single,
-      size: '25 m²',
-      guests: 1,
-      beds: '1 Single Bed',
-      rating: 4.7,
-      reviews: 89,
-      features: ['City View', 'Study Table', 'Modern Bathroom', 'Air Conditioning'],
-      amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
-      description: 'Comfortable single bedroom with modern amenities and city views, perfect for solo travelers.',
-      popular: true,
-      acType: 'ac',
-      detailedAmenities: {
-        popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Air Conditioning', '24-hour Room Service'],
-        roomFeatures: ['Charging Points', 'Chair', 'Study Table'],
-        mediaEntertainment: ['TV'],
-        bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-        otherFacilities: ['Newspaper']
+  // Load rooms from data service
+  useEffect(() => {
+    const loadRooms = () => {
+      try {
+        const roomsData = dataService.getRooms() || [];
+        setRooms(roomsData);
+      } catch (error) {
+        console.error('Error loading rooms:', error);
+        setRooms([]);
+      } finally {
+        setLoading(false);
       }
+    };
+
+    loadRooms();
+
+    // Listen for room updates
+    const handleRoomsUpdate = () => {
+      loadRooms();
+    };
+
+    window.addEventListener('roomsUpdated', handleRoomsUpdate);
+    window.addEventListener('storage', handleRoomsUpdate);
+
+    return () => {
+      window.removeEventListener('roomsUpdated', handleRoomsUpdate);
+      window.removeEventListener('storage', handleRoomsUpdate);
+    };
+  }, []);
+
+  // Safe transformation of room data
+  const transformedRooms = rooms.map(room => {
+    // Ensure room exists and has required properties
+    if (!room) return null;
+    
+    const safeCategory = room.category ? String(room.category).toLowerCase() : 'standard';
+    const safeDescription = room.description || 'Comfortable room with all modern amenities.';
+    const safeName = room.name || `${safeCategory.charAt(0).toUpperCase() + safeCategory.slice(1)} Room`;
+    const safeAcType = room.acType === 'ac' ? 'AC' : 'Non-AC';
+    const safePrice = typeof room.price === 'number' ? room.price : 299;
+    const safeOriginalPrice = room.originalPrice || safePrice + 50;
+    
+    // Properly handle rating object
+    const ratingObj = room.rating || {};
+    const ratingAverage = typeof ratingObj === 'object' ? (ratingObj.average || 4.5) : (ratingObj || 4.5);
+    const ratingCount = typeof ratingObj === 'object' ? (ratingObj.count || 0) : 0;
+    
+    return {
+      id: room.id || `room-${Math.random()}`,
+      name: `${safeName} ${safeAcType}`,
+      category: safeCategory,
+      roomNumber: room.roomNumber,
+      images: room.images || [], // Store ALL images
+      image: room.images?.[0]?.url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+      beds: room.bedConfiguration || '1 Single Bed',
+      rating: ratingAverage,
+      reviews: ratingCount,
+      amenities: Array.isArray(room.amenities) ? room.amenities : [],
+      guests: room.maxGuests || 1,
+      size: room.size || '25 m²',
+      description: safeDescription,
+      price: safePrice,
+      originalPrice: safeOriginalPrice,
+      popular: Boolean(room.popular),
+      acType: safeAcType,
+      view: room.view || 'City View'
+    };
+  }).filter(room => room !== null);
+
+  const categories = [
+    { id: 'all', name: 'All Rooms', count: transformedRooms.length },
+    { 
+      id: 'single', 
+      name: 'Single', 
+      count: transformedRooms.filter(r => r.category === 'single').length 
     },
-    {
-      id: 2,
-      name: 'Single Non-AC Room',
-      category: 'single',
-      price: 199,
-      originalPrice: 249,
-      image: roomImages.single,
-      size: '25 m²',
-      guests: 1,
-      beds: '1 Single Bed',
-      rating: 4.5,
-      reviews: 124,
-      features: ['Garden View', 'Study Table', 'Natural Ventilation', 'Ceiling Fan'],
-      amenities: ['Free WiFi', 'TV', 'Mini Fridge', 'Room Service', 'Fan'],
-      description: 'Comfortable single bedroom with natural ventilation and garden views, ideal for budget-conscious travelers.',
-      popular: false,
-      acType: 'non-ac',
-      detailedAmenities: {
-        popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Ceiling Fan'],
-        roomFeatures: ['Charging Points', 'Chair', 'Study Table'],
-        mediaEntertainment: ['TV'],
-        bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-        otherFacilities: ['Newspaper']
-      }
+    { 
+      id: 'double', 
+      name: 'Double', 
+      count: transformedRooms.filter(r => r.category === 'double').length 
     },
-    {
-      id: 3,
-      name: 'Double AC Room',
-      category: 'double',
-      price: 499,
-      originalPrice: 549,
-      image: roomImages.double,
-      size: '35 m²',
-      guests: 2,
-      beds: '1 Double Bed',
-      rating: 4.8,
-      reviews: 156,
-      features: ['City View', 'Seating Area', 'Modern Bathroom', 'Air Conditioning'],
-      amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
-      description: 'Spacious double bedroom perfect for couples with elegant furnishings and city views.',
-      popular: true,
-      acType: 'ac',
-      detailedAmenities: {
-        popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Air Conditioning', '24-hour Room Service'],
-        roomFeatures: ['Charging Points', 'Chair', 'Centre Table', 'Wardrobe'],
-        mediaEntertainment: ['TV'],
-        bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-        otherFacilities: ['Newspaper']
-      }
-    },
-    {
-      id: 4,
-      name: 'Double Non-AC Room',
-      category: 'double',
-      price: 399,
-      originalPrice: 449,
-      image: roomImages.double,
-      size: '35 m²',
-      guests: 2,
-      beds: '1 Double Bed',
-      rating: 4.6,
-      reviews: 203,
-      features: ['Garden View', 'Seating Area', 'Natural Ventilation', 'Ceiling Fan'],
-      amenities: ['Free WiFi', 'TV', 'Mini Fridge', 'Room Service', 'Fan'],
-      description: 'Comfortable double bedroom with natural ventilation and garden views, perfect for couples.',
-      popular: false,
-      acType: 'non-ac',
-      detailedAmenities: {
-        popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Ceiling Fan'],
-        roomFeatures: ['Charging Points', 'Chair', 'Centre Table', 'Garden View'],
-        mediaEntertainment: ['TV'],
-        bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-        otherFacilities: ['Newspaper']
-      }
-    },
-    {
-      id: 5,
-      name: 'Triple AC Room',
-      category: 'triple',
-      price: 699,
-      originalPrice: 749,
-      image: roomImages.triple,
-      size: '45 m²',
-      guests: 3,
-      beds: '3 Single Beds',
-      rating: 4.6,
-      reviews: 94,
-      features: ['City View', 'Large Space', 'Modern Bathroom', 'Air Conditioning'],
-      amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
-      description: 'Large triple bedroom ideal for families or groups with three comfortable beds and ample space.',
-      popular: true,
-      acType: 'ac',
-      detailedAmenities: {
-        popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Air Conditioning', '24-hour Room Service'],
-        roomFeatures: ['Charging Points', 'Chairs', 'Centre Table', 'Large Wardrobe'],
-        mediaEntertainment: ['TV'],
-        bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-        otherFacilities: ['Newspaper']
-      }
-    },
-    {
-      id: 6,
-      name: 'Triple Non-AC Room',
-      category: 'triple',
-      price: 599,
-      originalPrice: 649,
-      image: roomImages.triple,
-      size: '45 m²',
-      guests: 3,
-      beds: '3 Single Beds',
-      rating: 4.4,
-      reviews: 167,
-      features: ['Garden View', 'Large Space', 'Natural Ventilation', 'Ceiling Fans'],
-      amenities: ['Free WiFi', 'TV', 'Mini Fridge', 'Room Service', 'Fans'],
-      description: 'Spacious triple bedroom with natural ventilation, perfect for families or groups on a budget.',
-      popular: false,
-      acType: 'non-ac',
-      detailedAmenities: {
-        popularWithGuests: ['Heater', 'Daily Housekeeping', 'Free Wi-Fi', 'Laundry Service', 'Bathroom', 'Ceiling Fans'],
-        roomFeatures: ['Charging Points', 'Chairs', 'Centre Table', 'Large Wardrobe'],
-        mediaEntertainment: ['TV'],
-        bathroom: ['Towels', 'Toiletries', 'Geyser/Water Heater', 'Hot & Cold Water'],
-        otherFacilities: ['Newspaper']
-      }
+    { 
+      id: 'triple', 
+      name: 'Triple', 
+      count: transformedRooms.filter(r => r.category === 'triple').length 
     }
   ];
 
-  const categories = [
-    { id: 'all', name: 'All Rooms', count: rooms.length },
-    { id: 'single', name: 'Single', count: rooms.filter(r => r.category === 'single').length },
-    { id: 'double', name: 'Double', count: rooms.filter(r => r.category === 'double').length },
-    { id: 'triple', name: 'Triple', count: rooms.filter(r => r.category === 'triple').length }
-  ];
-
-  const filteredRooms = rooms.filter(room => {
+  const filteredRooms = transformedRooms.filter(room => {
+    // Safety check - if room is undefined, skip it
+    if (!room) return false;
+    
     const matchesCategory = selectedCategory === 'all' || room.category === selectedCategory;
     const matchesPrice = priceRange === 'all' || 
       (priceRange === 'budget' && room.price <= 200) ||
       (priceRange === 'mid' && room.price > 200 && room.price <= 350) ||
       (priceRange === 'luxury' && room.price > 350);
-    const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      room.description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Ensure all values are strings before calling toLowerCase
+    const safeName = room.name || '';
+    const safeDescription = room.description || '';
+    const safeSearchTerm = searchTerm || '';
+    
+    const matchesSearch = 
+      safeName.toLowerCase().includes(safeSearchTerm.toLowerCase()) ||
+      safeDescription.toLowerCase().includes(safeSearchTerm.toLowerCase());
     
     return matchesCategory && matchesPrice && matchesSearch;
   });
+
+  // Image carousel navigation
+  const nextImage = () => {
+    if (selectedRoom && selectedRoom.images) {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === selectedRoom.images.length - 1 ? 0 : prevIndex + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedRoom && selectedRoom.images) {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === 0 ? selectedRoom.images.length - 1 : prevIndex - 1
+      );
+    }
+  };
+
+  const handleRoomSelect = (room) => {
+    setSelectedRoom(room);
+    setCurrentImageIndex(0); // Reset to first image when opening modal
+  };
+
+  if (loading) {
+    return (
+      <div style={styles.loadingContainer}>
+        <div style={styles.spinner}></div>
+        <p>Loading rooms...</p>
+      </div>
+    );
+  }
+
+  // If no rooms, show empty state
+  if (transformedRooms.length === 0) {
+    return (
+      <div style={styles.container}>
+        <Navbar />
+        <div style={styles.emptyState}>
+          <h1 style={styles.emptyStateTitle}>No Rooms Available</h1>
+          <p style={styles.emptyStateText}>Please add rooms through the admin panel.</p>
+          <Link to="/admin" style={styles.adminLink}>
+            Go to Admin Panel
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={styles.container}>
@@ -294,7 +279,29 @@ const RoomsScreen = () => {
                 )}
                 
                 <div style={styles.roomImageContainer}>
-                  <img src={room.image} alt={room.name} style={styles.roomImage} />
+                  {/* Image Carousel in Room Card */}
+                  {room.images && room.images.length > 0 ? (
+                    <div style={styles.carouselContainer}>
+                      <img 
+                        src={room.images[0].url} 
+                        alt={room.images[0].alt || room.name} 
+                        style={styles.roomImage}
+                      />
+                      {room.images.length > 1 && (
+                        <div style={styles.imageCountBadge}>
+                          <FaImage style={styles.imageCountIcon} />
+                          +{room.images.length - 1}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <img 
+                      src={room.image} 
+                      alt={room.name} 
+                      style={styles.roomImage}
+                    />
+                  )}
+                  
                   <div style={styles.roomOverlay}>
                     <div style={styles.priceContainer}>
                       <span style={styles.currentPrice}>₹{room.price}</span>
@@ -334,7 +341,7 @@ const RoomsScreen = () => {
 
                   <div style={styles.roomActions}>
                     <button 
-                      onClick={() => setSelectedRoom(room)}
+                      onClick={() => handleRoomSelect(room)}
                       style={styles.viewDetailsBtn}
                     >
                       <FaEye style={styles.btnIcon} />
@@ -373,7 +380,7 @@ const RoomsScreen = () => {
         </div>
       </section>
 
-      {/* Room Details Modal */}
+      {/* Room Details Modal with Image Carousel */}
       {selectedRoom && (
         <div style={styles.modalOverlay} onClick={() => setSelectedRoom(null)}>
           <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -386,11 +393,69 @@ const RoomsScreen = () => {
             
             <div style={styles.modalHeader}>
               <div style={styles.modalImageContainer}>
-                <img 
-                  src={selectedRoom.image} 
-                  alt={selectedRoom.name} 
-                  style={styles.modalImage}
-                />
+                {/* Image Carousel in Modal */}
+                {selectedRoom.images && selectedRoom.images.length > 0 ? (
+                  <div style={styles.modalCarousel}>
+                    <img 
+                      src={selectedRoom.images[currentImageIndex].url} 
+                      alt={selectedRoom.images[currentImageIndex].alt || selectedRoom.name} 
+                      style={styles.modalImage}
+                    />
+                    
+                    {/* Navigation arrows */}
+                    {selectedRoom.images.length > 1 && (
+                      <>
+                        <button 
+                          style={styles.carouselArrowLeft}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            prevImage();
+                          }}
+                        >
+                          <FaChevronLeft />
+                        </button>
+                        <button 
+                          style={styles.carouselArrowRight}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            nextImage();
+                          }}
+                        >
+                          <FaChevronRight />
+                        </button>
+                        
+                        {/* Image dots indicator */}
+                        <div style={styles.imageDots}>
+                          {selectedRoom.images.map((_, index) => (
+                            <button
+                              key={index}
+                              style={{
+                                ...styles.imageDot,
+                                backgroundColor: index === currentImageIndex ? '#D4AF37' : 'rgba(255,255,255,0.5)'
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentImageIndex(index);
+                              }}
+                            />
+                          ))}
+                        </div>
+                        
+                        {/* Image counter */}
+                        <div style={styles.imageCounter}>
+                          {currentImageIndex + 1} / {selectedRoom.images.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <img 
+                    src={selectedRoom.image} 
+                    alt={selectedRoom.name} 
+                    style={styles.modalImage}
+                  />
+                )}
+                
                 {selectedRoom.popular && (
                   <div style={styles.modalPopularBadge}>
                     <FaStar style={styles.starIcon} />
@@ -436,9 +501,9 @@ const RoomsScreen = () => {
 
             <div style={styles.modalBody}>
               <div style={styles.amenitiesSection}>
-                <h3 style={styles.sectionTitle}>Popular with Guests</h3>
+                <h3 style={styles.sectionTitle}>Room Amenities</h3>
                 <div style={styles.amenitiesGrid}>
-                  {selectedRoom.detailedAmenities.popularWithGuests.map((amenity, index) => (
+                  {selectedRoom.amenities && selectedRoom.amenities.map((amenity, index) => (
                     <div key={index} style={styles.amenityItem}>
                       <FaCheckCircle style={styles.checkIcon} />
                       <span>{amenity}</span>
@@ -450,48 +515,74 @@ const RoomsScreen = () => {
               <div style={styles.amenitiesSection}>
                 <h3 style={styles.sectionTitle}>Room Features</h3>
                 <div style={styles.amenitiesGrid}>
-                  {selectedRoom.detailedAmenities.roomFeatures.map((feature, index) => (
-                    <div key={index} style={styles.amenityItem}>
-                      <FaCheckCircle style={styles.checkIcon} />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Daily Housekeeping</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>24/7 Room Service</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Charging Points</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Study Table & Chair</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Wardrobe</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>{selectedRoom.view}</span>
+                  </div>
                 </div>
               </div>
 
               <div style={styles.amenitiesSection}>
-                <h3 style={styles.sectionTitle}>Media and Entertainment</h3>
+                <h3 style={styles.sectionTitle}>Bathroom Facilities</h3>
                 <div style={styles.amenitiesGrid}>
-                  {selectedRoom.detailedAmenities.mediaEntertainment.map((media, index) => (
-                    <div key={index} style={styles.amenityItem}>
-                      <FaCheckCircle style={styles.checkIcon} />
-                      <span>{media}</span>
-                    </div>
-                  ))}
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Clean Towels</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Toiletries</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Hot & Cold Water</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Geyser/Water Heater</span>
+                  </div>
                 </div>
               </div>
 
               <div style={styles.amenitiesSection}>
-                <h3 style={styles.sectionTitle}>Bathroom</h3>
+                <h3 style={styles.sectionTitle}>Additional Services</h3>
                 <div style={styles.amenitiesGrid}>
-                  {selectedRoom.detailedAmenities.bathroom.map((bathroom, index) => (
-                    <div key={index} style={styles.amenityItem}>
-                      <FaCheckCircle style={styles.checkIcon} />
-                      <span>{bathroom}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={styles.amenitiesSection}>
-                <h3 style={styles.sectionTitle}>Other Facilities</h3>
-                <div style={styles.amenitiesGrid}>
-                  {selectedRoom.detailedAmenities.otherFacilities.map((facility, index) => (
-                    <div key={index} style={styles.amenityItem}>
-                      <FaCheckCircle style={styles.checkIcon} />
-                      <span>{facility}</span>
-                    </div>
-                  ))}
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Laundry Service</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Newspaper</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>24/7 Front Desk</span>
+                  </div>
+                  <div style={styles.amenityItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Security</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -518,6 +609,59 @@ const styles = {
     minHeight: '100vh',
     backgroundColor: '#FAF9F7',
     fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+  },
+
+  // Loading and Empty States
+  loadingContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    backgroundColor: '#FAF9F7',
+  },
+
+  spinner: {
+    width: '50px',
+    height: '50px',
+    border: '3px solid #f3f3f3',
+    borderTop: '3px solid #D4AF37',
+    borderRadius: '50%',
+    animation: 'spin 1s linear infinite',
+    marginBottom: '20px',
+  },
+
+  emptyState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 'calc(100vh - 80px)',
+    textAlign: 'center',
+    padding: '20px',
+  },
+
+  emptyStateTitle: {
+    fontSize: '2rem',
+    fontWeight: '600',
+    color: '#1A1A1A',
+    marginBottom: '1rem',
+  },
+
+  emptyStateText: {
+    fontSize: '1.1rem',
+    color: '#666',
+    marginBottom: '2rem',
+  },
+
+  adminLink: {
+    padding: '12px 24px',
+    backgroundColor: '#D4AF37',
+    color: '#1A1A1A',
+    textDecoration: 'none',
+    borderRadius: '8px',
+    fontWeight: '500',
+    transition: 'all 0.3s ease',
   },
 
   // Hero Section
@@ -699,6 +843,10 @@ const styles = {
     boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
     transition: 'all 0.3s ease',
     position: 'relative',
+    '&:hover': {
+      transform: 'translateY(-5px)',
+      boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+    },
   },
 
   popularBadge: {
@@ -727,11 +875,35 @@ const styles = {
     overflow: 'hidden',
   },
 
+  carouselContainer: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  },
+
   roomImage: {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
     transition: 'transform 0.5s ease',
+  },
+
+  imageCountBadge: {
+    position: 'absolute',
+    bottom: '10px',
+    right: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '5px 10px',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    color: 'white',
+    borderRadius: '15px',
+    fontSize: '12px',
+  },
+
+  imageCountIcon: {
+    fontSize: '10px',
   },
 
   roomOverlay: {
@@ -842,48 +1014,6 @@ const styles = {
     fontWeight: '500',
   },
 
-  roomFeatures: {
-    display: 'flex',
-    gap: '0.5rem',
-    marginBottom: '1rem',
-    flexWrap: 'wrap',
-  },
-
-  featureTag: {
-    backgroundColor: '#F0F0F0',
-    color: '#666',
-    padding: '4px 8px',
-    borderRadius: '6px',
-    fontSize: '12px',
-    fontWeight: '500',
-  },
-
-  moreFeatures: {
-    color: '#D4AF37',
-    fontSize: '12px',
-    fontWeight: '500',
-  },
-
-  roomAmenities: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '0.5rem',
-    marginBottom: '1.5rem',
-  },
-
-  amenityItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    fontSize: '12px',
-    color: '#666',
-  },
-
-  checkIcon: {
-    color: '#D4AF37',
-    fontSize: '12px',
-  },
-
   roomActions: {
     display: 'flex',
     gap: '0.5rem',
@@ -907,6 +1037,10 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     fontFamily: 'inherit',
+    '&:hover': {
+      backgroundColor: '#D4AF37',
+      color: '#1A1A1A',
+    },
   },
 
   bookBtn: {
@@ -923,6 +1057,10 @@ const styles = {
     justifyContent: 'center',
     gap: '4px',
     transition: 'all 0.3s ease',
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)',
+    },
   },
 
   btnIcon: {
@@ -973,6 +1111,10 @@ const styles = {
     fontWeight: '600',
     fontSize: '16px',
     transition: 'all 0.3s ease',
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: '0 8px 20px rgba(212, 175, 55, 0.4)',
+    },
   },
 
   // Modal Styles
@@ -993,9 +1135,9 @@ const styles = {
   modalContent: {
     backgroundColor: 'white',
     borderRadius: '12px',
-    maxWidth: '800px',
+    maxWidth: '900px',
     width: '100%',
-    maxHeight: '85vh',
+    maxHeight: '90vh',
     overflow: 'hidden',
     position: 'relative',
     boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
@@ -1020,6 +1162,9 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'all 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'rgba(26, 26, 26, 1)',
+    },
   },
 
   modalHeader: {
@@ -1034,12 +1179,96 @@ const styles = {
     position: 'relative',
     borderRadius: '8px',
     overflow: 'hidden',
+    height: '300px',
+  },
+
+  modalCarousel: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
   },
 
   modalImage: {
     width: '100%',
-    height: '200px',
+    height: '100%',
     objectFit: 'cover',
+  },
+
+  carouselArrowLeft: {
+    position: 'absolute',
+    top: '50%',
+    left: '10px',
+    transform: 'translateY(-50%)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '50%',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    zIndex: 2,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'rgba(0,0,0,0.8)',
+    },
+  },
+
+  carouselArrowRight: {
+    position: 'absolute',
+    top: '50%',
+    right: '10px',
+    transform: 'translateY(-50%)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '50%',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    zIndex: 2,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'rgba(0,0,0,0.8)',
+    },
+  },
+
+  imageDots: {
+    position: 'absolute',
+    bottom: '15px',
+    left: '0',
+    right: '0',
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '8px',
+    zIndex: 2,
+  },
+
+  imageDot: {
+    width: '10px',
+    height: '10px',
+    borderRadius: '50%',
+    border: 'none',
+    cursor: 'pointer',
+    padding: 0,
+    transition: 'all 0.3s ease',
+  },
+
+  imageCounter: {
+    position: 'absolute',
+    bottom: '15px',
+    right: '15px',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    color: 'white',
+    padding: '4px 10px',
+    borderRadius: '15px',
+    fontSize: '12px',
+    zIndex: 2,
   },
 
   modalPopularBadge: {
@@ -1055,6 +1284,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '3px',
+    zIndex: 2,
   },
 
   modalInfo: {
@@ -1116,7 +1346,7 @@ const styles = {
     flex: 1,
     padding: '0 1.5rem',
     overflowY: 'auto',
-    maxHeight: 'calc(85vh - 300px)',
+    maxHeight: 'calc(90vh - 400px)',
     scrollbarWidth: 'thin',
     scrollbarColor: '#D4AF37 #F0F0F0',
   },
@@ -1151,6 +1381,11 @@ const styles = {
     borderRadius: '6px',
   },
 
+  checkIcon: {
+    color: '#D4AF37',
+    fontSize: '12px',
+  },
+
   modalFooter: {
     padding: '1rem 1.5rem',
     borderTop: '1px solid #F0F0F0',
@@ -1171,7 +1406,21 @@ const styles = {
     justifyContent: 'center',
     gap: '6px',
     transition: 'all 0.3s ease',
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)',
+    },
   },
 };
+
+// Add CSS animation for spinner
+const spinStyle = document.createElement('style');
+spinStyle.innerHTML = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+document.head.appendChild(spinStyle);
 
 export default RoomsScreen;

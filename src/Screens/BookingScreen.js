@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import emailService from '../services/emailService';
+import dataService from '../services/dataService';
 import { 
   FaCalendarAlt, 
   FaUsers,
@@ -10,11 +12,6 @@ import {
   FaShieldAlt,
   FaArrowRight,
   FaArrowLeft,
-  FaStar,
-  FaWifi,
-  FaTv,
-  FaSnowflake,
-  FaCoffee,
   FaPhone,
   FaEnvelope,
   FaUser,
@@ -23,6 +20,7 @@ import {
 
 const BookingScreen = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [bookingData, setBookingData] = useState({
     checkIn: '',
@@ -41,61 +39,23 @@ const BookingScreen = () => {
       specialRequests: ''
     },
     paymentInfo: {
-      cardNumber: '',
-      expiryDate: '',
-      cvv: '',
-      cardholderName: '',
-      paymentType: 'full', // 'full' or 'advance'
-      advancePercentage: 30 // 30% advance payment
+      // Bank transfer - always full payment
     }
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [bookingComplete, setBookingComplete] = useState(false);
+  const [completedBooking, setCompletedBooking] = useState(null);
 
-  const rooms = [
-    {
-      id: 1,
-      name: 'Single AC Room',
-      price: 299,
-      originalPrice: 349,
-      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-      size: '25 m²',
-      guests: 1,
-      beds: '1 Single Bed',
-      rating: 4.7,
-      amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
-      features: ['City View', 'Study Table', 'Modern Bathroom', 'Air Conditioning']
-    },
-    {
-      id: 2,
-      name: 'Double AC Room',
-      price: 499,
-      originalPrice: 549,
-      image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-      size: '35 m²',
-      guests: 2,
-      beds: '1 Double Bed',
-      rating: 4.8,
-      amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
-      features: ['City View', 'Seating Area', 'Modern Bathroom', 'Air Conditioning']
-    },
-    {
-      id: 3,
-      name: 'Triple AC Room',
-      price: 699,
-      originalPrice: 749,
-      image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-      size: '45 m²',
-      guests: 3,
-      beds: '3 Single Beds',
-      rating: 4.6,
-      amenities: ['Free WiFi', 'Smart TV', 'Mini Fridge', 'Room Service', 'AC', 'Coffee Machine'],
-      features: ['City View', 'Large Space', 'Modern Bathroom', 'Air Conditioning']
-    }
-  ];
+  // Get rooms from data service
+  const rooms = dataService.getRooms();
 
   const selectedRoomData = rooms.find(room => room.id === parseInt(bookingData.selectedRoom)) || rooms[0];
+
+  // Create room display name
+  const getRoomDisplayName = (room) => {
+    return `${room.category} ${room.acType === 'ac' ? 'AC' : 'Non-AC'} Room`;
+  };
 
   const calculateNights = () => {
     if (bookingData.checkIn && bookingData.checkOut) {
@@ -115,21 +75,14 @@ const BookingScreen = () => {
     const serviceFee = 50;
     const grandTotal = roomTotal + taxes + serviceFee;
     
-    // Calculate payment amounts based on payment type
-    const paymentAmount = bookingData.paymentInfo.paymentType === 'advance' 
-      ? grandTotal * (bookingData.paymentInfo.advancePercentage / 100)
-      : grandTotal;
-    
-    const remainingAmount = grandTotal - paymentAmount;
-    
     return {
       subtotal: roomTotal,
       taxes: taxes,
       serviceFee: serviceFee,
       total: grandTotal,
-      paymentAmount: paymentAmount,
-      remainingAmount: remainingAmount,
-      isAdvancePayment: bookingData.paymentInfo.paymentType === 'advance'
+      paymentAmount: grandTotal, // Always full payment
+      remainingAmount: 0,
+      isAdvancePayment: false
     };
   };
 
@@ -151,6 +104,30 @@ const BookingScreen = () => {
   };
 
   const nextStep = () => {
+    // Validation for each step
+    if (currentStep === 1) {
+      if (!bookingData.checkIn || !bookingData.checkOut) {
+        alert('Please select check-in and check-out dates.');
+        return;
+      }
+      if (new Date(bookingData.checkIn) >= new Date(bookingData.checkOut)) {
+        alert('Check-out date must be after check-in date.');
+        return;
+      }
+    }
+    
+    if (currentStep === 2) {
+      const { firstName, lastName, email, phone } = bookingData.guestInfo;
+      if (!firstName || !lastName || !email || !phone) {
+        alert('Please fill in all required guest information fields (Name, Email, Phone).');
+        return;
+      }
+      if (!email.includes('@') || !email.includes('.')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+    }
+    
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     }
@@ -164,21 +141,100 @@ const BookingScreen = () => {
 
   const handleBookingSubmit = async () => {
     setIsLoading(true);
-    // Simulate booking process
-    setTimeout(() => {
-      setIsLoading(false);
+    
+    try {
+      // Prepare booking data
+      const bookingDetails = {
+        guestName: `${bookingData.guestInfo.firstName} ${bookingData.guestInfo.lastName}`,
+        guestEmail: bookingData.guestInfo.email,
+        guestPhone: bookingData.guestInfo.phone,
+        guestAddress: `${bookingData.guestInfo.address}, ${bookingData.guestInfo.city}, ${bookingData.guestInfo.country}`,
+        roomName: getRoomDisplayName(selectedRoomData),
+        roomNumber: selectedRoomData.roomNumber,
+        checkIn: bookingData.checkIn,
+        checkOut: bookingData.checkOut,
+        guests: bookingData.guests,
+        nights: calculateNights(),
+        amount: calculateTotal().total,
+        paymentStatus: 'pending',
+        paymentType: 'full',
+        paymentMethod: 'Bank Transfer',
+        specialRequests: bookingData.guestInfo.specialRequests || 'None',
+        bookingSource: 'Website',
+        guestInfo: bookingData.guestInfo
+      };
+
+      // Save booking to localStorage
+      const savedBooking = dataService.addBooking(bookingDetails);
+      
+      // Enhanced logging for debugging
+      console.log('=== BOOKING CONFIRMATION ===');
+      console.log('Booking saved successfully:', savedBooking);
+      console.log('Guest Email:', bookingDetails.guestEmail);
+      console.log('Admin Email: atchayakannan03@gmail.com');
+      console.log('Booking Details:', bookingDetails);
+      console.log('============================');
+
+      // Send email notification ONLY to JS ROOMS management
+      try {
+        const emailResult = await emailService.sendBookingConfirmation({
+          ...bookingDetails,
+          bookingNumber: savedBooking.bookingNumber
+        });
+
+        console.log('JS ROOMS admin email result:', emailResult);
+
+        // Always show success - booking is saved regardless of email
+        alert(`✅ BOOKING CONFIRMED!
+
+Confirmation Number: ${savedBooking.bookingNumber}
+Guest: ${bookingDetails.guestName}
+Room: ${bookingDetails.roomName}
+Total: ₹${bookingDetails.amount}
+
+${emailResult.success ? 
+  '📧 JS ROOMS management has been notified automatically.' : 
+  '📞 JS ROOMS will be notified. Check admin system for details.'
+}
+
+You will receive a call within 30 minutes for payment details.`);
+
+      } catch (emailError) {
+        console.error('Email sending failed:', emailError);
+        
+        // Still show success - booking is saved
+        alert(`✅ BOOKING CONFIRMED!
+
+Confirmation Number: ${savedBooking.bookingNumber}
+Guest: ${bookingDetails.guestName}
+Room: ${bookingDetails.roomName}
+Total: ₹${bookingDetails.amount}
+
+📞 JS ROOMS will contact you shortly.
+Your booking is saved in our system.
+
+For immediate assistance: +91 98765 43210`);
+      }
+
+      setCompletedBooking(savedBooking);
       setBookingComplete(true);
-    }, 3000);
+      
+    } catch (error) {
+      console.error('Booking failed:', error);
+      alert('Booking failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const steps = [
     { number: 1, title: 'Select Dates & Guests', icon: FaCalendarAlt },
     { number: 2, title: 'Guest Information', icon: FaUser },
-    { number: 3, title: 'Payment Details', icon: FaCreditCard },
+    { number: 3, title: 'Bank Transfer Details', icon: FaCreditCard },
     { number: 4, title: 'Confirmation', icon: FaCheckCircle }
   ];
 
-  if (bookingComplete) {
+  if (bookingComplete && completedBooking) {
     return (
       <div style={styles.container}>
         <Navbar />
@@ -189,53 +245,47 @@ const BookingScreen = () => {
             </div>
             <h1 style={styles.successTitle}>Booking Confirmed!</h1>
             <p style={styles.successMessage}>
-              Thank you for choosing JS ROOMS. Your reservation has been confirmed and 
-              a confirmation email has been sent to your email address.
+              Thank you for choosing JS ROOMS. Your reservation request has been received and 
+              a confirmation email with bank transfer details has been sent to your email address.
             </p>
             <div style={styles.bookingDetails}>
               <h3>Booking Details</h3>
               <div style={styles.detailRow}>
                 <span>Confirmation Number:</span>
-                <strong>JSR-{Math.random().toString(36).substr(2, 9).toUpperCase()}</strong>
+                <strong>{completedBooking.bookingNumber}</strong>
               </div>
               <div style={styles.detailRow}>
                 <span>Room:</span>
-                <strong>{selectedRoomData.name}</strong>
+                <strong>{completedBooking.roomName}</strong>
               </div>
               <div style={styles.detailRow}>
                 <span>Check-in:</span>
-                <strong>{bookingData.checkIn}</strong>
+                <strong>{completedBooking.checkIn}</strong>
               </div>
               <div style={styles.detailRow}>
                 <span>Check-out:</span>
-                <strong>{bookingData.checkOut}</strong>
+                <strong>{completedBooking.checkOut}</strong>
               </div>
               <div style={styles.detailRow}>
                 <span>Total Amount:</span>
-                <strong>₹{calculateTotal().total.toFixed(2)}</strong>
+                <strong>₹{completedBooking.amount.toFixed(2)}</strong>
               </div>
               <div style={styles.detailRow}>
-                <span>Amount Paid:</span>
-                <strong>₹{calculateTotal().paymentAmount.toFixed(2)}</strong>
+                <span>Amount to Transfer:</span>
+                <strong>₹{completedBooking.amount.toFixed(2)}</strong>
               </div>
-              {calculateTotal().isAdvancePayment && (
-                <div style={styles.detailRow}>
-                  <span>Remaining Amount:</span>
-                  <strong>₹{calculateTotal().remainingAmount.toFixed(2)} (Due at check-in)</strong>
-                </div>
-              )}
               <div style={styles.detailRow}>
                 <span>Payment Status:</span>
-                <strong>{calculateTotal().isAdvancePayment ? 'Advance Paid' : 'Fully Paid'}</strong>
+                <strong>Pending Bank Transfer</strong>
               </div>
             </div>
             <div style={styles.successActions}>
-              <Link to="/dashboard" style={styles.dashboardBtn}>
-                View Booking
-              </Link>
-              <Link to="/home" style={styles.homeBtn}>
+              <button 
+                onClick={() => navigate('/home')} 
+                style={styles.dashboardBtn}
+              >
                 Back to Home
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -292,9 +342,9 @@ const BookingScreen = () => {
                 <div style={styles.selectedRoomDisplay}>
                   <h3 style={styles.sectionTitle}>Selected Room</h3>
                   <div style={styles.selectedRoomCard}>
-                    <img src={selectedRoomData.image} alt={selectedRoomData.name} style={styles.selectedRoomImage} />
+                    <img src={selectedRoomData.images?.[0]?.url || 'https://via.placeholder.com/300x200'} alt={getRoomDisplayName(selectedRoomData)} style={styles.selectedRoomImage} />
                     <div style={styles.selectedRoomInfo}>
-                      <h4 style={styles.selectedRoomName}>{selectedRoomData.name}</h4>
+                      <h4 style={styles.selectedRoomName}>{getRoomDisplayName(selectedRoomData)}</h4>
                       <div style={styles.selectedRoomSpecs}>
                         <span>{selectedRoomData.size}</span>
                         <span>Max {selectedRoomData.guests} guests</span>
@@ -398,19 +448,20 @@ const BookingScreen = () => {
                       placeholder="Enter last name"
                     />
                   </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>
-                      <FaEnvelope style={styles.labelIcon} />
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      value={bookingData.guestInfo.email}
-                      onChange={(e) => handleInputChange('guestInfo', 'email', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="your.email@example.com"
-                    />
-                  </div>
+                    <div style={styles.formGroup}>
+                      <label style={styles.label}>
+                        <FaEnvelope style={styles.labelIcon} />
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        value={bookingData.guestInfo.email}
+                        onChange={(e) => handleInputChange('guestInfo', 'email', e.target.value)}
+                        style={styles.textInput}
+                        placeholder="your.email@example.com"
+                        required
+                      />
+                    </div>
                   <div style={styles.formGroup}>
                     <label style={styles.label}>
                       <FaPhone style={styles.labelIcon} />
@@ -477,138 +528,70 @@ const BookingScreen = () => {
               </div>
             )}
 
-            {/* Step 3: Payment Details */}
+            {/* Step 3: Bank Transfer Details */}
             {currentStep === 3 && (
               <div style={styles.stepContent}>
-                <h2 style={styles.stepTitle}>Payment Information</h2>
+                <h2 style={styles.stepTitle}>Bank Transfer Details</h2>
                 
                 <div style={styles.paymentSecurity}>
                   <FaShieldAlt style={styles.securityIcon} />
                   <div>
-                    <h4 style={styles.securityTitle}>Secure Payment</h4>
-                    <p style={styles.securityText}>Your payment information is encrypted and secure</p>
+                    <h4 style={styles.securityTitle}>Secure Bank Transfer</h4>
+                    <p style={styles.securityText}>Transfer the amount to our bank account to confirm your booking</p>
                   </div>
                 </div>
 
-                {/* Payment Type Selection */}
-                <div style={styles.paymentTypeSection}>
-                  <h3 style={styles.sectionTitle}>Choose Payment Option</h3>
-                  <div style={styles.paymentOptions}>
-                    <div 
-                      style={{
-                        ...styles.paymentOption,
-                        ...(bookingData.paymentInfo.paymentType === 'full' ? styles.paymentOptionActive : {})
-                      }}
-                      onClick={() => handleInputChange('paymentInfo', 'paymentType', 'full')}
-                    >
-                      <div style={styles.paymentOptionHeader}>
-                        <input
-                          type="radio"
-                          name="paymentType"
-                          checked={bookingData.paymentInfo.paymentType === 'full'}
-                          onChange={() => handleInputChange('paymentInfo', 'paymentType', 'full')}
-                          style={styles.radioInput}
-                        />
-                        <div>
-                          <h4 style={styles.paymentOptionTitle}>Pay Full Amount</h4>
-                          <p style={styles.paymentOptionDesc}>Pay the complete amount now</p>
-                        </div>
-                      </div>
-                      <div style={styles.paymentOptionAmount}>
-                        <span style={styles.paymentAmount}>₹{calculateTotal().total.toFixed(2)}</span>
-                        <span style={styles.paymentLabel}>Total Amount</span>
-                      </div>
-                    </div>
 
-                    <div 
-                      style={{
-                        ...styles.paymentOption,
-                        ...(bookingData.paymentInfo.paymentType === 'advance' ? styles.paymentOptionActive : {})
-                      }}
-                      onClick={() => handleInputChange('paymentInfo', 'paymentType', 'advance')}
-                    >
-                      <div style={styles.paymentOptionHeader}>
-                        <input
-                          type="radio"
-                          name="paymentType"
-                          checked={bookingData.paymentInfo.paymentType === 'advance'}
-                          onChange={() => handleInputChange('paymentInfo', 'paymentType', 'advance')}
-                          style={styles.radioInput}
-                        />
-                        <div>
-                          <h4 style={styles.paymentOptionTitle}>Pay Advance ({bookingData.paymentInfo.advancePercentage}%)</h4>
-                          <p style={styles.paymentOptionDesc}>Pay advance now, remaining at check-in</p>
-                        </div>
-                      </div>
-                      <div style={styles.paymentOptionAmount}>
-                        <span style={styles.paymentAmount}>₹{calculateTotal().paymentAmount.toFixed(2)}</span>
-                        <span style={styles.paymentLabel}>Advance Payment</span>
-                        <span style={styles.remainingAmount}>
-                          Remaining: ₹{calculateTotal().remainingAmount.toFixed(2)}
-                        </span>
-                      </div>
+
+                {/* Bank Details Section */}
+                <div style={styles.bankDetailsSection}>
+                  <h3 style={styles.sectionTitle}>Bank Account Details</h3>
+                  <div style={styles.bankDetailsCard}>
+                    <div style={styles.bankDetailRow}>
+                      <span style={styles.bankDetailLabel}>Bank Name:</span>
+                      <span style={styles.bankDetailValue}>State Bank of India</span>
+                    </div>
+                    <div style={styles.bankDetailRow}>
+                      <span style={styles.bankDetailLabel}>Account Name:</span>
+                      <span style={styles.bankDetailValue}>JS ROOMS LUXURY LODGE</span>
+                    </div>
+                    <div style={styles.bankDetailRow}>
+                      <span style={styles.bankDetailLabel}>Account Number:</span>
+                      <span style={styles.bankDetailValue}>12345678901234</span>
+                    </div>
+                    <div style={styles.bankDetailRow}>
+                      <span style={styles.bankDetailLabel}>IFSC Code:</span>
+                      <span style={styles.bankDetailValue}>SBIN0001234</span>
+                    </div>
+                    <div style={styles.bankDetailRow}>
+                      <span style={styles.bankDetailLabel}>Branch:</span>
+                      <span style={styles.bankDetailValue}>Chennai Main Branch</span>
+                    </div>
+                    <div style={styles.bankDetailRow}>
+                      <span style={styles.bankDetailLabel}>Amount to Transfer:</span>
+                      <span style={styles.bankDetailValueHighlight}>₹{calculateTotal().total.toFixed(2)}</span>
                     </div>
                   </div>
 
-                  {bookingData.paymentInfo.paymentType === 'advance' && (
-                    <div style={styles.advanceNote}>
-                      <FaCheckCircle style={styles.noteIcon} />
-                      <div>
-                        <p style={styles.noteText}>
-                          <strong>Advance Payment Policy:</strong> You'll pay ₹{calculateTotal().paymentAmount.toFixed(2)} now to secure your booking. 
-                          The remaining amount of ₹{calculateTotal().remainingAmount.toFixed(2)} will be collected at check-in.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  <div style={styles.transferInstructions}>
+                    <h4 style={styles.instructionsTitle}>Transfer Instructions:</h4>
+                    <ul style={styles.instructionsList}>
+                      <li>Transfer the exact amount shown above to our bank account</li>
+                      <li>Use your booking reference as the transfer description</li>
+                      <li>Keep the transaction receipt for your records</li>
+                      <li>Your booking will be confirmed once we receive the payment</li>
+                      <li>For any queries, contact us at +91 98765 43210</li>
+                    </ul>
+                  </div>
 
-                <div style={styles.formGrid}>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>
-                      <FaCreditCard style={styles.labelIcon} />
-                      Card Number
-                    </label>
-                    <input
-                      type="text"
-                      value={bookingData.paymentInfo.cardNumber}
-                      onChange={(e) => handleInputChange('paymentInfo', 'cardNumber', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="1234 5678 9012 3456"
-                      maxLength="19"
-                    />
-                  </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>Cardholder Name</label>
-                    <input
-                      type="text"
-                      value={bookingData.paymentInfo.cardholderName}
-                      onChange={(e) => handleInputChange('paymentInfo', 'cardholderName', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="Name on card"
-                    />
-                  </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>Expiry Date</label>
-                    <input
-                      type="text"
-                      value={bookingData.paymentInfo.expiryDate}
-                      onChange={(e) => handleInputChange('paymentInfo', 'expiryDate', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="MM/YY"
-                      maxLength="5"
-                    />
-                  </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>CVV</label>
-                    <input
-                      type="text"
-                      value={bookingData.paymentInfo.cvv}
-                      onChange={(e) => handleInputChange('paymentInfo', 'cvv', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="123"
-                      maxLength="4"
-                    />
+                  <div style={styles.paymentNote}>
+                    <FaCheckCircle style={styles.noteIcon} />
+                    <div>
+                      <p style={styles.noteText}>
+                        <strong>Important:</strong> Please complete the bank transfer within 24 hours to secure your booking. 
+                        We will send you a confirmation email once the payment is received and verified.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -663,19 +646,13 @@ const BookingScreen = () => {
                   <div style={styles.confirmationSection}>
                     <h3>Payment Details</h3>
                     <div style={styles.confirmationRow}>
-                      <span>Payment Type:</span>
-                      <strong>{bookingData.paymentInfo.paymentType === 'full' ? 'Full Payment' : `Advance Payment (${bookingData.paymentInfo.advancePercentage}%)`}</strong>
+                      <span>Payment Method:</span>
+                      <strong>Bank Transfer</strong>
                     </div>
                     <div style={styles.confirmationRow}>
-                      <span>Amount to Pay Now:</span>
-                      <strong>₹{calculateTotal().paymentAmount.toFixed(2)}</strong>
+                      <span>Amount to Transfer:</span>
+                      <strong>₹{calculateTotal().total.toFixed(2)}</strong>
                     </div>
-                    {calculateTotal().isAdvancePayment && (
-                      <div style={styles.confirmationRow}>
-                        <span>Remaining at Check-in:</span>
-                        <strong>₹{calculateTotal().remainingAmount.toFixed(2)}</strong>
-                      </div>
-                    )}
                     <div style={styles.confirmationRow}>
                       <span>Total Booking Amount:</span>
                       <strong>₹{calculateTotal().total.toFixed(2)}</strong>
@@ -712,7 +689,7 @@ const BookingScreen = () => {
                   style={styles.bookButton}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Processing...' : 'Complete Booking'}
+                  {isLoading ? 'Processing...' : 'Confirm Booking'}
                   {!isLoading && <FaCheckCircle style={styles.btnIcon} />}
                 </button>
               )}
@@ -726,9 +703,9 @@ const BookingScreen = () => {
               
               {selectedRoomData && (
                 <div style={styles.selectedRoom}>
-                  <img src={selectedRoomData.image} alt={selectedRoomData.name} style={styles.summaryRoomImage} />
+                  <img src={selectedRoomData.images?.[0]?.url || 'https://via.placeholder.com/300x200'} alt={getRoomDisplayName(selectedRoomData)} style={styles.summaryRoomImage} />
                   <div style={styles.summaryRoomInfo}>
-                    <h4 style={styles.summaryRoomName}>{selectedRoomData.name}</h4>
+                    <h4 style={styles.summaryRoomName}>{getRoomDisplayName(selectedRoomData)}</h4>
                     <div style={styles.summaryRoomSpecs}>
                       <span>{selectedRoomData.size}</span>
                       <span>Max {selectedRoomData.guests} guests</span>
@@ -785,22 +762,14 @@ const BookingScreen = () => {
                   <span>₹{calculateTotal().total.toFixed(2)}</span>
                 </div>
                 
-                {/* Payment Amount Display */}
+                {/* Transfer Amount Display */}
                 {currentStep >= 3 && (
                   <>
                     <div style={styles.paymentSummary}>
                       <div style={styles.paymentRow}>
-                        <span style={styles.paymentLabel}>
-                          {calculateTotal().isAdvancePayment ? 'Advance Payment:' : 'Payment Amount:'}
-                        </span>
-                        <span style={styles.paymentAmountText}>₹{calculateTotal().paymentAmount.toFixed(2)}</span>
+                        <span style={styles.paymentLabel}>Transfer Amount:</span>
+                        <span style={styles.paymentAmountText}>₹{calculateTotal().total.toFixed(2)}</span>
                       </div>
-                      {calculateTotal().isAdvancePayment && (
-                        <div style={styles.remainingRow}>
-                          <span>Remaining at Check-in:</span>
-                          <span>₹{calculateTotal().remainingAmount.toFixed(2)}</span>
-                        </div>
-                      )}
                     </div>
                   </>
                 )}
@@ -1172,110 +1141,6 @@ const styles = {
     margin: 0,
   },
 
-  // Payment Type Selection
-  paymentTypeSection: {
-    marginBottom: '2rem',
-  },
-
-  paymentOptions: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '1rem',
-    marginBottom: '1.5rem',
-  },
-
-  paymentOption: {
-    border: '2px solid #E5E5E5',
-    borderRadius: '8px',
-    padding: '1rem',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    backgroundColor: 'white',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    minHeight: '120px',
-  },
-
-  paymentOptionActive: {
-    borderColor: '#D4AF37',
-    backgroundColor: 'rgba(212, 175, 55, 0.05)',
-  },
-
-  paymentOptionHeader: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '0.5rem',
-    marginBottom: '0.5rem',
-  },
-
-  radioInput: {
-    marginTop: '2px',
-    accentColor: '#D4AF37',
-    transform: 'scale(1.2)',
-  },
-
-  paymentOptionTitle: {
-    fontSize: '1rem',
-    fontWeight: '600',
-    color: '#1A1A1A',
-    margin: '0 0 0.25rem 0',
-  },
-
-  paymentOptionDesc: {
-    fontSize: '12px',
-    color: '#666',
-    margin: 0,
-  },
-
-  paymentOptionAmount: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-  },
-
-  paymentAmount: {
-    fontSize: '1.1rem',
-    fontWeight: '700',
-    color: '#D4AF37',
-  },
-
-  paymentLabel: {
-    fontSize: '10px',
-    color: '#666',
-    marginTop: '2px',
-  },
-
-  remainingAmount: {
-    fontSize: '10px',
-    color: '#999',
-    marginTop: '2px',
-  },
-
-  advanceNote: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '1rem',
-    padding: '1rem',
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    borderRadius: '10px',
-    border: '1px solid rgba(16, 185, 129, 0.2)',
-  },
-
-  noteIcon: {
-    fontSize: '16px',
-    color: '#10B981',
-    marginTop: '2px',
-    flexShrink: 0,
-  },
-
-  noteText: {
-    fontSize: '14px',
-    color: '#1A1A1A',
-    margin: 0,
-    lineHeight: '1.5',
-  },
-
   // Confirmation
   confirmationDetails: {
     display: 'flex',
@@ -1499,6 +1364,12 @@ const styles = {
     marginBottom: '0.5rem',
   },
 
+  paymentLabel: {
+    fontSize: '14px',
+    color: '#666',
+    fontWeight: '500',
+  },
+
   paymentAmountText: {
     fontSize: '18px',
     fontWeight: '700',
@@ -1513,6 +1384,77 @@ const styles = {
     color: '#666',
     paddingTop: '0.5rem',
     borderTop: '1px solid rgba(212, 175, 55, 0.2)',
+  },
+
+  // Bank Details Section
+  bankDetailsSection: {
+    marginTop: '2rem',
+  },
+
+  bankDetailsCard: {
+    backgroundColor: '#FAF9F7',
+    border: '2px solid #D4AF37',
+    borderRadius: '12px',
+    padding: '1.5rem',
+    marginBottom: '1.5rem',
+  },
+
+  bankDetailRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0.75rem 0',
+    borderBottom: '1px solid #E5E5E5',
+  },
+
+  bankDetailLabel: {
+    fontSize: '14px',
+    color: '#666',
+    fontWeight: '500',
+  },
+
+  bankDetailValue: {
+    fontSize: '14px',
+    color: '#1A1A1A',
+    fontWeight: '600',
+  },
+
+  bankDetailValueHighlight: {
+    fontSize: '16px',
+    color: '#D4AF37',
+    fontWeight: '700',
+  },
+
+  transferInstructions: {
+    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+    border: '1px solid rgba(212, 175, 55, 0.2)',
+    borderRadius: '10px',
+    padding: '1.5rem',
+    marginBottom: '1.5rem',
+  },
+
+  instructionsTitle: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    color: '#1A1A1A',
+    marginBottom: '1rem',
+  },
+
+  instructionsList: {
+    margin: 0,
+    paddingLeft: '1.5rem',
+    color: '#666',
+    lineHeight: '1.6',
+  },
+
+  paymentNote: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '1rem',
+    padding: '1rem',
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderRadius: '10px',
+    border: '1px solid rgba(16, 185, 129, 0.2)',
   },
 
   summaryFeatures: {

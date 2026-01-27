@@ -1,13 +1,9 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import Navbar from '../Components/Navbar';
 import { 
   FaBed, 
-  FaUtensils, 
   FaWifi, 
-  FaStar,
   FaCalendarAlt,
-  FaUser,
   FaPhone,
   FaEnvelope,
   FaMapMarkerAlt,
@@ -15,8 +11,6 @@ import {
   FaInstagram,
   FaTwitter,
   FaFacebookF,
-  FaUserTie,
-  FaUsers,
   FaCheckCircle
 } from 'react-icons/fa';
 
@@ -25,42 +19,8 @@ const heroBackground = 'https://images.unsplash.com/photo-1611892440504-42a792e2
 const singleRoom = 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
 const doubleRoom = 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
 const mountainView = 'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
-const logoImage = '../Assets/logoimg.png';
 
 function HomeScreen() {
-  const [enquiryData, setEnquiryData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    roomType: '',
-    specialRequests: '',
-    checkIn: '',
-    checkOut: '',
-    guests: '1'
-  });
-
-  const handleEnquirySubmit = (e) => {
-    e.preventDefault();
-    alert('Thank you for your enquiry! We will contact you soon.');
-    setEnquiryData({
-      fullName: '',
-      email: '',
-      phone: '',
-      roomType: '',
-      specialRequests: '',
-      checkIn: '',
-      checkOut: '',
-      guests: '1'
-    });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEnquiryData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
  
   return (
     <div style={styles.container}>
@@ -84,9 +44,6 @@ function HomeScreen() {
                 <Link to="/rooms" style={styles.primaryBtn}>
                   <FaCalendarAlt style={{ marginRight: '10px' }} />
                   <span>Book Your Stay</span>
-                </Link>
-                <Link to="/contact" style={styles.secondaryBtn}>
-                  <span>Plan Your Stay</span>
                 </Link>
               </div>
             </div>
@@ -247,189 +204,6 @@ function HomeScreen() {
           </div>
         </section>
 
-        {/* Premium Enquiry Form */}
-        <section id="enquiry" style={styles.enquirySection}>
-          <div style={styles.enquiryContainer}>
-            <div style={styles.enquiryGrid}>
-              {/* Left Column - Form Header & Info */}
-              <div style={styles.enquiryLeft}>
-                <div style={styles.enquiryHeader}>
-                  <span style={styles.enquiryBadge}>PLAN YOUR STAY</span>
-                  <h2 style={styles.enquiryTitle}>Request a Custom Quote</h2>
-                  <p style={styles.enquirySubtitle}>
-                    Let our concierge team create the perfect experience for you. 
-                    Fill in your details and we'll get back to you within 24 hours.
-                  </p>
-                </div>
-                
-                <div style={styles.enquiryBenefits}>
-                  <div style={styles.benefitCard}>
-                    <FaUserTie style={styles.benefitIcon} />
-                    <div>
-                      <h4 style={styles.benefitTitle}>Personalized Service</h4>
-                      <p style={styles.benefitText}>Tailored recommendations based on your preferences</p>
-                    </div>
-                  </div>
-                  
-                  <div style={styles.benefitCard}>
-                    <FaStar style={styles.benefitIcon} />
-                    <div>
-                      <h4 style={styles.benefitTitle}>Best Rate Guarantee</h4>
-                      <p style={styles.benefitText}>Get the best available rates for your stay</p>
-                    </div>
-                  </div>
-                  
-                  <div style={styles.benefitCard}>
-                    <FaUsers style={styles.benefitIcon} />
-                    <div>
-                      <h4 style={styles.benefitTitle}>Dedicated Support</h4>
-                      <p style={styles.benefitText}>24/7 concierge support for all your needs</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Right Column - Form */}
-              <div style={styles.enquiryRight}>
-                <form onSubmit={handleEnquirySubmit} style={styles.enquiryForm}>
-                  <div style={styles.formRow}>
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>
-                        <FaUser style={styles.inputIcon} />
-                        Full Name
-                      </label>
-                      <input 
-                        type="text"
-                        name="fullName"
-                        value={enquiryData.fullName}
-                        onChange={handleInputChange}
-                        placeholder="Enter your full name"
-                        style={styles.formInput}
-                        required
-                      />
-                    </div>
-                    
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>
-                        <FaEnvelope style={styles.inputIcon} />
-                        Email Address
-                      </label>
-                      <input 
-                        type="email"
-                        name="email"
-                        value={enquiryData.email}
-                        onChange={handleInputChange}
-                        placeholder="your.email@example.com"
-                        style={styles.formInput}
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div style={styles.formRow}>
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>
-                        <FaPhone style={styles.inputIcon} />
-                        Phone Number
-                      </label>
-                      <input 
-                        type="tel"
-                        name="phone"
-                        value={enquiryData.phone}
-                        onChange={handleInputChange}
-                        placeholder="+91"
-                        style={styles.formInput}
-                        required
-                      />
-                    </div>
-                    
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>
-                        <FaBed style={styles.inputIcon} />
-                        Room Type
-                      </label>
-                      <select 
-                        name="roomType"
-                        value={enquiryData.roomType}
-                        onChange={handleInputChange}
-                        style={styles.formSelect}
-                        required
-                      >
-                        <option value="">Select room type</option>
-                        <option value="single">Single Room - ₹299/night</option>
-                        <option value="double">Double Room - ₹499/night</option>
-                        <option value="triple">Triple Room - ₹699/night</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div style={styles.formRow}>
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>Check-in Date</label>
-                      <input 
-                        type="date"
-                        name="checkIn"
-                        value={enquiryData.checkIn}
-                        onChange={handleInputChange}
-                        style={styles.formInput}
-                        required
-                      />
-                    </div>
-                    
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>Check-out Date</label>
-                      <input 
-                        type="date"
-                        name="checkOut"
-                        value={enquiryData.checkOut}
-                        onChange={handleInputChange}
-                        style={styles.formInput}
-                        required
-                      />
-                    </div>
-                    
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>Number of Guests</label>
-                      <select 
-                        name="guests"
-                        value={enquiryData.guests}
-                        onChange={handleInputChange}
-                        style={styles.formSelect}
-                        required
-                      >
-                        {[1,2,3,4,5,6].map(num => (
-                          <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>
-                      <FaUser style={styles.inputIcon} />
-                      Special Requests
-                    </label>
-                    <textarea 
-                      name="specialRequests"
-                      value={enquiryData.specialRequests}
-                      onChange={handleInputChange}
-                      placeholder="Tell us about any special requirements, dietary needs, or preferences..."
-                      rows="4"
-                      style={styles.formTextarea}
-                    ></textarea>
-                  </div>
-                  
-                  <button type="submit" style={styles.submitBtn}>
-                    <FaEnvelope style={{ marginRight: '10px' }} />
-                    <span>Send Enquiry</span>
-                    <FaArrowRight style={{ marginLeft: '10px' }} />
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* CTA Section */}
         <section style={styles.ctaSection}>
           <div style={styles.ctaContent}>
@@ -440,9 +214,6 @@ function HomeScreen() {
             <div style={styles.ctaButtons}>
               <Link to="/rooms" style={styles.ctaPrimaryBtn}>
                 <span>Book Now</span>
-              </Link>
-              <Link to="/contact" style={styles.ctaSecondaryBtn}>
-                <span>Plan Your Stay</span>
               </Link>
             </div>
           </div>
@@ -1128,20 +899,6 @@ container: {
     fontWeight: '600',
     fontSize: '15px',
     transition: 'all 0.3s ease',
-  },
-  
-  ctaSecondaryBtn: {
-    padding: '14px 32px',
-    backgroundColor: 'transparent',
-    color: 'white',
-    textDecoration: 'none',
-    borderRadius: '25px',
-    fontWeight: '600',
-    border: '2px solid rgba(255,255,255,0.3)',
-    fontSize: '15px',
-    transition: 'all 0.3s ease',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
   },
   
   // Footer

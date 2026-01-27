@@ -3,12 +3,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using JSroomsAPI.Data;
+using JSroomsAPI.Services;
+using JSroomsAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Database Context
 builder.Services.AddDbContext<JSroomsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("JSroomsDb")));
+
+// HTTP Client for Email Service
+builder.Services.AddHttpClient<IEmailService, EmailService>();
+
+// Email Service
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -47,6 +55,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:3000",
+            "http://localhost:3001",
             "https://jsrooms.in",
             "https://www.jsrooms.in"
         )

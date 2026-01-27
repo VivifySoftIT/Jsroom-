@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import contactEmailService from '../services/contactEmailService';
 import { 
   FaPhone, 
   FaEnvelope,
@@ -30,6 +31,7 @@ const ContactScreen = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,24 +41,45 @@ const ContactScreen = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    setIsSubmitted(true);
+    setIsSubmitting(true);
     
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: '',
-        inquiryType: 'general'
-      });
-    }, 3000);
+    try {
+      console.log('📧 SENDING CONTACT MESSAGE...');
+      console.log('Contact Data:', formData);
+      
+      // Send email to JS ROOMS management
+      const emailResult = await contactEmailService.sendContactMessage(formData);
+      console.log('Contact email result:', emailResult);
+      
+      if (emailResult.success) {
+        console.log('✅ CONTACT MESSAGE SENT SUCCESSFULLY!');
+        setIsSubmitted(true);
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          setIsSubmitted(false);
+          setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            subject: '',
+            message: '',
+            inquiryType: 'general'
+          });
+        }, 3000);
+      } else {
+        console.error('❌ CONTACT EMAIL FAILED:', emailResult.error);
+        alert('Failed to send message. Please try again or contact us directly.');
+      }
+      
+    } catch (error) {
+      console.error('❌ CONTACT FORM ERROR:', error);
+      alert('Failed to send message. Please try again or contact us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -89,8 +112,7 @@ const ContactScreen = () => {
   const inquiryTypes = [
     { value: 'general', label: 'General Inquiry', icon: FaQuestionCircle },
     { value: 'reservation', label: 'Reservations', icon: FaCalendarAlt },
-    { value: 'support', label: 'Guest Support', icon: FaHeadset },
-    { value: 'feedback', label: 'Feedback', icon: FaComments }
+    { value: 'support', label: 'Guest Support', icon: FaHeadset }
   ];
 
   const departments = [
@@ -271,9 +293,9 @@ const ContactScreen = () => {
                     ></textarea>
                   </div>
 
-                  <button type="submit" style={styles.submitBtn}>
+                  <button type="submit" style={styles.submitBtn} disabled={isSubmitting}>
                     <FaArrowRight style={styles.btnIcon} />
-                    Send Message
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </button>
                 </form>
               )}
@@ -622,6 +644,7 @@ const styles = {
     transition: 'all 0.3s ease',
     marginTop: '1rem',
     fontFamily: 'inherit',
+    opacity: 1,
   },
 
   // Success Message

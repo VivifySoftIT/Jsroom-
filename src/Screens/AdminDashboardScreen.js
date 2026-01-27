@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import dataService from '../services/dataService';
 import { 
   FaHome, 
   FaBed, 
@@ -15,10 +16,12 @@ import {
   FaEye,
   FaEdit,
   FaPlus,
-  FaFilter
+  FaFilter,
+  FaEnvelope
 } from 'react-icons/fa';
 import AdminBookingsComponent from '../Components/AdminBookingsComponent';
 import AdminRoomsComponent from '../Components/AdminRoomsComponent';
+import EmailTestComponent from '../Components/EmailTestComponent';
 
 const AdminDashboardScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -46,82 +49,47 @@ const AdminDashboardScreen = () => {
     navigate('/admin/login');
   };
 
-  // Mock data - Replace with actual API calls
+  // Get real dashboard stats from data service
   const getDashboardStats = (filter) => {
-    const baseStats = {
-      today: {
-        totalRooms: 24,
-        availableRooms: 18,
-        occupiedRooms: 6,
-        totalBookings: 8,
-        todayCheckIns: 8,
-        todayCheckOuts: 5,
-        totalRevenue: 15000,
-        monthlyRevenue: 15000
-      },
-      week: {
-        totalRooms: 24,
-        availableRooms: 18,
-        occupiedRooms: 6,
-        totalBookings: 45,
-        todayCheckIns: 45,
-        todayCheckOuts: 38,
-        totalRevenue: 85000,
-        monthlyRevenue: 85000
-      },
-      month: {
-        totalRooms: 24,
-        availableRooms: 18,
-        occupiedRooms: 6,
-        totalBookings: 156,
-        todayCheckIns: 156,
-        todayCheckOuts: 142,
-        totalRevenue: 325000,
-        monthlyRevenue: 325000
-      }
-    };
-    return baseStats[filter];
+    return dataService.getDashboardStats();
   };
 
-  const dashboardStats = getDashboardStats(statsFilter);
+  const [dashboardStats, setDashboardStats] = useState(getDashboardStats(statsFilter));
+  const [recentBookings, setRecentBookings] = useState([]);
 
-  const recentBookings = [
-    {
-      id: 1,
-      bookingNumber: 'JSR001',
-      guestName: 'John Smith',
-      roomName: 'Presidential Suite',
-      checkIn: '2024-01-22',
-      checkOut: '2024-01-25',
-      status: 'confirmed',
-      amount: 1797
-    },
-    {
-      id: 2,
-      bookingNumber: 'JSR002',
-      guestName: 'Sarah Johnson',
-      roomName: 'Deluxe Suite',
-      checkIn: '2024-01-21',
-      checkOut: '2024-01-23',
-      status: 'checked-in',
-      amount: 598
-    },
-    {
-      id: 3,
-      bookingNumber: 'JSR003',
-      guestName: 'Mike Wilson',
-      roomName: 'Executive Room',
-      checkIn: '2024-01-20',
-      checkOut: '2024-01-22',
-      status: 'checked-out',
-      amount: 398
-    }
-  ];
+  // Load dashboard data
+  useEffect(() => {
+    const loadDashboardData = () => {
+      const stats = getDashboardStats(statsFilter);
+      const bookings = dataService.getBookings().slice(0, 5); // Get latest 5 bookings
+      
+      setDashboardStats(stats);
+      setRecentBookings(bookings);
+    };
+
+    loadDashboardData();
+
+    // Listen for data updates
+    const handleDataUpdate = () => {
+      loadDashboardData();
+    };
+
+    window.addEventListener('bookingsUpdated', handleDataUpdate);
+    window.addEventListener('roomsUpdated', handleDataUpdate);
+    window.addEventListener('storage', handleDataUpdate);
+
+    return () => {
+      window.removeEventListener('bookingsUpdated', handleDataUpdate);
+      window.removeEventListener('roomsUpdated', handleDataUpdate);
+      window.removeEventListener('storage', handleDataUpdate);
+    };
+  }, [statsFilter]);
 
   const sidebarItems = [
     { id: 'overview', label: 'Overview', icon: FaHome },
     { id: 'bookings', label: 'Bookings', icon: FaCalendarAlt },
     { id: 'rooms', label: 'Room Management', icon: FaBed },
+    { id: 'email-test', label: 'Email Test', icon: FaEnvelope },
   ];
 
   const getStatusColor = (status) => {
@@ -368,6 +336,20 @@ const AdminDashboardScreen = () => {
               
               {/* Room Management Component */}
               <AdminRoomsComponent />
+            </div>
+          )}
+
+          {activeTab === 'email-test' && (
+            <div style={styles.section}>
+              <div style={styles.sectionHeader}>
+                <h2 style={styles.sectionTitle}>Email System Test</h2>
+                <p style={styles.sectionDescription}>
+                  Test the backend email API to ensure booking notifications are sent to atchayakannan03@gmail.com
+                </p>
+              </div>
+              
+              {/* Email Test Component */}
+              <EmailTestComponent />
             </div>
           )}
         </div>
@@ -644,6 +626,12 @@ const styles = {
     fontWeight: '600',
     color: '#1A1A1A',
     margin: 0,
+  },
+
+  sectionDescription: {
+    fontSize: '0.9rem',
+    color: '#666',
+    margin: '0.5rem 0 0 0',
   },
 
   viewAllBtn: {

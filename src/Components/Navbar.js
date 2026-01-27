@@ -140,23 +140,13 @@ const Navbar = () => {
             <FaPhone style={styles.navIcon} />
             <span>Contact</span>
           </Link>
-          <Link 
-            to="/feedback" 
-            style={{
-              ...styles.navLink,
-              color: isActive('/feedback') ? '#D4AF37' : 'white'
-            }}
-          >
-            <FaUser style={styles.navIcon} />
-            <span>Feedback</span>
-          </Link>
 
           {userData ? (
             <div style={styles.userSection}>
-              <Link to="/dashboard" style={styles.userLink}>
+              <div style={styles.userInfo}>
                 <FaUser style={styles.userIcon} />
                 <span>{userData.name}</span>
-              </Link>
+              </div>
               <button onClick={handleLogout} style={styles.logoutBtn}>
                 Logout
               </button>
@@ -245,24 +235,13 @@ const Navbar = () => {
               <FaPhone style={styles.mobileNavIcon} />
               <span>Contact</span>
             </Link>
-            <Link 
-              to="/feedback" 
-              style={{
-                ...styles.mobileNavLink,
-                color: isActive('/feedback') ? '#D4AF37' : 'white'
-              }} 
-              onClick={closeMobileMenu}
-            >
-              <FaUser style={styles.mobileNavIcon} />
-              <span>Feedback</span>
-            </Link>
             
             {userData ? (
               <>
-                <Link to="/dashboard" style={styles.mobileNavLink} onClick={closeMobileMenu}>
+                <div style={styles.mobileUserInfo}>
                   <FaUser style={styles.mobileNavIcon} />
-                  <span>Dashboard</span>
-                </Link>
+                  <span>{userData.name}</span>
+                </div>
                 <button 
                   onClick={() => { handleLogout(); closeMobileMenu(); }} 
                   style={styles.mobileLogoutBtn}
@@ -370,9 +349,8 @@ const styles = {
     alignItems: 'center',
     gap: '1rem',
   },
-  userLink: {
+  userInfo: {
     color: 'white',
-    textDecoration: 'none',
     fontSize: '14px',
     fontWeight: '500',
     display: 'flex',
@@ -380,11 +358,6 @@ const styles = {
     gap: '6px',
     padding: '8px 12px',
     borderRadius: '8px',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      backgroundColor: 'rgba(212, 175, 55, 0.1)',
-      color: '#D4AF37',
-    },
   },
   userIcon: {
     fontSize: '14px',
@@ -465,6 +438,16 @@ const styles = {
     '&:hover': {
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
+  },
+  mobileUserInfo: {
+    color: 'white',
+    fontSize: '16px',
+    fontWeight: '500',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '14px 16px',
+    borderRadius: '8px',
   },
   mobileNavIcon: {
     fontSize: '16px',
