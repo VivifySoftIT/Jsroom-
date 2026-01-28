@@ -557,32 +557,7 @@ const RoomsScreen = () => {
                     <FaCheckCircle style={styles.checkIcon} />
                     <span>Hot & Cold Water</span>
                   </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Geyser/Water Heater</span>
-                  </div>
-                </div>
-              </div>
-
-              <div style={styles.amenitiesSection}>
-                <h3 style={styles.sectionTitle}>Additional Services</h3>
-                <div style={styles.amenitiesGrid}>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Laundry Service</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Newspaper</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>24/7 Front Desk</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Security</span>
-                  </div>
+             
                 </div>
               </div>
             </div>

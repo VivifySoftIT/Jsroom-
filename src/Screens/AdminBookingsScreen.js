@@ -58,7 +58,7 @@ const AdminBookingsScreen = () => {
         checkOut: '2024-01-23',
         guests: 1,
         nights: 2,
-        status: 'checked-in',
+        status: 'completed',
         amount: 598,
         paymentStatus: 'paid',
         specialRequests: 'Extra towels',
@@ -76,7 +76,7 @@ const AdminBookingsScreen = () => {
         checkOut: '2024-01-22',
         guests: 2,
         nights: 2,
-        status: 'checked-out',
+        status: 'completed',
         amount: 398,
         paymentStatus: 'paid',
         specialRequests: 'None',
@@ -94,9 +94,9 @@ const AdminBookingsScreen = () => {
         checkOut: '2024-01-28',
         guests: 4,
         nights: 3,
-        status: 'pending',
+        status: 'confirmed',
         amount: 747,
-        paymentStatus: 'pending',
+        paymentStatus: 'paid',
         specialRequests: 'Baby crib needed',
         createdAt: '2024-01-21'
       },
@@ -112,9 +112,9 @@ const AdminBookingsScreen = () => {
         checkOut: '2024-01-20',
         guests: 1,
         nights: 2,
-        status: 'cancelled',
+        status: 'confirmed',
         amount: 298,
-        paymentStatus: 'refunded',
+        paymentStatus: 'paid',
         specialRequests: 'None',
         createdAt: '2024-01-16'
       }
@@ -147,10 +147,7 @@ const AdminBookingsScreen = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirmed': return '#D4AF37';
-      case 'checked-in': return '#10B981';
-      case 'checked-out': return '#6B7280';
-      case 'cancelled': return '#EF4444';
-      case 'pending': return '#F59E0B';
+      case 'completed': return '#10B981';
       default: return '#6B7280';
     }
   };
@@ -158,10 +155,7 @@ const AdminBookingsScreen = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'confirmed': return FaCheckCircle;
-      case 'checked-in': return FaClock;
-      case 'checked-out': return FaCheckCircle;
-      case 'cancelled': return FaExclamationTriangle;
-      case 'pending': return FaClock;
+      case 'completed': return FaCheckCircle;
       default: return FaClock;
     }
   };
@@ -185,10 +179,9 @@ const AdminBookingsScreen = () => {
 
   return (
     <div style={styles.container}>
-      {/* Header */}
-      <div style={styles.header}>
-        <h1 style={styles.title}>Booking Management</h1>
-        <div style={styles.headerActions}>
+      {/* Controls Section */}
+      <div style={styles.controlsSection}>
+        <div style={styles.searchRow}>
           <div style={styles.searchContainer}>
             <FaSearch style={styles.searchIcon} />
             <input
@@ -199,6 +192,8 @@ const AdminBookingsScreen = () => {
               style={styles.searchInput}
             />
           </div>
+        </div>
+        <div style={styles.filterRow}>
           <div style={styles.filterContainer}>
             <FaFilter style={styles.filterIcon} />
             <select
@@ -207,11 +202,8 @@ const AdminBookingsScreen = () => {
               style={styles.filterSelect}
             >
               <option value="all">All Status</option>
-              <option value="pending">Pending</option>
               <option value="confirmed">Confirmed</option>
-              <option value="checked-in">Checked In</option>
-              <option value="checked-out">Checked Out</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="completed">Completed</option>
             </select>
           </div>
         </div>
@@ -228,12 +220,8 @@ const AdminBookingsScreen = () => {
           <div style={styles.statLabel}>Confirmed</div>
         </div>
         <div style={styles.statCard}>
-          <div style={styles.statNumber}>{bookings.filter(b => b.status === 'checked-in').length}</div>
-          <div style={styles.statLabel}>Checked In</div>
-        </div>
-        <div style={styles.statCard}>
-          <div style={styles.statNumber}>{bookings.filter(b => b.status === 'pending').length}</div>
-          <div style={styles.statLabel}>Pending</div>
+          <div style={styles.statNumber}>{bookings.filter(b => b.status === 'completed').length}</div>
+          <div style={styles.statLabel}>Completed</div>
         </div>
       </div>
 
@@ -308,20 +296,11 @@ const AdminBookingsScreen = () => {
                       </button>
                       {booking.status === 'confirmed' && (
                         <button 
-                          onClick={() => handleStatusChange(booking.id, 'checked-in')}
-                          style={{...styles.actionBtn, ...styles.checkInBtn}}
-                          title="Check In"
+                          onClick={() => handleStatusChange(booking.id, 'completed')}
+                          style={{...styles.actionBtn, ...styles.completeBtn}}
+                          title="Mark as Completed"
                         >
                           <FaCheck />
-                        </button>
-                      )}
-                      {booking.status === 'checked-in' && (
-                        <button 
-                          onClick={() => handleStatusChange(booking.id, 'checked-out')}
-                          style={{...styles.actionBtn, ...styles.checkOutBtn}}
-                          title="Check Out"
-                        >
-                          <FaCheckCircle />
                         </button>
                       )}
                     </div>
@@ -462,20 +441,11 @@ const AdminBookingsScreen = () => {
               <div style={styles.modalActions}>
                 {selectedBooking.status === 'confirmed' && (
                   <button 
-                    onClick={() => handleStatusChange(selectedBooking.id, 'checked-in')}
-                    style={styles.checkInModalBtn}
+                    onClick={() => handleStatusChange(selectedBooking.id, 'completed')}
+                    style={styles.completeModalBtn}
                   >
                     <FaCheck style={styles.btnIcon} />
-                    Check In Guest
-                  </button>
-                )}
-                {selectedBooking.status === 'checked-in' && (
-                  <button 
-                    onClick={() => handleStatusChange(selectedBooking.id, 'checked-out')}
-                    style={styles.checkOutModalBtn}
-                  >
-                    <FaCheckCircle style={styles.btnIcon} />
-                    Check Out Guest
+                    Mark as Completed
                   </button>
                 )}
                 <button style={styles.editModalBtn}>
@@ -503,9 +473,13 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '2rem',
+    marginBottom: '1.5rem',
     flexWrap: 'wrap',
     gap: '1rem',
+    padding: '1.5rem',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    border: '1px solid #E5E5E5',
   },
 
   title: {
@@ -515,55 +489,79 @@ const styles = {
     margin: 0,
   },
 
-  headerActions: {
+  controlsSection: {
+    marginBottom: '2rem',
+    padding: '2rem',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    border: '1px solid #E5E5E5',
     display: 'flex',
-    gap: '1rem',
-    alignItems: 'center',
+    flexDirection: 'column',
+    gap: '2rem',
+  },
+
+  searchRow: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    width: '100%',
+  },
+
+  filterRow: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    width: '100%',
   },
 
   searchContainer: {
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
-  },
-
-  searchIcon: {
-    position: 'absolute',
-    left: '12px',
-    color: '#D4AF37',
-    fontSize: '14px',
-    zIndex: 2,
-  },
-
-  searchInput: {
-    padding: '10px 12px 10px 36px',
-    border: '1px solid #E5E5E5',
-    borderRadius: '8px',
-    fontSize: '14px',
-    backgroundColor: 'white',
-    outline: 'none',
-    width: '250px',
+    width: '400px',
   },
 
   filterContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: '15px',
+    width: '250px',
+  },
+
+  searchIcon: {
+    position: 'absolute',
+    left: '16px',
+    color: '#D4AF37',
+    fontSize: '16px',
+    zIndex: 2,
+  },
+
+  searchInput: {
+    padding: '14px 20px 14px 48px',
+    border: '2px solid #E5E5E5',
+    borderRadius: '10px',
+    fontSize: '14px',
+    backgroundColor: 'white',
+    outline: 'none',
+    width: '100%',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
   },
 
   filterIcon: {
     color: '#D4AF37',
-    fontSize: '14px',
+    fontSize: '16px',
   },
 
   filterSelect: {
-    padding: '10px 12px',
-    border: '1px solid #E5E5E5',
-    borderRadius: '8px',
+    padding: '14px 20px',
+    border: '2px solid #E5E5E5',
+    borderRadius: '10px',
     fontSize: '14px',
     backgroundColor: 'white',
     outline: 'none',
     cursor: 'pointer',
+    minWidth: '180px',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
   },
 
   statsGrid: {
@@ -726,9 +724,9 @@ const styles = {
     color: '#10B981',
   },
 
-  checkOutBtn: {
-    borderColor: '#6B7280',
-    color: '#6B7280',
+  completeBtn: {
+    borderColor: '#10B981',
+    color: '#10B981',
   },
 
   noResults: {
@@ -885,9 +883,9 @@ const styles = {
     transition: 'all 0.3s ease',
   },
 
-  checkOutModalBtn: {
+  completeModalBtn: {
     padding: '10px 20px',
-    backgroundColor: '#6B7280',
+    backgroundColor: '#10B981',
     color: 'white',
     border: 'none',
     borderRadius: '6px',

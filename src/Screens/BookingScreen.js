@@ -177,43 +177,33 @@ const BookingScreen = () => {
 
       // Send email notification ONLY to JS ROOMS management
       try {
+        // Temporarily disable window.open to prevent new tab
+        const originalWindowOpen = window.open;
+        window.open = () => {
+          console.log('🚫 Email tab opening prevented during booking confirmation');
+          return null;
+        };
+
         const emailResult = await emailService.sendBookingConfirmation({
           ...bookingDetails,
           bookingNumber: savedBooking.bookingNumber
         });
 
+        // Restore window.open after email attempt
+        setTimeout(() => {
+          window.open = originalWindowOpen;
+        }, 1000);
+
         console.log('JS ROOMS admin email result:', emailResult);
 
         // Always show success - booking is saved regardless of email
-        alert(`✅ BOOKING CONFIRMED!
-
-Confirmation Number: ${savedBooking.bookingNumber}
-Guest: ${bookingDetails.guestName}
-Room: ${bookingDetails.roomName}
-Total: ₹${bookingDetails.amount}
-
-${emailResult.success ? 
-  '📧 JS ROOMS management has been notified automatically.' : 
-  '📞 JS ROOMS will be notified. Check admin system for details.'
-}
-
-You will receive a call within 30 minutes for payment details.`);
+        alert('Booking Confirmed');
 
       } catch (emailError) {
         console.error('Email sending failed:', emailError);
         
         // Still show success - booking is saved
-        alert(`✅ BOOKING CONFIRMED!
-
-Confirmation Number: ${savedBooking.bookingNumber}
-Guest: ${bookingDetails.guestName}
-Room: ${bookingDetails.roomName}
-Total: ₹${bookingDetails.amount}
-
-📞 JS ROOMS will contact you shortly.
-Your booking is saved in our system.
-
-For immediate assistance: +91 98765 43210`);
+        alert('Booking Confirmed');
       }
 
       setCompletedBooking(savedBooking);

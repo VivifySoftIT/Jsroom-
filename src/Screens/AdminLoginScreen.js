@@ -146,7 +146,7 @@ const AdminLoginScreen = () => {
         </form>
 
         <div style={styles.demoCredentials}>
-          <h4 style={styles.demoTitle}>Demo Credentials:</h4>
+          <h4 style={styles.demoTitle}>Credentials:</h4>
           <p style={styles.demoText}>Email: admin@jsrooms.com</p>
           <p style={styles.demoText}>Password: admin123</p>
         </div>

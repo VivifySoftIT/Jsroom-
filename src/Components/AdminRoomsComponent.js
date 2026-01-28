@@ -112,13 +112,25 @@ const AdminRoomsComponent = () => {
 
   // Handle room operations
   const handleViewRoom = (room) => {
-    setSelectedRoom(room);
+    // Find the category name from categoryId
+    const category = categories.find(cat => cat.categoryId === room.categoryId);
+    const roomWithCategory = {
+      ...room,
+      category: category ? category.categoryName : 'Unknown Category'
+    };
+    setSelectedRoom(roomWithCategory);
     setModalMode('view');
     setShowModal(true);
   };
 
   const handleEditRoom = (room) => {
-    setSelectedRoom(room);
+    // Find the category name from categoryId
+    const category = categories.find(cat => cat.categoryId === room.categoryId);
+    const roomWithCategory = {
+      ...room,
+      category: category ? category.categoryName : 'Unknown Category'
+    };
+    setSelectedRoom(roomWithCategory);
     setFormData({
       roomNumber: room.roomNumber,
       categoryId: room.categoryId,
@@ -213,7 +225,9 @@ const AdminRoomsComponent = () => {
         view: 'City View',
         originalPrice: parseFloat(formData.price) + 50,
         lastCleaned: new Date().toISOString().split('T')[0],
-        lastMaintenance: new Date().toISOString().split('T')[0]
+        lastMaintenance: new Date().toISOString().split('T')[0],
+        // Add category name for display purposes
+        category: categories.find(cat => cat.categoryId === formData.categoryId)?.categoryName || 'Unknown Category'
       };
 
       if (modalMode === 'add') {
@@ -346,25 +360,8 @@ const AdminRoomsComponent = () => {
 
   return (
     <div style={styles.container}>
-      {/* Header */}
-      <div style={styles.header}>
-        <h1 style={styles.title}>Room Management</h1>
-        <button onClick={handleAddRoom} style={styles.addBtn}>
-          <FaPlus style={styles.btnIcon} />
-          Add Room
-        </button>
-      </div>
-
-      {/* Error Message */}
-      {error && (
-        <div style={styles.errorMessage}>
-          <FaExclamationTriangle style={styles.errorIcon} />
-          {error}
-        </div>
-      )}
-
       {/* Controls */}
-      <div style={styles.controls}>
+      <div style={styles.controlsSection}>
         <div style={styles.searchContainer}>
           <FaSearch style={styles.searchIcon} />
           <input
@@ -376,113 +373,121 @@ const AdminRoomsComponent = () => {
           />
         </div>
         
-        <div style={styles.filterContainer}>
-          <FaFilter style={styles.filterIcon} />
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            style={styles.filterSelect}
-          >
-            <option value="all">All Categories</option>
-            {categories.map(category => (
-              <option key={category.categoryId} value={category.categoryName}>
-                {category.categoryName}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div style={styles.filtersGroup}>
+          <div style={styles.filterContainer}>
+            <FaFilter style={styles.filterIcon} />
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              style={styles.filterSelect}
+            >
+              <option value="all">All Categories</option>
+              {categories.map(category => (
+                <option key={category.categoryId} value={category.categoryName}>
+                  {category.categoryName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div style={styles.filterContainer}>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={styles.filterSelect}
-          >
-            <option value="all">All Status</option>
-            <option value="available">Available</option>
-            <option value="occupied">Occupied</option>
-            <option value="maintenance">Maintenance</option>
-          </select>
+          <div style={styles.filterContainer}>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              style={styles.filterSelect}
+            >
+              <option value="all">All Status</option>
+              <option value="available">Available</option>
+              <option value="occupied">Occupied</option>
+              <option value="maintenance">Maintenance</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Rooms Grid */}
       <div style={styles.roomsGrid}>
         {filteredRooms.length > 0 ? (
-          filteredRooms.map(room => (
-            <div key={room.id} style={styles.roomCard}>
-              <div style={styles.roomImage}>
-                <div style={styles.imageCarousel}>
-                  <img 
-                    src={room.images?.[0]?.url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80'} 
-                    alt={room.images?.[0]?.alt || 'Room'} 
-                    style={styles.image}
-                  />
-                  {room.images && room.images.length > 1 && (
-                    <div style={styles.imageCountBadge}>
-                      <FaImage style={styles.imageCountIcon} />
-                      +{room.images.length - 1}
+          filteredRooms.map(room => {
+            // Find the category name from categoryId
+            const category = categories.find(cat => cat.categoryId === room.categoryId);
+            const categoryName = category ? category.categoryName : 'Unknown Category';
+            
+            return (
+              <div key={room.id} style={styles.roomCard}>
+                <div style={styles.roomImage}>
+                  <div style={styles.imageCarousel}>
+                    <img 
+                      src={room.images?.[0]?.url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80'} 
+                      alt={room.images?.[0]?.alt || 'Room'} 
+                      style={styles.image}
+                    />
+                    {room.images && room.images.length > 1 && (
+                      <div style={styles.imageCountBadge}>
+                        <FaImage style={styles.imageCountIcon} />
+                        +{room.images.length - 1}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{
+                    ...styles.statusBadge,
+                    backgroundColor: getStatusColor(room.status)
+                  }}>
+                    {room.status}
+                  </div>
+                </div>
+
+                <div style={styles.roomContent}>
+                  <div style={styles.roomHeader}>
+                    <h3 style={styles.roomTitle}>Room #{room.roomNumber}</h3>
+                    <div style={styles.roomPrice}>₹{room.price}</div>
+                  </div>
+
+                  <div style={styles.roomDetails}>
+                    <div style={styles.roomInfo}>
+                      <FaBed style={styles.infoIcon} />
+                      <span>{categoryName} {room.acType === 'ac' ? 'AC' : 'Non-AC'}</span>
                     </div>
-                  )}
-                </div>
-                <div style={{
-                  ...styles.statusBadge,
-                  backgroundColor: getStatusColor(room.status)
-                }}>
-                  {room.status}
+                    <div style={styles.roomInfo}>
+                      <FaUsers style={styles.infoIcon} />
+                      <span>{room.maxGuests} Guest{room.maxGuests > 1 ? 's' : ''}</span>
+                    </div>
+                  </div>
+
+                  <p style={styles.roomDescription}>
+                    {room.description.length > 100 
+                      ? `${room.description.substring(0, 100)}...` 
+                      : room.description
+                    }
+                  </p>
+
+                  <div style={styles.roomActions}>
+                    <button 
+                      onClick={() => handleViewRoom(room)}
+                      style={styles.viewBtn}
+                    >
+                      <FaEye style={styles.btnIcon} />
+                      View
+                    </button>
+                    <button 
+                      onClick={() => handleEditRoom(room)}
+                      style={styles.editBtn}
+                    >
+                      <FaEdit style={styles.btnIcon} />
+                      Edit
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteRoom(room.id)}
+                      style={styles.deleteBtn}
+                    >
+                      <FaTrash style={styles.btnIcon} />
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              <div style={styles.roomContent}>
-                <div style={styles.roomHeader}>
-                  <h3 style={styles.roomTitle}>Room #{room.roomNumber}</h3>
-                  <div style={styles.roomPrice}>₹{room.price}</div>
-                </div>
-
-                <div style={styles.roomDetails}>
-                  <div style={styles.roomInfo}>
-                    <FaBed style={styles.infoIcon} />
-                    <span>{room.category} {room.acType === 'ac' ? 'AC' : 'Non-AC'}</span>
-                  </div>
-                  <div style={styles.roomInfo}>
-                    <FaUsers style={styles.infoIcon} />
-                    <span>{room.maxGuests} Guest{room.maxGuests > 1 ? 's' : ''}</span>
-                  </div>
-                </div>
-
-                <p style={styles.roomDescription}>
-                  {room.description.length > 100 
-                    ? `${room.description.substring(0, 100)}...` 
-                    : room.description
-                  }
-                </p>
-
-                <div style={styles.roomActions}>
-                  <button 
-                    onClick={() => handleViewRoom(room)}
-                    style={styles.viewBtn}
-                  >
-                    <FaEye style={styles.btnIcon} />
-                    View
-                  </button>
-                  <button 
-                    onClick={() => handleEditRoom(room)}
-                    style={styles.editBtn}
-                  >
-                    <FaEdit style={styles.btnIcon} />
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => handleDeleteRoom(room.id)}
-                    style={styles.deleteBtn}
-                  >
-                    <FaTrash style={styles.btnIcon} />
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <div style={styles.noResults}>
             <h3>No rooms found</h3>
@@ -573,17 +578,6 @@ const AdminRoomsComponent = () => {
                     <div style={styles.descriptionSection}>
                       <h4 style={styles.sectionTitle}>Description</h4>
                       <p style={styles.description}>{selectedRoom?.description}</p>
-                    </div>
-                    
-                    <div style={styles.amenitiesSection}>
-                      <h4 style={styles.sectionTitle}>Amenities</h4>
-                      <div style={styles.amenitiesList}>
-                        {selectedRoom?.amenities?.map((amenity, index) => (
-                          <span key={index} style={styles.amenityTag}>
-                            {amenity}
-                          </span>
-                        ))}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -817,6 +811,10 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '30px',
+    padding: '20px',
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
   },
   title: {
     fontSize: '28px',
@@ -850,46 +848,76 @@ const styles = {
   errorIcon: {
     fontSize: '16px',
   },
-  controls: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '20px',
+  controlsSection: {
     marginBottom: '30px',
+    padding: '20px',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '3rem',
     flexWrap: 'wrap',
   },
+
   searchContainer: {
     position: 'relative',
     flex: '1',
+    maxWidth: '400px',
     minWidth: '300px',
   },
+
   searchIcon: {
     position: 'absolute',
-    left: '12px',
+    left: '16px',
     top: '50%',
     transform: 'translateY(-50%)',
-    color: '#666',
+    color: '#D4AF37',
+    fontSize: '16px',
   },
+
   searchInput: {
     width: '100%',
-    padding: '10px 12px 10px 40px',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
+    padding: '14px 20px 14px 48px',
+    border: '2px solid #E5E5E5',
+    borderRadius: '10px',
     fontSize: '14px',
+    backgroundColor: 'white',
+    outline: 'none',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
   },
+
+  filtersGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+    flex: '0 0 auto',
+  },
+
   filterContainer: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
   },
+
   filterIcon: {
-    color: '#666',
+    color: '#D4AF37',
+    fontSize: '16px',
   },
+
   filterSelect: {
-    padding: '10px',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
+    padding: '14px 16px',
+    border: '2px solid #E5E5E5',
+    borderRadius: '10px',
     fontSize: '14px',
-    minWidth: '150px',
+    backgroundColor: 'white',
+    outline: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    minWidth: '160px',
   },
   roomsGrid: {
     display: 'grid',
@@ -1115,24 +1143,6 @@ const styles = {
     fontSize: '14px',
     lineHeight: '1.5',
     color: '#666',
-  },
-  amenitiesSection: {
-    backgroundColor: '#f9f9f9',
-    padding: '15px',
-    borderRadius: '8px',
-  },
-  amenitiesList: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '8px',
-  },
-  amenityTag: {
-    padding: '5px 10px',
-    backgroundColor: '#D4AF37',
-    color: '#1a1a1a',
-    borderRadius: '15px',
-    fontSize: '12px',
-    fontWeight: '500',
   },
   formContent: {
     display: 'flex',

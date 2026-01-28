@@ -4,30 +4,21 @@ import dataService from '../services/dataService';
 import { 
   FaHome, 
   FaBed, 
-  FaUsers, 
   FaCalendarAlt, 
-  FaChartLine,
   FaCheckCircle,
   FaClock,
   FaExclamationTriangle,
   FaSignOutAlt,
   FaBars,
-  FaTimes,
-  FaEye,
-  FaEdit,
-  FaPlus,
-  FaFilter,
-  FaEnvelope
+  FaTimes
 } from 'react-icons/fa';
 import AdminBookingsComponent from '../Components/AdminBookingsComponent';
 import AdminRoomsComponent from '../Components/AdminRoomsComponent';
-import EmailTestComponent from '../Components/EmailTestComponent';
 
 const AdminDashboardScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [adminUser, setAdminUser] = useState(null);
-  const [statsFilter, setStatsFilter] = useState('today'); // today, week, month
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,21 +40,13 @@ const AdminDashboardScreen = () => {
     navigate('/admin/login');
   };
 
-  // Get real dashboard stats from data service
-  const getDashboardStats = (filter) => {
-    return dataService.getDashboardStats();
-  };
-
-  const [dashboardStats, setDashboardStats] = useState(getDashboardStats(statsFilter));
   const [recentBookings, setRecentBookings] = useState([]);
 
   // Load dashboard data
   useEffect(() => {
     const loadDashboardData = () => {
-      const stats = getDashboardStats(statsFilter);
       const bookings = dataService.getBookings().slice(0, 5); // Get latest 5 bookings
       
-      setDashboardStats(stats);
       setRecentBookings(bookings);
     };
 
@@ -83,13 +66,12 @@ const AdminDashboardScreen = () => {
       window.removeEventListener('roomsUpdated', handleDataUpdate);
       window.removeEventListener('storage', handleDataUpdate);
     };
-  }, [statsFilter]);
+  }, []);
 
   const sidebarItems = [
     { id: 'overview', label: 'Overview', icon: FaHome },
     { id: 'bookings', label: 'Bookings', icon: FaCalendarAlt },
     { id: 'rooms', label: 'Room Management', icon: FaBed },
-    { id: 'email-test', label: 'Email Test', icon: FaEnvelope },
   ];
 
   const getStatusColor = (status) => {
@@ -195,70 +177,6 @@ const AdminDashboardScreen = () => {
         <div style={styles.content}>
           {activeTab === 'overview' && (
             <>
-              {/* Filter Section */}
-              <div style={styles.filterSection}>
-                <div style={styles.filterContainer}>
-                  <FaFilter style={styles.filterIcon} />
-                  <span style={styles.filterLabel}>Show stats for:</span>
-                  <div style={styles.filterButtons}>
-                    {['today', 'week', 'month'].map(filter => (
-                      <button
-                        key={filter}
-                        onClick={() => setStatsFilter(filter)}
-                        style={{
-                          ...styles.filterBtn,
-                          ...(statsFilter === filter ? styles.filterBtnActive : {})
-                        }}
-                      >
-                        {filter.charAt(0).toUpperCase() + filter.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Stats Cards */}
-              <div style={styles.statsGrid}>
-                <div style={styles.statCard}>
-                  <div style={styles.statIcon}>
-                    <FaBed />
-                  </div>
-                  <div style={styles.statContent}>
-                    <div style={styles.statNumber}>{dashboardStats.totalRooms}</div>
-                    <div style={styles.statLabel}>Total Rooms</div>
-                    <div style={styles.statSubtext}>
-                      {dashboardStats.availableRooms} available
-                    </div>
-                  </div>
-                </div>
-
-                <div style={styles.statCard}>
-                  <div style={styles.statIcon}>
-                    <FaCalendarAlt />
-                  </div>
-                  <div style={styles.statContent}>
-                    <div style={styles.statNumber}>{dashboardStats.totalBookings}</div>
-                    <div style={styles.statLabel}>Total Bookings</div>
-                    <div style={styles.statSubtext}>
-                      {statsFilter === 'today' ? 'today' : `this ${statsFilter}`}
-                    </div>
-                  </div>
-                </div>
-
-                <div style={styles.statCard}>
-                  <div style={styles.statIcon}>
-                    <FaChartLine />
-                  </div>
-                  <div style={styles.statContent}>
-                    <div style={styles.statNumber}>₹{dashboardStats.totalRevenue.toLocaleString()}</div>
-                    <div style={styles.statLabel}>Total Revenue</div>
-                    <div style={styles.statSubtext}>
-                      {statsFilter === 'today' ? 'today' : `this ${statsFilter}`}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Recent Bookings */}
               <div style={styles.section}>
                 <div style={styles.sectionHeader}>
@@ -317,10 +235,7 @@ const AdminDashboardScreen = () => {
             <div style={styles.section}>
               <div style={styles.sectionHeader}>
                 <h2 style={styles.sectionTitle}>All Bookings</h2>
-                <button style={styles.addBtn}>
-                  <FaPlus style={styles.btnIcon} />
-                  New Booking
-                </button>
+           
               </div>
               
               {/* Booking Management Component */}
@@ -336,20 +251,6 @@ const AdminDashboardScreen = () => {
               
               {/* Room Management Component */}
               <AdminRoomsComponent />
-            </div>
-          )}
-
-          {activeTab === 'email-test' && (
-            <div style={styles.section}>
-              <div style={styles.sectionHeader}>
-                <h2 style={styles.sectionTitle}>Email System Test</h2>
-                <p style={styles.sectionDescription}>
-                  Test the backend email API to ensure booking notifications are sent to atchayakannan03@gmail.com
-                </p>
-              </div>
-              
-              {/* Email Test Component */}
-              <EmailTestComponent />
             </div>
           )}
         </div>
@@ -554,58 +455,6 @@ const styles = {
     overflow: 'auto',
   },
 
-  statsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '1.5rem',
-    marginBottom: '2rem',
-  },
-
-  statCard: {
-    backgroundColor: 'white',
-    padding: '1.5rem',
-    borderRadius: '12px',
-    border: '1px solid #E5E5E5',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem',
-  },
-
-  statIcon: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '10px',
-    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '20px',
-    color: '#1A1A1A',
-  },
-
-  statContent: {
-    flex: 1,
-  },
-
-  statNumber: {
-    fontSize: '1.8rem',
-    fontWeight: '700',
-    color: '#1A1A1A',
-    lineHeight: '1',
-  },
-
-  statLabel: {
-    fontSize: '14px',
-    color: '#666',
-    marginTop: '4px',
-  },
-
-  statSubtext: {
-    fontSize: '12px',
-    color: '#D4AF37',
-    marginTop: '2px',
-  },
-
   section: {
     backgroundColor: 'white',
     borderRadius: '12px',
@@ -645,26 +494,6 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     fontFamily: 'inherit',
-  },
-
-  addBtn: {
-    padding: '8px 16px',
-    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
-    color: '#1A1A1A',
-    border: 'none',
-    borderRadius: '6px',
-    fontSize: '14px',
-    fontWeight: '500',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    transition: 'all 0.3s ease',
-    fontFamily: 'inherit',
-  },
-
-  btnIcon: {
-    fontSize: '12px',
   },
 
   tableContainer: {
@@ -735,56 +564,6 @@ const styles = {
     padding: '3rem',
     textAlign: 'center',
     color: '#666',
-  },
-
-  // Filter Section
-  filterSection: {
-    backgroundColor: 'white',
-    padding: '1rem 2rem',
-    borderRadius: '12px',
-    border: '1px solid #E5E5E5',
-    marginBottom: '2rem',
-  },
-
-  filterContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem',
-  },
-
-  filterIcon: {
-    color: '#D4AF37',
-    fontSize: '16px',
-  },
-
-  filterLabel: {
-    fontSize: '14px',
-    fontWeight: '500',
-    color: '#1A1A1A',
-  },
-
-  filterButtons: {
-    display: 'flex',
-    gap: '0.5rem',
-  },
-
-  filterBtn: {
-    padding: '6px 12px',
-    border: '1px solid #E5E5E5',
-    borderRadius: '6px',
-    backgroundColor: 'white',
-    color: '#666',
-    fontSize: '12px',
-    fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    fontFamily: 'inherit',
-  },
-
-  filterBtnActive: {
-    backgroundColor: '#D4AF37',
-    color: '#1A1A1A',
-    borderColor: '#D4AF37',
   },
 };
 

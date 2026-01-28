@@ -85,8 +85,36 @@ const AdminBookingsComponent = () => {
     try {
       setLoading(true);
       
+      // Set a flag to indicate this is an admin operation
+      window.isAdminOperation = true;
+      
+      // Temporarily disable any global email functionality
+      const originalWindowOpen = window.open;
+      const originalAlert = window.alert;
+      
+      window.open = () => {
+        console.log('🚫 Email functionality disabled in admin panel');
+        return null;
+      };
+      
+      window.alert = (message) => {
+        if (message.includes('EMAIL SENT') || message.includes('BOOKING CONFIRMED')) {
+          console.log('🚫 Email alert suppressed in admin panel');
+          return;
+        }
+        return originalAlert(message);
+      };
+      
+      // Update booking status without triggering any email functionality
       dataService.updateBooking(bookingId, { status: newStatus });
-      console.log('✅ Booking status updated in localStorage');
+      console.log('✅ Booking status updated in localStorage (admin panel - no email)');
+      
+      // Restore original functions after a short delay
+      setTimeout(() => {
+        window.open = originalWindowOpen;
+        window.alert = originalAlert;
+        window.isAdminOperation = false;
+      }, 1000);
       
       // Reload bookings
       loadBookings();
@@ -156,9 +184,7 @@ const AdminBookingsComponent = () => {
   return (
     <div style={styles.container}>
       {/* Header */}
-      <div style={styles.header}>
-        <h1 style={styles.title}>Booking Management</h1>
-      </div>
+     
 
       {/* Error Message */}
       {error && (
@@ -169,7 +195,7 @@ const AdminBookingsComponent = () => {
       )}
 
       {/* Controls */}
-      <div style={styles.controls}>
+      <div style={styles.controlsSection}>
         <div style={styles.searchContainer}>
           <FaSearch style={styles.searchIcon} />
           <input
@@ -189,8 +215,6 @@ const AdminBookingsComponent = () => {
           >
             <option value="all">All Status</option>
             <option value="confirmed">Confirmed</option>
-            <option value="pending">Pending</option>
-            <option value="cancelled">Cancelled</option>
             <option value="completed">Completed</option>
           </select>
         </div>
@@ -252,7 +276,11 @@ const AdminBookingsComponent = () => {
                   View
                 </button>
                 <button 
-                  onClick={() => handleUpdateStatus(booking.id, booking.status === 'confirmed' ? 'completed' : 'confirmed')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleUpdateStatus(booking.id, booking.status === 'confirmed' ? 'completed' : 'confirmed');
+                  }}
                   style={styles.statusBtn}
                 >
                   <FaEdit style={styles.btnIcon} />
@@ -384,43 +412,64 @@ const styles = {
   errorIcon: {
     fontSize: '16px',
   },
-  controls: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '20px',
+  controlsSection: {
     marginBottom: '30px',
+    padding: '20px',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '3rem',
     flexWrap: 'wrap',
   },
+
   searchContainer: {
     position: 'relative',
     flex: '1',
     maxWidth: '400px',
+    minWidth: '300px',
   },
+
   searchIcon: {
     position: 'absolute',
-    left: '12px',
+    left: '16px',
     top: '50%',
     transform: 'translateY(-50%)',
-    color: '#666',
+    color: '#D4AF37',
+    fontSize: '16px',
   },
+
   searchInput: {
     width: '100%',
-    padding: '10px 12px 10px 40px',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
+    padding: '14px 20px 14px 48px',
+    border: '2px solid #E5E5E5',
+    borderRadius: '10px',
     fontSize: '14px',
+    backgroundColor: 'white',
+    outline: 'none',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
   },
+
   filterContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    flex: '0 0 auto',
   },
+
   filterSelect: {
-    padding: '10px',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
+    padding: '14px 16px',
+    border: '2px solid #E5E5E5',
+    borderRadius: '10px',
     fontSize: '14px',
-    minWidth: '150px',
+    backgroundColor: 'white',
+    outline: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    minWidth: '180px',
   },
   bookingsGrid: {
     display: 'grid',

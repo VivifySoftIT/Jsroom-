@@ -382,10 +382,7 @@ const ContactScreen = () => {
               <FaCalendarAlt style={styles.btnIcon} />
               Book Now
             </Link>
-            <a href="tel:+918947382799" style={styles.ctaSecondaryBtn}>
-              <FaPhone style={styles.btnIcon} />
-              Call Us
-            </a>
+        
           </div>
         </div>
       </section>
