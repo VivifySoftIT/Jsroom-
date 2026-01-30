@@ -1,8 +1,8 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { 
-  FaHome, FaBed, FaImages, FaInfoCircle, 
-  FaPhone, FaCalendarAlt, FaUser, FaBars, FaTimes 
+import {
+  FaHome, FaBed, FaImages, FaInfoCircle,
+  FaPhone, FaCalendarAlt, FaUser, FaBars, FaTimes
 } from 'react-icons/fa';
 import localforage from "localforage";
 
@@ -31,6 +31,8 @@ const Navbar = () => {
         const token = await localforage.getItem('token');
         if (token) {
           setUserData({ name: 'User' });
+        } else if (localStorage.getItem('isAdmin') === 'true') {
+          setUserData({ name: 'Admin' });
         }
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -40,7 +42,7 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
     checkAuth();
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
@@ -49,6 +51,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await localforage.removeItem('token');
+    localStorage.removeItem('isAdmin');
     setUserData(null);
     navigate('/home');
   };
@@ -86,12 +89,12 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div style={{ 
+        <div style={{
           ...styles.navLinks,
-          display: isMobile ? 'none' : 'flex' 
+          display: isMobile ? 'none' : 'flex'
         }}>
-          <Link 
-            to="/home" 
+          <Link
+            to="/home"
             style={{
               ...styles.navLink,
               color: isActive('/home') ? '#D4AF37' : 'white'
@@ -100,8 +103,8 @@ const Navbar = () => {
             <FaHome style={styles.navIcon} />
             <span>Home</span>
           </Link>
-          <Link 
-            to="/rooms" 
+          <Link
+            to="/rooms"
             style={{
               ...styles.navLink,
               color: isActive('/rooms') ? '#D4AF37' : 'white'
@@ -110,8 +113,8 @@ const Navbar = () => {
             <FaBed style={styles.navIcon} />
             <span>Rooms</span>
           </Link>
-          <Link 
-            to="/gallery" 
+          <Link
+            to="/gallery"
             style={{
               ...styles.navLink,
               color: isActive('/gallery') ? '#D4AF37' : 'white'
@@ -120,8 +123,8 @@ const Navbar = () => {
             <FaImages style={styles.navIcon} />
             <span>Gallery</span>
           </Link>
-          <Link 
-            to="/about" 
+          <Link
+            to="/about"
             style={{
               ...styles.navLink,
               color: isActive('/about') ? '#D4AF37' : 'white'
@@ -130,8 +133,8 @@ const Navbar = () => {
             <FaInfoCircle style={styles.navIcon} />
             <span>About</span>
           </Link>
-          <Link 
-            to="/contact" 
+          <Link
+            to="/contact"
             style={{
               ...styles.navLink,
               color: isActive('/contact') ? '#D4AF37' : 'white'
@@ -153,13 +156,24 @@ const Navbar = () => {
             </div>
           ) : (
             <div style={styles.rightSection}>
+              <button
+                onClick={() => {
+                  const pwd = prompt("Enter Admin Password:");
+                  if (pwd === "admin123") {
+                    localStorage.setItem('isAdmin', 'true');
+                    setUserData({ name: 'Admin' });
+                    window.location.reload(); // Refresh to update UI components
+                  } else if (pwd) {
+                    alert("Incorrect Password");
+                  }
+                }}
+                style={{ ...styles.navLink, background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                <FaUser style={styles.navIcon} />
+              </button>
               <Link to="/rooms" style={styles.bookingBtn}>
                 <FaCalendarAlt style={{ marginRight: '8px' }} />
                 <span>Book Now</span>
-              </Link>
-              <Link to="/admin/login" style={styles.adminBtn}>
-                <FaUser style={{ marginRight: '6px' }} />
-                <span>Admin</span>
               </Link>
             </div>
           )}
@@ -167,8 +181,8 @@ const Navbar = () => {
 
         {/* Mobile Menu Button - Only shown on mobile */}
         {isMobile && (
-          <button 
-            onClick={toggleMobileMenu} 
+          <button
+            onClick={toggleMobileMenu}
             style={styles.mobileMenuBtn}
           >
             {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
@@ -180,70 +194,70 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div style={styles.mobileMenu}>
           <div style={styles.mobileMenuContent}>
-            <Link 
-              to="/home" 
+            <Link
+              to="/home"
               style={{
                 ...styles.mobileNavLink,
                 color: isActive('/home') ? '#D4AF37' : 'white'
-              }} 
+              }}
               onClick={closeMobileMenu}
             >
               <FaHome style={styles.mobileNavIcon} />
               <span>Home</span>
             </Link>
-            <Link 
-              to="/rooms" 
+            <Link
+              to="/rooms"
               style={{
                 ...styles.mobileNavLink,
                 color: isActive('/rooms') ? '#D4AF37' : 'white'
-              }} 
+              }}
               onClick={closeMobileMenu}
             >
               <FaBed style={styles.mobileNavIcon} />
               <span>Rooms</span>
             </Link>
-            <Link 
-              to="/gallery" 
+            <Link
+              to="/gallery"
               style={{
                 ...styles.mobileNavLink,
                 color: isActive('/gallery') ? '#D4AF37' : 'white'
-              }} 
+              }}
               onClick={closeMobileMenu}
             >
               <FaImages style={styles.mobileNavIcon} />
               <span>Gallery</span>
             </Link>
-            <Link 
-              to="/about" 
+            <Link
+              to="/about"
               style={{
                 ...styles.mobileNavLink,
                 color: isActive('/about') ? '#D4AF37' : 'white'
-              }} 
+              }}
               onClick={closeMobileMenu}
             >
               <FaInfoCircle style={styles.mobileNavIcon} />
               <span>About</span>
             </Link>
-            <Link 
-              to="/contact" 
+            <Link
+              to="/contact"
               style={{
                 ...styles.mobileNavLink,
                 color: isActive('/contact') ? '#D4AF37' : 'white'
-              }} 
+              }}
               onClick={closeMobileMenu}
             >
               <FaPhone style={styles.mobileNavIcon} />
               <span>Contact</span>
             </Link>
-            
+
             {userData ? (
               <>
                 <div style={styles.mobileUserInfo}>
                   <FaUser style={styles.mobileNavIcon} />
                   <span>{userData.name}</span>
                 </div>
-                <button 
-                  onClick={() => { handleLogout(); closeMobileMenu(); }} 
+                <button
+                  onClick={() => { handleLogout(); closeMobileMenu(); }}
                   style={styles.mobileLogoutBtn}
                 >
                   Logout
@@ -254,10 +268,6 @@ const Navbar = () => {
                 <Link to="/rooms" style={styles.mobileBookingBtn} onClick={closeMobileMenu}>
                   <FaCalendarAlt style={styles.mobileNavIcon} />
                   <span>Book Now</span>
-                </Link>
-                <Link to="/admin/login" style={styles.mobileAdminBtn} onClick={closeMobileMenu}>
-                  <FaUser style={styles.mobileNavIcon} />
-                  <span>Admin Login</span>
                 </Link>
               </div>
             )}
@@ -495,49 +505,11 @@ const styles = {
     alignItems: 'center',
     gap: '1rem',
   },
-  adminBtn: {
-    padding: '8px 16px',
-    background: 'transparent',
-    color: 'white',
-    textDecoration: 'none',
-    border: '1px solid rgba(212, 175, 55, 0.3)',
-    borderRadius: '20px',
-    fontWeight: '500',
-    fontSize: '14px',
-    display: 'flex',
-    alignItems: 'center',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      backgroundColor: 'rgba(212, 175, 55, 0.1)',
-      borderColor: '#D4AF37',
-      color: '#D4AF37',
-    },
-  },
   mobileRightSection: {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.5rem',
     marginTop: '1rem',
-  },
-  mobileAdminBtn: {
-    padding: '14px 16px',
-    background: 'transparent',
-    color: 'white',
-    textDecoration: 'none',
-    border: '1px solid rgba(212, 175, 55, 0.3)',
-    borderRadius: '8px',
-    fontWeight: '500',
-    fontSize: '16px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    justifyContent: 'center',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      backgroundColor: 'rgba(212, 175, 55, 0.1)',
-      borderColor: '#D4AF37',
-      color: '#D4AF37',
-    },
   },
 };
 

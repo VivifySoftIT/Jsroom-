@@ -168,9 +168,9 @@ function HomeScreen() {
         </section>
 
         {/* Experience Section - About */}
-        <section style={styles.experienceSection}>
-          <div style={styles.experienceContent}>
-            <div style={styles.experienceText}>
+        <section style={styles.experienceSection} className="experience-section">
+          <div style={styles.experienceContent} className="experience-content">
+            <div style={styles.experienceText} className="experience-text">
               <span style={styles.experienceBadge}>THE EXPERIENCE</span>
               <h2 style={styles.experienceTitle}>
                 Crafting Unforgettable Memories
@@ -179,26 +179,26 @@ function HomeScreen() {
                 At JS ROOMS, luxury is found in the details. Our dedicated team ensures 
                 every aspect of your stay exceeds expectations with personalized service.
               </p>
-              <div style={styles.experienceStats}>
-                <div style={styles.statItem}>
+              <div style={styles.experienceStats} className="experience-stats">
+                <div style={styles.statItem} className="stat-item">
                   <div style={styles.statNumber}>500+</div>
                   <div style={styles.statLabel}>Happy Guests</div>
                 </div>
-                <div style={styles.statItem}>
+                <div style={styles.statItem} className="stat-item">
                   <div style={styles.statNumber}>50+</div>
                   <div style={styles.statLabel}>Luxury Rooms</div>
                 </div>
-                <div style={styles.statItem}>
+                <div style={styles.statItem} className="stat-item">
                   <div style={styles.statNumber}>4.9</div>
                   <div style={styles.statLabel}>Rating</div>
                 </div>
-                <div style={styles.statItem}>
+                <div style={styles.statItem} className="stat-item">
                   <div style={styles.statNumber}>24/7</div>
                   <div style={styles.statLabel}>Service</div>
                 </div>
               </div>
             </div>
-            <div style={styles.experienceImage}>
+            <div style={styles.experienceImage} className="experience-image">
               <img src={mountainView} alt="Mountain View" style={styles.experienceImg} />
             </div>
           </div>
@@ -314,6 +314,15 @@ heroSection: {
   display: 'flex',
   alignItems: 'center',
   padding: '0 1.5rem', // No margin or padding-top needed
+  '@media (max-width: 768px)': {
+    height: '70vh',
+    minHeight: '500px',
+    padding: '0 1rem',
+  },
+  '@media (max-width: 480px)': {
+    height: '60vh',
+    minHeight: '400px',
+  },
 },
 
 container: {
@@ -371,6 +380,11 @@ container: {
     display: 'flex',
     gap: '1rem',
     flexWrap: 'wrap',
+    '@media (max-width: 480px)': {
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.75rem',
+    },
   },
   
   primaryBtn: {
@@ -404,6 +418,9 @@ container: {
   featuresSection: {
     padding: '3rem 1.5rem',
     backgroundColor: '#FAF9F7',
+    '@media (max-width: 768px)': {
+      padding: '2rem 1rem',
+    },
   },
   
   sectionHeader: {
@@ -435,6 +452,14 @@ container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
     gap: '2rem',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '1.5rem',
+    },
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '1rem',
+    },
   },
   
   featureCard: {
@@ -480,6 +505,9 @@ container: {
   roomsSection: {
     padding: '3rem 1.5rem',
     backgroundColor: 'white',
+    '@media (max-width: 768px)': {
+      padding: '2rem 1rem',
+    },
   },
   
   roomsGrid: {
@@ -488,6 +516,14 @@ container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: '2rem',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+      gap: '1.5rem',
+    },
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '1rem',
+    },
   },
   
   roomCard: {
@@ -601,6 +637,9 @@ container: {
     padding: '3rem 1.5rem',
     backgroundColor: '#0A0A0A',
     color: 'white',
+    '@media (max-width: 768px)': {
+      padding: '2rem 1rem',
+    },
   },
   
   experienceContent: {
@@ -610,10 +649,19 @@ container: {
     gridTemplateColumns: '1fr 1fr',
     gap: '4rem',
     alignItems: 'center',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: '1fr',
+      gap: '2rem',
+      textAlign: 'center',
+    },
   },
-  
+
   experienceText: {
     maxWidth: '500px',
+    '@media (max-width: 768px)': {
+      maxWidth: '100%',
+      order: 1,
+    },
   },
   
   experienceBadge: {
@@ -644,29 +692,75 @@ container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(4, 1fr)',
     gap: '1.5rem',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+      gap: '1rem',
+      maxWidth: '100%',
+      overflow: 'hidden',
+    },
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+      gap: '0.75rem',
+    },
   },
-  
+
   statItem: {
     textAlign: 'center',
+    minWidth: '0',
+    '@media (max-width: 768px)': {
+      padding: '1rem 0.5rem',
+      background: 'rgba(212, 175, 55, 0.1)',
+      borderRadius: '8px',
+      border: '1px solid rgba(212, 175, 55, 0.2)',
+    },
+    '@media (max-width: 480px)': {
+      padding: '0.75rem 0.25rem',
+      borderRadius: '6px',
+    },
   },
-  
+
   statNumber: {
-    fontSize: '2rem',
+    fontSize: 'clamp(1.5rem, 4vw, 2rem)',
     fontWeight: '700',
     color: '#D4AF37',
     marginBottom: '4px',
+    lineHeight: '1',
+    '@media (max-width: 768px)': {
+      fontSize: '1.6rem',
+      marginBottom: '0.5rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1.4rem',
+      marginBottom: '0.25rem',
+    },
   },
-  
+
   statLabel: {
-    fontSize: '13px',
+    fontSize: 'clamp(0.8rem, 2vw, 13px)',
     color: 'rgba(255,255,255,0.6)',
     fontWeight: '500',
+    lineHeight: '1.2',
+    wordWrap: 'break-word',
+    overflowWrap: 'break-word',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8rem',
+      color: 'rgba(255,255,255,0.8)',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '0.7rem',
+      hyphens: 'auto',
+    },
   },
   
   experienceImage: {
     borderRadius: '16px',
     overflow: 'hidden',
     boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+    '@media (max-width: 768px)': {
+      order: 2,
+      margin: '0 auto',
+      maxWidth: '100%',
+    },
   },
   
   experienceImg: {
@@ -906,6 +1000,9 @@ container: {
     backgroundColor: '#0A0A0A',
     color: 'white',
     padding: '4rem 1.5rem 2rem',
+    '@media (max-width: 768px)': {
+      padding: '3rem 1rem 1.5rem',
+    },
   },
   
   footerMain: {
@@ -915,6 +1012,16 @@ container: {
     gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
     gap: '3rem',
     marginBottom: '3rem',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '2rem',
+      marginBottom: '2rem',
+    },
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '1.5rem',
+      textAlign: 'center',
+    },
   },
   
   footerColumn: {

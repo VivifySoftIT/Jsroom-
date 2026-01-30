@@ -3,6 +3,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import emailService from '../services/emailService';
 import dataService from '../services/dataService';
+import { getResponsiveStyle, getTouchFriendlyStyle, getMobileInputStyle } from '../utils/mobileUtils';
 import { 
   FaCalendarAlt, 
   FaUsers,
@@ -177,11 +178,23 @@ const BookingScreen = () => {
 
       // Send email notification ONLY to JS ROOMS management
       try {
-        // Temporarily disable window.open to prevent new tab
+        // Temporarily disable window.open and alert to prevent new tab and large alerts
         const originalWindowOpen = window.open;
+        const originalAlert = window.alert;
+        
         window.open = () => {
           console.log('🚫 Email tab opening prevented during booking confirmation');
           return null;
+        };
+
+        window.alert = (message) => {
+          // Suppress all email service alerts
+          if (message.includes('EMAIL SENT') || message.includes('BOOKING CONFIRMED') || message.includes('CONFIRMED & EMAIL SENT')) {
+            console.log('🚫 Email service alert suppressed:', message);
+            return;
+          }
+          // Allow other alerts to show
+          return originalAlert(message);
         };
 
         const emailResult = await emailService.sendBookingConfirmation({
@@ -189,21 +202,22 @@ const BookingScreen = () => {
           bookingNumber: savedBooking.bookingNumber
         });
 
-        // Restore window.open after email attempt
+        // Restore original functions after email attempt
         setTimeout(() => {
           window.open = originalWindowOpen;
+          window.alert = originalAlert;
         }, 1000);
 
         console.log('JS ROOMS admin email result:', emailResult);
 
-        // Always show success - booking is saved regardless of email
-        alert('Booking Confirmed');
+        // Show only our simple success message
+        alert('✅ Booking Confirmed');
 
       } catch (emailError) {
         console.error('Email sending failed:', emailError);
         
-        // Still show success - booking is saved
-        alert('Booking Confirmed');
+        // Still show success - booking is saved (no duplicate alert)
+        console.log('Booking saved successfully, email notification failed but booking is confirmed');
       }
 
       setCompletedBooking(savedBooking);
@@ -290,21 +304,21 @@ const BookingScreen = () => {
       {/* Progress Steps */}
       <section style={styles.progressSection}>
         <div style={styles.progressContainer}>
-          <div style={styles.progressSteps}>
+          <div style={styles.progressSteps} className="progressSteps">
             {steps.map((step, index) => {
               const IconComponent = step.icon;
               return (
-                <div key={step.number} style={styles.progressStep}>
+                <div key={step.number} style={styles.progressStep} className="progressStep">
                   <div style={{
                     ...styles.stepCircle,
                     ...(currentStep >= step.number ? styles.stepCircleActive : {}),
                     ...(currentStep === step.number ? styles.stepCircleCurrent : {})
-                  }}>
-                    <IconComponent style={styles.stepIcon} />
+                  }} className="stepCircle">
+                    <IconComponent style={styles.stepIcon} className="stepIcon" />
                   </div>
-                  <div style={styles.stepInfo}>
-                    <div style={styles.stepNumber}>Step {step.number}</div>
-                    <div style={styles.stepTitle}>{step.title}</div>
+                  <div style={styles.stepInfo} className="stepInfo">
+                    <div style={styles.stepNumber} className="stepNumber">Step {step.number}</div>
+                    <div style={styles.stepTitle} className="stepTitle">{step.title}</div>
                   </div>
                   {index < steps.length - 1 && (
                     <div style={{
@@ -320,7 +334,7 @@ const BookingScreen = () => {
       </section>
 
       <div style={styles.bookingContainer}>
-        <div style={styles.bookingGrid}>
+        <div style={styles.bookingGrid} className="bookingGrid">
           {/* Main Booking Form */}
           <div style={styles.bookingForm}>
             {/* Step 1: Select Dates & Guests */}
@@ -331,8 +345,8 @@ const BookingScreen = () => {
                 {/* Selected Room Display */}
                 <div style={styles.selectedRoomDisplay}>
                   <h3 style={styles.sectionTitle}>Selected Room</h3>
-                  <div style={styles.selectedRoomCard}>
-                    <img src={selectedRoomData.images?.[0]?.url || 'https://via.placeholder.com/300x200'} alt={getRoomDisplayName(selectedRoomData)} style={styles.selectedRoomImage} />
+                  <div style={styles.selectedRoomCard} className="selectedRoomCard">
+                    <img src={selectedRoomData.images?.[0]?.url || 'https://via.placeholder.com/300x200'} alt={getRoomDisplayName(selectedRoomData)} style={styles.selectedRoomImage} className="selectedRoomImage" />
                     <div style={styles.selectedRoomInfo}>
                       <h4 style={styles.selectedRoomName}>{getRoomDisplayName(selectedRoomData)}</h4>
                       <div style={styles.selectedRoomSpecs}>
@@ -348,20 +362,20 @@ const BookingScreen = () => {
                         <span style={styles.perNight}>/night</span>
                       </div>
                     </div>
-                    <Link to="/rooms" style={styles.changeRoomBtn}>
+                    <Link to="/rooms" style={getTouchFriendlyStyle(styles.changeRoomBtn)}>
                       Change Room
                     </Link>
                   </div>
                 </div>
                 
-                <div style={styles.dateSelection}>
+                <div style={styles.dateSelection} className="formGrid">
                   <div style={styles.dateGroup}>
                     <label style={styles.label}>Check-in Date</label>
                     <input
                       type="date"
                       value={bookingData.checkIn}
                       onChange={(e) => handleInputChange(null, 'checkIn', e.target.value)}
-                      style={styles.dateInput}
+                      style={getMobileInputStyle(styles.dateInput)}
                       min={new Date().toISOString().split('T')[0]}
                     />
                   </div>
@@ -371,13 +385,13 @@ const BookingScreen = () => {
                       type="date"
                       value={bookingData.checkOut}
                       onChange={(e) => handleInputChange(null, 'checkOut', e.target.value)}
-                      style={styles.dateInput}
+                      style={getMobileInputStyle(styles.dateInput)}
                       min={bookingData.checkIn || new Date().toISOString().split('T')[0]}
                     />
                   </div>
                 </div>
 
-                <div style={styles.guestSelection}>
+                <div style={styles.guestSelection} className="formGrid">
                   <div style={styles.guestGroup}>
                     <label style={styles.label}>
                       <FaUsers style={styles.labelIcon} />
@@ -386,7 +400,7 @@ const BookingScreen = () => {
                     <select
                       value={bookingData.guests}
                       onChange={(e) => handleInputChange(null, 'guests', parseInt(e.target.value))}
-                      style={styles.selectInput}
+                      style={getMobileInputStyle(styles.selectInput)}
                     >
                       {[1,2,3,4,5,6].map(num => (
                         <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
@@ -401,7 +415,7 @@ const BookingScreen = () => {
                     <select
                       value={bookingData.rooms}
                       onChange={(e) => handleInputChange(null, 'rooms', parseInt(e.target.value))}
-                      style={styles.selectInput}
+                      style={getMobileInputStyle(styles.selectInput)}
                     >
                       {[1,2,3,4].map(num => (
                         <option key={num} value={num}>{num} Room{num > 1 ? 's' : ''}</option>
@@ -662,21 +676,21 @@ const BookingScreen = () => {
             {/* Navigation Buttons */}
             <div style={styles.navigationButtons}>
               {currentStep > 1 && (
-                <button onClick={prevStep} style={styles.prevButton}>
+                <button onClick={prevStep} style={getTouchFriendlyStyle(styles.prevButton)}>
                   <FaArrowLeft style={styles.btnIcon} />
                   Previous
                 </button>
               )}
               
               {currentStep < 4 ? (
-                <button onClick={nextStep} style={styles.nextButton}>
+                <button onClick={nextStep} style={getTouchFriendlyStyle(styles.nextButton)}>
                   Next
                   <FaArrowRight style={styles.btnIcon} />
                 </button>
               ) : (
                 <button 
                   onClick={handleBookingSubmit} 
-                  style={styles.bookButton}
+                  style={getTouchFriendlyStyle(styles.bookButton)}
                   disabled={isLoading}
                 >
                   {isLoading ? 'Processing...' : 'Confirm Booking'}
@@ -687,7 +701,7 @@ const BookingScreen = () => {
           </div>
 
           {/* Booking Summary Sidebar */}
-          <div style={styles.bookingSummary}>
+          <div style={styles.bookingSummary} className="bookingSummary">
             <div style={styles.summaryCard}>
               <h3 style={styles.summaryTitle}>Booking Summary</h3>
               
@@ -803,6 +817,10 @@ const styles = {
     backgroundColor: 'white',
     marginTop: '80px',
     borderBottom: '1px solid rgba(0,0,0,0.1)',
+    '@media (max-width: 768px)': {
+      padding: '1rem 1rem',
+      marginTop: '70px',
+    },
   },
 
   progressContainer: {
@@ -815,6 +833,13 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     position: 'relative',
+    '@media (max-width: 768px)': {
+      flexDirection: 'column',
+      gap: '1rem',
+    },
+    '@media (max-width: 480px)': {
+      gap: '0.75rem',
+    },
   },
 
   progressStep: {
@@ -823,6 +848,13 @@ const styles = {
     alignItems: 'center',
     position: 'relative',
     flex: 1,
+    '@media (max-width: 768px)': {
+      flex: 'none',
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      gap: '1rem',
+    },
   },
 
   stepCircle: {
@@ -835,6 +867,16 @@ const styles = {
     justifyContent: 'center',
     marginBottom: '0.5rem',
     transition: 'all 0.3s ease',
+    '@media (max-width: 768px)': {
+      width: '40px',
+      height: '40px',
+      marginBottom: '0',
+      flexShrink: 0,
+    },
+    '@media (max-width: 480px)': {
+      width: '35px',
+      height: '35px',
+    },
   },
 
   stepCircleActive: {
@@ -850,16 +892,29 @@ const styles = {
 
   stepIcon: {
     fontSize: '20px',
+    '@media (max-width: 768px)': {
+      fontSize: '16px',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '14px',
+    },
   },
 
   stepInfo: {
     textAlign: 'center',
+    '@media (max-width: 768px)': {
+      textAlign: 'left',
+      flex: 1,
+    },
   },
 
   stepNumber: {
     fontSize: '12px',
     color: '#666',
     fontWeight: '500',
+    '@media (max-width: 480px)': {
+      fontSize: '11px',
+    },
   },
 
   stepTitle: {
@@ -867,6 +922,9 @@ const styles = {
     color: '#1A1A1A',
     fontWeight: '600',
     marginTop: '0.25rem',
+    '@media (max-width: 480px)': {
+      fontSize: '13px',
+    },
   },
 
   stepConnector: {
@@ -888,6 +946,9 @@ const styles = {
     maxWidth: '1200px',
     margin: '0 auto',
     padding: '2rem 1.5rem',
+    '@media (max-width: 768px)': {
+      padding: '1rem 1rem',
+    },
   },
 
   bookingGrid: {
@@ -895,6 +956,10 @@ const styles = {
     gridTemplateColumns: '2fr 1fr',
     gap: '3rem',
     alignItems: 'start',
+    '@media (max-width: 968px)': {
+      gridTemplateColumns: '1fr',
+      gap: '2rem',
+    },
   },
 
   // Booking Form
@@ -903,6 +968,14 @@ const styles = {
     borderRadius: '16px',
     padding: '2rem',
     boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+    '@media (max-width: 768px)': {
+      padding: '1.5rem',
+      borderRadius: '12px',
+    },
+    '@media (max-width: 480px)': {
+      padding: '1rem',
+      borderRadius: '8px',
+    },
   },
 
   stepContent: {
@@ -914,6 +987,13 @@ const styles = {
     fontWeight: '600',
     color: '#1A1A1A',
     marginBottom: '1.5rem',
+    '@media (max-width: 768px)': {
+      fontSize: '1.3rem',
+      marginBottom: '1rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1.2rem',
+    },
   },
 
   // Date Selection
@@ -922,6 +1002,10 @@ const styles = {
     gridTemplateColumns: '1fr 1fr',
     gap: '1rem',
     marginBottom: '2rem',
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '0.75rem',
+    },
   },
 
   dateGroup: {
@@ -960,6 +1044,10 @@ const styles = {
     gridTemplateColumns: '1fr 1fr',
     gap: '1rem',
     marginBottom: '2rem',
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '0.75rem',
+    },
   },
 
   guestGroup: {
@@ -994,6 +1082,12 @@ const styles = {
     borderRadius: '12px',
     backgroundColor: 'rgba(212, 175, 55, 0.05)',
     gap: '1rem',
+    '@media (max-width: 768px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      padding: '1rem',
+      gap: '0.75rem',
+    },
   },
 
   selectedRoomImage: {
@@ -1002,6 +1096,10 @@ const styles = {
     objectFit: 'cover',
     borderRadius: '8px',
     flexShrink: 0,
+    '@media (max-width: 768px)': {
+      width: '100%',
+      height: '150px',
+    },
   },
 
   selectedRoomInfo: {
@@ -1074,6 +1172,10 @@ const styles = {
     gridTemplateColumns: '1fr 1fr',
     gap: '1rem',
     marginBottom: '1.5rem',
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '0.75rem',
+    },
   },
 
   formGroup: {
@@ -1241,6 +1343,10 @@ const styles = {
   bookingSummary: {
     position: 'sticky',
     top: '100px',
+    '@media (max-width: 968px)': {
+      position: 'static',
+      order: -1,
+    },
   },
 
   summaryCard: {
@@ -1248,6 +1354,14 @@ const styles = {
     borderRadius: '16px',
     padding: '2rem',
     boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+    '@media (max-width: 768px)': {
+      padding: '1.5rem',
+      borderRadius: '12px',
+    },
+    '@media (max-width: 480px)': {
+      padding: '1rem',
+      borderRadius: '8px',
+    },
   },
 
   summaryTitle: {
