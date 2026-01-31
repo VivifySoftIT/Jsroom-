@@ -1,11 +1,17 @@
-import { db, auth } from '../config/firebaseConfig';
+import { db, auth, storage } from '../config/firebaseConfig';
 import {
     collection,
     getDocs,
     doc,
     updateDoc,
-    setDoc
+    setDoc,
+    addDoc
 } from 'firebase/firestore';
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from 'firebase/storage';
 import defaultRooms from '../data/defaultRooms';
 
 const dataService = {
@@ -19,20 +25,21 @@ const dataService = {
             if (!roomSnapshot.empty) {
                 const roomList = roomSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                // Sort by ID to keep order consistent
-                roomList.sort((a, b) => a.id - b.id);
+                // Sort by ID (handling both number and string types)
+                roomList.sort((a, b) => {
+                    const idA = typeof a.id === 'string' ? parseInt(a.id) || a.id : a.id;
+                    const idB = typeof b.id === 'string' ? parseInt(b.id) || b.id : b.id;
+                    return idA - idB;
+                });
 
                 console.log(`✅ Loaded ${roomList.length} rooms from Firebase`);
                 return roomList;
             } else {
                 console.warn('⚠️ No rooms in Firebase. Using default local data.');
-                // Optional: Seed Firebase with default data one time
-                // await dataService.seedDefaults(); 
                 return defaultRooms;
             }
         } catch (error) {
-            console.error('❌ Firebase connection failed (Keys missing?):', error);
-            console.log('⚠️ Falling back to local default data.');
+            console.error('❌ Firebase connection failed:', error);
             return defaultRooms;
         }
     },
@@ -40,28 +47,21 @@ const dataService = {
     // 💰 UPDATE Price in Firebase
     updateRoomPrice: async (roomId, newPrice) => {
         try {
-            // Find the Firestore Doc ID (assuming ID is stored as field, or we use a query)
-            // Ideally, we should use the document ID. For now, let's query by internal ID if they differ.
-            // If the document ID matches the room ID (e.g. "1", "2"), we can use doc() directly.
-
-            // Implementation assuming document ID matches room.id (passed as string)
             const roomRef = doc(db, 'rooms', roomId.toString());
-
             await updateDoc(roomRef, {
                 price: Number(newPrice)
             });
-
-            console.log(`✅ Price updated for Room ${roomId} in Firebase`);
+            console.log(`✅ Price updated for Room ${roomId}`);
             return true;
         } catch (error) {
-            console.error('❌ Failed to update price in Firebase:', error);
+            console.error('❌ Failed to update price:', error);
             throw error;
         }
     },
 
-    // 🛠️ ONE-TIME Seed Function (Call this once to upload defaults)
+    // 🛠️ ONE-TIME Seed Function
     seedDefaults: async () => {
-        console.log('🌱 Seeding default rooms to Firebase...');
+        console.log('🌱 Seeding default rooms...');
         const roomsCol = collection(db, 'rooms');
         for (const room of defaultRooms) {
             const roomRef = doc(roomsCol, room.id.toString());
@@ -71,7 +71,6 @@ const dataService = {
     },
 
     addBooking: (bookingDetails) => {
-        console.log('Mock DataService: Saving booking', bookingDetails);
         return {
             ...bookingDetails,
             bookingNumber: 'BK' + Date.now(),

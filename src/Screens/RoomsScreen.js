@@ -82,6 +82,23 @@ const RoomsScreen = () => {
     loadRooms();
   }, []);
 
+  // Image carousel navigation
+  const nextImage = () => {
+    if (selectedRoom && selectedRoom.images) {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === selectedRoom.images.length - 1 ? 0 : prevIndex + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedRoom && selectedRoom.images) {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === 0 ? selectedRoom.images.length - 1 : prevIndex - 1
+      );
+    }
+  };
+
   // Filter and transform rooms
   const transformedRooms = rooms;
 
@@ -123,23 +140,6 @@ const RoomsScreen = () => {
 
     return matchesCategory && matchesPrice && matchesSearch;
   });
-
-  // Image carousel navigation
-  const nextImage = () => {
-    if (selectedRoom && selectedRoom.images) {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === selectedRoom.images.length - 1 ? 0 : prevIndex + 1
-      );
-    }
-  };
-
-  const prevImage = () => {
-    if (selectedRoom && selectedRoom.images) {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === 0 ? selectedRoom.images.length - 1 : prevIndex - 1
-      );
-    }
-  };
 
   const handleRoomSelect = (room) => {
     setSelectedRoom(room);
@@ -285,20 +285,6 @@ const RoomsScreen = () => {
           borderBottom: '1px solid #FFEEBA'
         }}>
           <span>🔧 <strong>Admin Mode</strong></span>
-          <button
-            onClick={handleSeedData}
-            style={{
-              marginLeft: '15px',
-              padding: '5px 10px',
-              cursor: 'pointer',
-              backgroundColor: '#856404',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px'
-            }}
-          >
-            ☁️ Upload/Reset Cloud Data
-          </button>
         </div>
       )}
 
@@ -374,14 +360,10 @@ const RoomsScreen = () => {
           <div style={styles.roomsGrid}>
             {filteredRooms.map(room => (
               <div key={room.id} style={styles.roomCard}>
-                {room.popular && (
-                  <div style={styles.popularBadge}>
-                    <FaStar style={styles.starIcon} />
-                    Popular
-                  </div>
-                )}
-
-                <div style={styles.roomImageContainer}>
+                <div
+                  style={styles.roomImageContainer}
+                  onClick={() => handleRoomSelect(room)}
+                >
                   {/* Image Carousel in Room Card */}
                   {room.images && room.images.length > 0 ? (
                     <div style={styles.carouselContainer}>
@@ -404,8 +386,6 @@ const RoomsScreen = () => {
                       style={styles.roomImage}
                     />
                   )}
-
-
 
                   <div style={styles.roomOverlay}>
                     <div style={styles.priceContainer}>
@@ -447,10 +427,8 @@ const RoomsScreen = () => {
                           )}
                         </div>
                       )}
-                      {room.originalPrice && room.originalPrice > room.price && (
-                        <span style={styles.originalPrice}>₹{room.originalPrice}</span>
-                      )}
-                      <span style={styles.perNight}>/night</span>
+
+                      <span style={styles.perNight}>Per Night</span>
                     </div>
                   </div>
                 </div>
@@ -522,214 +500,206 @@ const RoomsScreen = () => {
         </div>
       </section>
 
+
       {/* Room Details Modal with Image Carousel */}
-      {selectedRoom && (
-        <div style={styles.modalOverlay} onClick={() => setSelectedRoom(null)}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <button
-              style={styles.closeBtn}
-              onClick={() => setSelectedRoom(null)}
-            >
-              <FaTimes />
-            </button>
-
-            <div style={styles.modalHeader}>
-              <div style={styles.modalImageContainer}>
-                {/* Image Carousel in Modal */}
-                {selectedRoom.images && selectedRoom.images.length > 0 ? (
-                  <div style={styles.modalCarousel}>
-                    <img
-                      src={selectedRoom.images[currentImageIndex].url}
-                      alt={selectedRoom.images[currentImageIndex].alt || selectedRoom.name}
-                      style={styles.modalImage}
-                    />
-
-                    {/* Navigation arrows */}
-                    {selectedRoom.images.length > 1 && (
-                      <>
-                        <button
-                          style={styles.carouselArrowLeft}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            prevImage();
-                          }}
-                        >
-                          <FaChevronLeft />
-                        </button>
-                        <button
-                          style={styles.carouselArrowRight}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            nextImage();
-                          }}
-                        >
-                          <FaChevronRight />
-                        </button>
-
-                        {/* Image dots indicator */}
-                        <div style={styles.imageDots}>
-                          {selectedRoom.images.map((_, index) => (
-                            <button
-                              key={index}
-                              style={{
-                                ...styles.imageDot,
-                                backgroundColor: index === currentImageIndex ? '#D4AF37' : 'rgba(255,255,255,0.5)'
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setCurrentImageIndex(index);
-                              }}
-                            />
-                          ))}
-                        </div>
-
-                        {/* Image counter */}
-                        <div style={styles.imageCounter}>
-                          {currentImageIndex + 1} / {selectedRoom.images.length}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <img
-                    src={selectedRoom.image}
-                    alt={selectedRoom.name}
-                    style={styles.modalImage}
-                  />
-                )}
-
-                {selectedRoom.popular && (
-                  <div style={styles.modalPopularBadge}>
-                    <FaStar style={styles.starIcon} />
-                    Popular
-                  </div>
-                )}
-              </div>
-
-              <div style={styles.modalInfo}>
-                <h2 style={styles.modalTitle}>{selectedRoom.name}</h2>
-                <div style={styles.modalRating}>
-                  <FaStar style={styles.ratingIcon} />
-                  <span style={styles.ratingValue}>{selectedRoom.rating}</span>
-                  <span style={styles.reviewCount}>({selectedRoom.reviews} reviews)</span>
-                </div>
-                <p style={styles.modalDescription}>{selectedRoom.description}</p>
-
-                <div style={styles.modalSpecs}>
-                  <div style={styles.specItem}>
-                    <FaBed style={styles.specIcon} />
-                    <span>{selectedRoom.beds}</span>
-                  </div>
-                  <div style={styles.specItem}>
-                    <FaUsers style={styles.specIcon} />
-                    <span>Max {selectedRoom.guests} guests</span>
-                  </div>
-                  <div style={styles.specItem}>
-                    <span style={styles.roomSize}>{selectedRoom.size}</span>
-                  </div>
-                  {selectedRoom.acType && (
-                    <div style={styles.specItem}>
-                      <FaSnowflake style={styles.specIcon} />
-                      <span>{selectedRoom.acType}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div style={styles.modalPricing}>
-                  <div style={styles.priceContainer}>
-                    <span style={styles.modalCurrentPrice}>₹{selectedRoom.price}</span>
-                    {selectedRoom.originalPrice && selectedRoom.originalPrice > selectedRoom.price && (
-                      <span style={styles.modalOriginalPrice}>₹{selectedRoom.originalPrice}</span>
-                    )}
-                    <span style={styles.modalPerNight}>/night</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.modalBody}>
-              <div style={styles.amenitiesSection}>
-                <h3 style={styles.sectionTitle}>Room Amenities</h3>
-                <div style={styles.amenitiesGrid}>
-                  {selectedRoom.amenities && selectedRoom.amenities.map((amenity, index) => (
-                    <div key={index} style={styles.amenityItem}>
-                      <FaCheckCircle style={styles.checkIcon} />
-                      <span>{amenity}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={styles.amenitiesSection}>
-                <h3 style={styles.sectionTitle}>Room Features</h3>
-                <div style={styles.amenitiesGrid}>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Daily Housekeeping</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>24/7 Room Service</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Charging Points</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Study Table & Chair</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Wardrobe</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>{selectedRoom.view || 'City View'}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div style={styles.amenitiesSection}>
-                <h3 style={styles.sectionTitle}>Bathroom Facilities</h3>
-                <div style={styles.amenitiesGrid}>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Clean Towels</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Toiletries</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Hot & Cold Water</span>
-                  </div>
-                  <div style={styles.amenityItem}>
-                    <FaCheckCircle style={styles.checkIcon} />
-                    <span>Hair Dryer</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.modalFooter}>
-              <Link
-                to={`/booking?room=${selectedRoom.id}`}
-                style={styles.modalBookBtn}
+      {
+        selectedRoom && (
+          <div className="rooms-modal-overlay" style={styles.modalOverlay} onClick={() => setSelectedRoom(null)}>
+            <div className="rooms-modal-content" style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+              <button
+                style={styles.closeBtn}
                 onClick={() => setSelectedRoom(null)}
               >
-                <FaCalendarAlt style={styles.btnIcon} />
-                Book Now - ₹{selectedRoom.price}/night
-              </Link>
+                <FaTimes />
+              </button>
+
+              <div className="rooms-modal-header" style={styles.modalHeader}>
+                <div style={styles.modalImageContainer}>
+                  {/* Image Carousel in Modal */}
+                  {selectedRoom.images && selectedRoom.images.length > 0 ? (
+                    <div style={styles.modalCarousel}>
+                      <img
+                        src={selectedRoom.images[currentImageIndex].url}
+                        alt={selectedRoom.images[currentImageIndex].alt || selectedRoom.name}
+                        style={styles.modalImage}
+                      />
+
+                      {/* Navigation arrows */}
+                      {selectedRoom.images.length > 1 && (
+                        <>
+                          <button
+                            style={styles.carouselArrowLeft}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              prevImage();
+                            }}
+                          >
+                            <FaChevronLeft />
+                          </button>
+                          <button
+                            style={styles.carouselArrowRight}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              nextImage();
+                            }}
+                          >
+                            <FaChevronRight />
+                          </button>
+
+                          {/* Image dots indicator */}
+                          <div style={styles.imageDots}>
+                            {selectedRoom.images.map((_, index) => (
+                              <button
+                                key={index}
+                                style={{
+                                  ...styles.imageDot,
+                                  backgroundColor: index === currentImageIndex ? '#D4AF37' : 'rgba(255,255,255,0.5)'
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setCurrentImageIndex(index);
+                                }}
+                              />
+                            ))}
+                          </div>
+
+                          {/* Image counter */}
+                          <div style={styles.imageCounter}>
+                            {currentImageIndex + 1} / {selectedRoom.images.length}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <img
+                      src={selectedRoom.image}
+                      alt={selectedRoom.name}
+                      style={styles.modalImage}
+                    />
+                  )}
+
+                </div>
+
+                <div style={styles.modalInfo}>
+                  <h2 style={styles.modalTitle}>{selectedRoom.name}</h2>
+                  <div style={styles.modalRating}>
+                    <FaStar style={styles.ratingIcon} />
+                    <span style={styles.ratingValue}>{selectedRoom.rating}</span>
+                    <span style={styles.reviewCount}>({selectedRoom.reviews} reviews)</span>
+                  </div>
+                  <p style={styles.modalDescription}>{selectedRoom.description}</p>
+
+                  <div style={styles.modalSpecs}>
+                    <div style={styles.specItem}>
+                      <FaBed style={styles.specIcon} />
+                      <span>{selectedRoom.beds}</span>
+                    </div>
+                    <div style={styles.specItem}>
+                      <FaUsers style={styles.specIcon} />
+                      <span>Max {selectedRoom.guests} guests</span>
+                    </div>
+                    <div style={styles.specItem}>
+                      <span style={styles.roomSize}>{selectedRoom.size}</span>
+                    </div>
+                    {selectedRoom.acType && (
+                      <div style={styles.specItem}>
+                        <FaSnowflake style={styles.specIcon} />
+                        <span>{selectedRoom.acType}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={styles.modalPricing}>
+                    <div style={styles.priceContainer}>
+                      <span style={styles.modalCurrentPrice}>₹{selectedRoom.price}</span>
+
+                      <span style={styles.modalPerNight}>Per Night</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rooms-modal-body" style={styles.modalBody}>
+                <div style={styles.amenitiesSection}>
+                  <h3 style={styles.sectionTitle}>Room Amenities</h3>
+                  <div style={styles.amenitiesGrid}>
+                    {selectedRoom.amenities && selectedRoom.amenities.map((amenity, index) => (
+                      <div key={index} style={styles.amenityItem}>
+                        <FaCheckCircle style={styles.checkIcon} />
+                        <span>{amenity}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={styles.amenitiesSection}>
+                  <h3 style={styles.sectionTitle}>Room Features</h3>
+                  <div style={styles.amenitiesGrid}>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>Daily Housekeeping</span>
+                    </div>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>24/7 Room Service</span>
+                    </div>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>Charging Points</span>
+                    </div>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>Study Table & Chair</span>
+                    </div>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>Wardrobe</span>
+                    </div>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>{selectedRoom.view || 'City View'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={styles.amenitiesSection}>
+                  <h3 style={styles.sectionTitle}>Bathroom Facilities</h3>
+                  <div style={styles.amenitiesGrid}>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>Clean Towels</span>
+                    </div>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>Toiletries</span>
+                    </div>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>Hot & Cold Water</span>
+                    </div>
+                    <div style={styles.amenityItem}>
+                      <FaCheckCircle style={styles.checkIcon} />
+                      <span>Hair Dryer</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rooms-modal-footer" style={styles.modalFooter}>
+                <Link
+                  to={`/booking?room=${selectedRoom.id}`}
+                  style={styles.modalBookBtn}
+                  onClick={() => setSelectedRoom(null)}
+                >
+                  <FaCalendarAlt style={styles.btnIcon} />
+                  Book Now - ₹{selectedRoom.price} Per Night
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-
-    </div>
-
-
+        )
+      }
+    </div >
   );
   if (error) {
     return (
@@ -997,6 +967,37 @@ const styles = {
     padding: '3rem 1.5rem',
   },
 
+  // Add Room Form Styles
+  addRoomForm: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  },
+  formGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '1rem',
+  },
+  formGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '5px',
+  },
+  formLabel: {
+    fontSize: '12px',
+    fontWeight: '600',
+    color: '#666',
+    textTransform: 'uppercase',
+  },
+  formInput: {
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    fontSize: '14px',
+    outline: 'none',
+    transition: 'border-color 0.3s ease',
+  },
+
   roomsContainer: {
     maxWidth: '1200px',
     margin: '0 auto',
@@ -1006,11 +1007,6 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: '2rem',
-    gap: '2rem',
-    // Media queries not supported in inline styles
-    // gridTemplateColumns: '1fr', 
-    // gap: '1.5rem',
-    // padding: '0 0.5rem',
   },
 
   roomCard: {
@@ -1022,33 +1018,17 @@ const styles = {
     position: 'relative',
     width: '100%',
     maxWidth: '100%',
-  },
-
-  popularBadge: {
-    position: 'absolute',
-    top: '1rem',
-    left: '1rem',
-    backgroundColor: '#D4AF37',
-    color: '#1A1A1A',
-    padding: '6px 12px',
-    borderRadius: '20px',
-    fontSize: '12px',
-    fontWeight: '600',
     display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-    zIndex: 2,
-  },
-
-  starIcon: {
-    fontSize: '10px',
+    flexDirection: 'column',
   },
 
   roomImageContainer: {
-    height: '200px',
+    height: '250px',
     position: 'relative',
     overflow: 'hidden',
     width: '100%',
+    flexShrink: 0,
+    cursor: 'pointer',
   },
 
   carouselContainer: {
@@ -1076,6 +1056,7 @@ const styles = {
     color: 'white',
     borderRadius: '15px',
     fontSize: '12px',
+    zIndex: 2,
   },
 
   imageCountIcon: {
@@ -1137,9 +1118,6 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   priceSaveBtn: {
@@ -1154,9 +1132,6 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   priceCancelBtn: {
@@ -1168,9 +1143,6 @@ const styles = {
     color: 'white',
     fontSize: '12px',
     transition: 'all 0.3s ease',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1397,11 +1369,15 @@ const styles = {
     maxWidth: '900px',
     width: '100%',
     maxHeight: '90vh',
-    overflow: 'hidden',
+    overflowY: 'auto',
     position: 'relative',
     boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
     display: 'flex',
     flexDirection: 'column',
+    '@media (max-width: 768px)': {
+      width: '100%',
+      maxHeight: '95vh',
+    }
   },
 
   closeBtn: {
@@ -1436,7 +1412,7 @@ const styles = {
     position: 'relative',
     borderRadius: '8px',
     overflow: 'hidden',
-    height: '250px',
+    height: '350px',
     width: '100%',
   },
 
@@ -1469,7 +1445,6 @@ const styles = {
     cursor: 'pointer',
     zIndex: 2,
     transition: 'all 0.3s ease',
-    transition: 'all 0.3s ease',
   },
 
   carouselArrowRight: {
@@ -1488,7 +1463,6 @@ const styles = {
     justifyContent: 'center',
     cursor: 'pointer',
     zIndex: 2,
-    transition: 'all 0.3s ease',
     transition: 'all 0.3s ease',
   },
 
@@ -1603,6 +1577,10 @@ const styles = {
     maxHeight: 'calc(90vh - 350px)',
     scrollbarWidth: 'thin',
     scrollbarColor: '#D4AF37 #F0F0F0',
+    '@media (max-width: 768px)': {
+      maxHeight: 'calc(95vh - 200px)',
+      padding: '0 1rem',
+    }
   },
 
   amenitiesSection: {

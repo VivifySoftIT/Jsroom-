@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
-import { 
-  FaBed, 
-  FaWifi, 
+import {
+  FaBed,
+  FaWifi,
   FaCalendarAlt,
   FaPhone,
   FaEnvelope,
@@ -21,7 +21,7 @@ const doubleRoom = 'https://images.unsplash.com/photo-1566665797739-1674de7a421a
 const mountainView = 'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
 
 function HomeScreen() {
- 
+
   return (
     <div style={styles.container}>
       <Navbar />
@@ -56,7 +56,7 @@ function HomeScreen() {
             <span style={styles.sectionSubtitle}>EXCLUSIVE AMENITIES</span>
             <h2 style={styles.sectionTitle}>Premium Experiences</h2>
           </div>
-          
+
           <div style={styles.featuresGrid}>
             <div style={styles.featureCard}>
               <div style={styles.featureIconContainer}>
@@ -67,7 +67,7 @@ function HomeScreen() {
                 Elegant rooms with premium amenities
               </p>
             </div>
-            
+
             <div style={styles.featureCard}>
               <div style={styles.featureIconContainer}>
                 <FaWifi style={styles.featureIcon} />
@@ -77,7 +77,7 @@ function HomeScreen() {
                 High-speed internet connectivity throughout the property
               </p>
             </div>
-            
+
             <div style={styles.featureCard}>
               <div style={styles.featureIconContainer}>
                 <FaWifi style={styles.featureIcon} />
@@ -96,13 +96,13 @@ function HomeScreen() {
             <span style={styles.sectionSubtitle}>ACCOMMODATIONS</span>
             <h2 style={styles.sectionTitle}>Our Premium Rooms</h2>
           </div>
-          
+
           <div style={styles.roomsGrid}>
             <div style={styles.roomCard}>
               <div style={styles.roomImageContainer}>
                 <img src={doubleRoom} alt="Double Room" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
-                  <span style={styles.roomPrice}>₹499/night</span>
+                  <span style={styles.roomPrice}>₹499 Per Night</span>
                 </div>
               </div>
               <div style={styles.roomContent}>
@@ -127,12 +127,12 @@ function HomeScreen() {
                 </div>
               </div>
             </div>
-            
+
             <div style={styles.roomCard}>
               <div style={styles.roomImageContainer}>
                 <img src={singleRoom} alt="Single Room" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
-                  <span style={styles.roomPrice}>₹299/night</span>
+                  <span style={styles.roomPrice}>₹299 Per Night</span>
                 </div>
               </div>
               <div style={styles.roomContent}>
@@ -158,7 +158,7 @@ function HomeScreen() {
               </div>
             </div>
           </div>
-          
+
           <div style={styles.roomsCta}>
             <Link to="/rooms" style={styles.viewAllBtn}>
               <span>View All Rooms</span>
@@ -176,7 +176,7 @@ function HomeScreen() {
                 Crafting Unforgettable Memories
               </h2>
               <p style={styles.experienceDescription}>
-                At JS ROOMS, luxury is found in the details. Our dedicated team ensures 
+                At JS ROOMS, luxury is found in the details. Our dedicated team ensures
                 every aspect of your stay exceeds expectations with personalized service.
               </p>
               <div style={styles.experienceStats} className="experience-stats">
@@ -229,7 +229,7 @@ function HomeScreen() {
               <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
             </div>
             <p style={styles.footerDescription}>
-              Where elegance meets serenity. Experience premium hospitality 
+              Where elegance meets serenity. Experience premium hospitality
               amidst nature's finest landscapes.
             </p>
             <div style={styles.socialLinks}>
@@ -244,7 +244,7 @@ function HomeScreen() {
               </a>
             </div>
           </div>
-          
+
           <div style={styles.footerColumn}>
             <h4 style={styles.footerTitle}>Quick Links</h4>
             <Link to="/rooms" style={styles.footerLink}>
@@ -260,7 +260,7 @@ function HomeScreen() {
               Gallery
             </Link>
           </div>
-          
+
           <div style={styles.footerColumn}>
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
@@ -277,7 +277,7 @@ function HomeScreen() {
             </div>
           </div>
         </div>
-        
+
         <div style={styles.footerBottom}>
           <p style={styles.copyright}>
             © 2026 JS ROOMS Luxury Lodge. All rights reserved.
@@ -299,53 +299,53 @@ const styles = {
     color: '#1A1A1A',
     overflowX: 'hidden',
   },
-  
+
   mainContent: {
     flex: 1,
   },
-  
-// Then remove ALL marginTop from heroSection:
-heroSection: {
-  height: '90vh',
-  minHeight: '600px',
-  backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.8)), url(${heroBackground})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  display: 'flex',
-  alignItems: 'center',
-  padding: '0 1.5rem', // No margin or padding-top needed
-  '@media (max-width: 768px)': {
-    height: '70vh',
-    minHeight: '500px',
-    padding: '0 1rem',
-  },
-  '@media (max-width: 480px)': {
-    height: '60vh',
-    minHeight: '400px',
-  },
-},
 
-container: {
-  minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
-  backgroundColor: '#FAF9F7',
-  color: '#1A1A1A',
-  overflowX: 'hidden',
-  paddingTop: '80px', // Add padding-top here to push everything down
-},
-  
+  // Then remove ALL marginTop from heroSection:
+  heroSection: {
+    height: '90vh',
+    minHeight: '600px',
+    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.8)), url(${heroBackground})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 1.5rem', // No margin or padding-top needed
+    '@media (max-width: 768px)': {
+      height: '70vh',
+      minHeight: '500px',
+      padding: '0 1rem',
+    },
+    '@media (max-width: 480px)': {
+      height: '60vh',
+      minHeight: '400px',
+    },
+  },
+
+  container: {
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+    backgroundColor: '#FAF9F7',
+    color: '#1A1A1A',
+    overflowX: 'hidden',
+    paddingTop: '80px', // Add padding-top here to push everything down
+  },
+
   heroContent: {
     maxWidth: '1200px',
     margin: '0 auto',
     width: '100%',
   },
-  
+
   heroText: {
     maxWidth: '650px',
   },
-  
+
   heroBadge: {
     display: 'inline-block',
     backgroundColor: 'rgba(212, 175, 55, 0.1)',
@@ -358,7 +358,7 @@ container: {
     color: '#D4AF37',
     border: '1px solid rgba(212, 175, 55, 0.3)',
   },
-  
+
   heroTitle: {
     fontSize: 'clamp(2.5rem, 5vw, 4rem)',
     fontWeight: '700',
@@ -366,7 +366,7 @@ container: {
     marginBottom: '1.5rem',
     color: 'white',
   },
-  
+
   heroSubtitle: {
     fontSize: 'clamp(1rem, 2vw, 1.2rem)',
     opacity: 0.9,
@@ -375,7 +375,7 @@ container: {
     color: 'rgba(255,255,255,0.8)',
     maxWidth: '500px',
   },
-  
+
   heroButtons: {
     display: 'flex',
     gap: '1rem',
@@ -386,7 +386,7 @@ container: {
       gap: '0.75rem',
     },
   },
-  
+
   primaryBtn: {
     padding: '14px 32px',
     background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
@@ -399,7 +399,7 @@ container: {
     fontSize: '15px',
     transition: 'all 0.3s ease',
   },
-  
+
   secondaryBtn: {
     padding: '14px 32px',
     backgroundColor: 'transparent',
@@ -413,7 +413,7 @@ container: {
     cursor: 'pointer',
     fontFamily: 'inherit',
   },
-  
+
   // Features Section
   featuresSection: {
     padding: '3rem 1.5rem',
@@ -422,13 +422,13 @@ container: {
       padding: '2rem 1rem',
     },
   },
-  
+
   sectionHeader: {
     textAlign: 'center',
     maxWidth: '700px',
     margin: '0 auto 3.5rem',
   },
-  
+
   sectionSubtitle: {
     display: 'block',
     fontSize: '13px',
@@ -438,14 +438,14 @@ container: {
     textTransform: 'uppercase',
     marginBottom: '12px',
   },
-  
+
   sectionTitle: {
     fontSize: 'clamp(2rem, 4vw, 2.8rem)',
     fontWeight: '700',
     color: '#0A0A0A',
     lineHeight: '1.2',
   },
-  
+
   featuresGrid: {
     maxWidth: '1200px',
     margin: '0 auto',
@@ -461,7 +461,7 @@ container: {
       gap: '1rem',
     },
   },
-  
+
   featureCard: {
     backgroundColor: 'white',
     padding: '2rem',
@@ -471,7 +471,7 @@ container: {
     border: '1px solid rgba(0,0,0,0.05)',
     boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
   },
-  
+
   featureIconContainer: {
     width: '60px',
     height: '60px',
@@ -482,25 +482,25 @@ container: {
     justifyContent: 'center',
     margin: '0 auto 1.25rem',
   },
-  
+
   featureIcon: {
     fontSize: '1.5rem',
     color: 'white',
   },
-  
+
   featureTitle: {
     fontSize: '1.1rem',
     fontWeight: '600',
     marginBottom: '0.75rem',
     color: '#0A0A0A',
   },
-  
+
   featureDescription: {
     fontSize: '14px',
     color: '#666',
     lineHeight: '1.5',
   },
-  
+
   // Rooms Section
   roomsSection: {
     padding: '3rem 1.5rem',
@@ -509,7 +509,7 @@ container: {
       padding: '2rem 1rem',
     },
   },
-  
+
   roomsGrid: {
     maxWidth: '1200px',
     margin: '0 auto 3rem',
@@ -525,27 +525,27 @@ container: {
       gap: '1rem',
     },
   },
-  
+
   roomCard: {
     backgroundColor: '#FAF9F7',
     borderRadius: '16px',
     overflow: 'hidden',
     transition: 'all 0.3s ease',
   },
-  
+
   roomImageContainer: {
     height: '220px',
     position: 'relative',
     overflow: 'hidden',
   },
-  
+
   roomImage: {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
     transition: 'transform 0.5s ease',
   },
-  
+
   roomOverlay: {
     position: 'absolute',
     bottom: '0',
@@ -554,38 +554,38 @@ container: {
     background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
     padding: '1rem',
   },
-  
+
   roomPrice: {
     fontSize: '1rem',
     fontWeight: '600',
     color: 'white',
   },
-  
+
   roomContent: {
     padding: '1.5rem',
   },
-  
+
   roomTitle: {
     fontSize: '1.2rem',
     fontWeight: '600',
     marginBottom: '0.75rem',
     color: '#0A0A0A',
   },
-  
+
   roomDescription: {
     fontSize: '14px',
     color: '#666',
     lineHeight: '1.5',
     marginBottom: '1rem',
   },
-  
+
   roomFeatures: {
     display: 'flex',
     gap: '0.75rem',
     marginBottom: '1rem',
     flexWrap: 'wrap',
   },
-  
+
   roomFeature: {
     fontSize: '12px',
     color: '#D4AF37',
@@ -594,14 +594,14 @@ container: {
     borderRadius: '10px',
     fontWeight: '500',
   },
-  
+
   roomBenefits: {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.5rem',
     marginTop: '1rem',
   },
-  
+
   benefitItem: {
     display: 'flex',
     alignItems: 'center',
@@ -609,16 +609,16 @@ container: {
     fontSize: '13px',
     color: '#666',
   },
-  
+
   checkIcon: {
     color: '#D4AF37',
     fontSize: '14px',
   },
-  
+
   roomsCta: {
     textAlign: 'center',
   },
-  
+
   viewAllBtn: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -631,7 +631,7 @@ container: {
     fontSize: '15px',
     transition: 'all 0.3s ease',
   },
-  
+
   // Experience Section
   experienceSection: {
     padding: '3rem 1.5rem',
@@ -641,7 +641,7 @@ container: {
       padding: '2rem 1rem',
     },
   },
-  
+
   experienceContent: {
     maxWidth: '1200px',
     margin: '0 auto',
@@ -663,7 +663,7 @@ container: {
       order: 1,
     },
   },
-  
+
   experienceBadge: {
     display: 'block',
     fontSize: '13px',
@@ -673,21 +673,21 @@ container: {
     textTransform: 'uppercase',
     marginBottom: '1rem',
   },
-  
+
   experienceTitle: {
     fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
     fontWeight: '700',
     marginBottom: '1.5rem',
     lineHeight: '1.2',
   },
-  
+
   experienceDescription: {
     fontSize: '15px',
     color: 'rgba(255,255,255,0.7)',
     lineHeight: '1.6',
     marginBottom: '2.5rem',
   },
-  
+
   experienceStats: {
     display: 'grid',
     gridTemplateColumns: 'repeat(4, 1fr)',
@@ -751,7 +751,7 @@ container: {
       hyphens: 'auto',
     },
   },
-  
+
   experienceImage: {
     borderRadius: '16px',
     overflow: 'hidden',
@@ -762,39 +762,39 @@ container: {
       maxWidth: '100%',
     },
   },
-  
+
   experienceImg: {
     width: '100%',
     height: '400px',
     objectFit: 'cover',
   },
-  
+
   // Premium Enquiry Section
   enquirySection: {
     padding: '3rem 1.5rem',
     backgroundColor: '#FAF9F7',
   },
-  
+
   enquiryContainer: {
     maxWidth: '1200px',
     margin: '0 auto',
   },
-  
+
   enquiryGrid: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gap: '4rem',
     alignItems: 'start',
   },
-  
+
   enquiryLeft: {
     paddingRight: '2rem',
   },
-  
+
   enquiryHeader: {
     marginBottom: '3rem',
   },
-  
+
   enquiryBadge: {
     display: 'block',
     fontSize: '13px',
@@ -804,7 +804,7 @@ container: {
     textTransform: 'uppercase',
     marginBottom: '12px',
   },
-  
+
   enquiryTitle: {
     fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
     fontWeight: '700',
@@ -812,19 +812,19 @@ container: {
     color: '#0A0A0A',
     lineHeight: '1.2',
   },
-  
+
   enquirySubtitle: {
     fontSize: '16px',
     color: '#666',
     lineHeight: '1.6',
   },
-  
+
   enquiryBenefits: {
     display: 'flex',
     flexDirection: 'column',
     gap: '1.5rem',
   },
-  
+
   benefitCard: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -835,27 +835,27 @@ container: {
     border: '1px solid rgba(0,0,0,0.05)',
     boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
   },
-  
+
   benefitIcon: {
     fontSize: '1.5rem',
     color: '#D4AF37',
     minWidth: '40px',
     paddingTop: '4px',
   },
-  
+
   benefitTitle: {
     fontSize: '1rem',
     fontWeight: '600',
     marginBottom: '4px',
     color: '#0A0A0A',
   },
-  
+
   benefitText: {
     fontSize: '14px',
     color: '#666',
     lineHeight: '1.5',
   },
-  
+
   enquiryRight: {
     backgroundColor: 'white',
     padding: '2.5rem',
@@ -863,24 +863,24 @@ container: {
     boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
     border: '1px solid rgba(0,0,0,0.05)',
   },
-  
+
   enquiryForm: {
     display: 'flex',
     flexDirection: 'column',
     gap: '1.5rem',
   },
-  
+
   formRow: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gap: '1rem',
   },
-  
+
   formGroup: {
     display: 'flex',
     flexDirection: 'column',
   },
-  
+
   formLabel: {
     fontSize: '14px',
     fontWeight: '600',
@@ -890,13 +890,13 @@ container: {
     alignItems: 'center',
     gap: '8px',
   },
-  
+
   inputIcon: {
     fontSize: '14px',
     color: '#D4AF37',
     opacity: 0.8,
   },
-  
+
   formInput: {
     padding: '14px 16px',
     border: '1px solid #E5E5E5',
@@ -905,7 +905,7 @@ container: {
     backgroundColor: '#FAF9F7',
     transition: 'all 0.3s ease',
   },
-  
+
   formSelect: {
     padding: '14px 16px',
     border: '1px solid #E5E5E5',
@@ -919,7 +919,7 @@ container: {
     backgroundPosition: 'right 16px center',
     backgroundSize: '16px',
   },
-  
+
   formTextarea: {
     padding: '14px 16px',
     border: '1px solid #E5E5E5',
@@ -930,7 +930,7 @@ container: {
     minHeight: '100px',
     fontFamily: 'inherit',
   },
-  
+
   submitBtn: {
     padding: '16px 24px',
     background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
@@ -947,7 +947,7 @@ container: {
     marginTop: '1rem',
     fontFamily: 'inherit',
   },
-  
+
   // CTA Section
   ctaSection: {
     padding: '3rem 1.5rem',
@@ -957,33 +957,33 @@ container: {
     textAlign: 'center',
     color: 'white',
   },
-  
+
   ctaContent: {
     maxWidth: '700px',
     margin: '0 auto',
   },
-  
+
   ctaTitle: {
     fontSize: 'clamp(2rem, 4vw, 2.5rem)',
     fontWeight: '700',
     marginBottom: '1rem',
     lineHeight: '1.2',
   },
-  
+
   ctaText: {
     fontSize: '16px',
     opacity: 0.8,
     marginBottom: '2.5rem',
     lineHeight: '1.6',
   },
-  
+
   ctaButtons: {
     display: 'flex',
     gap: '1rem',
     justifyContent: 'center',
     flexWrap: 'wrap',
   },
-  
+
   ctaPrimaryBtn: {
     padding: '14px 32px',
     background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
@@ -994,7 +994,7 @@ container: {
     fontSize: '15px',
     transition: 'all 0.3s ease',
   },
-  
+
   // Footer
   footer: {
     backgroundColor: '#0A0A0A',
@@ -1004,7 +1004,7 @@ container: {
       padding: '3rem 1rem 1.5rem',
     },
   },
-  
+
   footerMain: {
     maxWidth: '1200px',
     margin: '0 auto',
@@ -1023,16 +1023,16 @@ container: {
       textAlign: 'center',
     },
   },
-  
+
   footerColumn: {
     display: 'flex',
     flexDirection: 'column',
   },
-  
+
   footerLogo: {
     marginBottom: '1.25rem',
   },
-  
+
   footerLogoText: {
     fontSize: '1.4rem',
     fontWeight: '700',
@@ -1042,7 +1042,7 @@ container: {
     backgroundClip: 'text',
     display: 'block',
   },
-  
+
   footerLogoSubtext: {
     fontSize: '12px',
     fontWeight: '600',
@@ -1052,19 +1052,19 @@ container: {
     display: 'block',
     marginTop: '2px',
   },
-  
+
   footerDescription: {
     fontSize: '14px',
     color: '#999',
     lineHeight: '1.6',
     marginBottom: '1.5rem',
   },
-  
+
   socialLinks: {
     display: 'flex',
     gap: '12px',
   },
-  
+
   socialLink: {
     width: '36px',
     height: '36px',
@@ -1078,14 +1078,14 @@ container: {
     fontSize: '14px',
     transition: 'all 0.3s ease',
   },
-  
+
   footerTitle: {
     fontSize: '1rem',
     fontWeight: '600',
     marginBottom: '1.25rem',
     color: 'white',
   },
-  
+
   footerLink: {
     color: '#999',
     textDecoration: 'none',
@@ -1097,7 +1097,7 @@ container: {
     border: 'none',
     cursor: 'pointer',
   },
-  
+
   contactItem: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -1107,13 +1107,13 @@ container: {
     marginBottom: '12px',
     lineHeight: '1.5',
   },
-  
+
   contactIcon: {
     fontSize: '14px',
     opacity: 0.7,
     marginTop: '2px',
   },
-  
+
   footerBottom: {
     maxWidth: '1200px',
     margin: '0 auto',
@@ -1125,26 +1125,26 @@ container: {
     flexWrap: 'wrap',
     gap: '1rem',
   },
-  
+
   copyright: {
     fontSize: '13px',
     color: '#999',
     textAlign: 'center',
     margin: 0,
   },
-  
+
   footerLinks: {
     display: 'flex',
     gap: '1.5rem',
   },
-  
+
   bottomLink: {
     fontSize: '13px',
     color: '#999',
     textDecoration: 'none',
     transition: 'all 0.3s ease',
   },
-  
+
   // Animations
   '@keyframes spin': {
     '0%': { transform: 'rotate(0deg)' },

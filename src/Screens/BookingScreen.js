@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import emailService from '../services/emailService';
 import dataService from '../services/dataService';
 import { getResponsiveStyle, getTouchFriendlyStyle, getMobileInputStyle } from '../utils/mobileUtils';
-import { 
-  FaCalendarAlt, 
+import {
+  FaCalendarAlt,
   FaUsers,
   FaBed,
   FaCheckCircle,
@@ -48,14 +48,31 @@ const BookingScreen = () => {
   const [bookingComplete, setBookingComplete] = useState(false);
   const [completedBooking, setCompletedBooking] = useState(null);
 
-  // Get rooms from data service
-  const rooms = dataService.getRooms();
+  const [rooms, setRooms] = useState([]);
+  const [roomsLoading, setRoomsLoading] = useState(true);
 
-  const selectedRoomData = rooms.find(room => room.id === parseInt(bookingData.selectedRoom)) || rooms[0];
+  // Load rooms from data service
+  useEffect(() => {
+    const fetchRooms = async () => {
+      setRoomsLoading(true);
+      try {
+        const data = await dataService.getRooms();
+        setRooms(data);
+      } catch (err) {
+        console.error("Failed to fetch rooms:", err);
+      } finally {
+        setRoomsLoading(false);
+      }
+    };
+    fetchRooms();
+  }, []);
+
+  const selectedRoomData = rooms.length > 0 ? (rooms.find(room => room.id.toString() === bookingData.selectedRoom.toString()) || rooms[0]) : null;
 
   // Create room display name
   const getRoomDisplayName = (room) => {
-    return `${room.category} ${room.acType === 'ac' ? 'AC' : 'Non-AC'} Room`;
+    if (!room) return 'Room';
+    return `${room.category || ''} ${room.acType === 'ac' ? 'AC' : 'Non-AC'} Room`;
   };
 
   const calculateNights = () => {
@@ -70,12 +87,13 @@ const BookingScreen = () => {
   };
 
   const calculateTotal = () => {
+    if (!selectedRoomData) return { subtotal: 0, taxes: 0, serviceFee: 0, total: 0 };
     const nights = calculateNights();
     const roomTotal = selectedRoomData.price * nights * bookingData.rooms;
     const taxes = roomTotal * 0.12; // 12% tax
     const serviceFee = 50;
     const grandTotal = roomTotal + taxes + serviceFee;
-    
+
     return {
       subtotal: roomTotal,
       taxes: taxes,
@@ -116,7 +134,7 @@ const BookingScreen = () => {
         return;
       }
     }
-    
+
     if (currentStep === 2) {
       const { firstName, lastName, email, phone } = bookingData.guestInfo;
       if (!firstName || !lastName || !email || !phone) {
@@ -128,7 +146,7 @@ const BookingScreen = () => {
         return;
       }
     }
-    
+
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     }
@@ -142,7 +160,7 @@ const BookingScreen = () => {
 
   const handleBookingSubmit = async () => {
     setIsLoading(true);
-    
+
     try {
       // Prepare booking data
       const bookingDetails = {
@@ -167,7 +185,7 @@ const BookingScreen = () => {
 
       // Save booking to localStorage
       const savedBooking = dataService.addBooking(bookingDetails);
-      
+
       // Enhanced logging for debugging
       console.log('=== BOOKING CONFIRMATION ===');
       console.log('Booking saved successfully:', savedBooking);
@@ -181,7 +199,7 @@ const BookingScreen = () => {
         // Temporarily disable window.open and alert to prevent new tab and large alerts
         const originalWindowOpen = window.open;
         const originalAlert = window.alert;
-        
+
         window.open = () => {
           console.log('🚫 Email tab opening prevented during booking confirmation');
           return null;
@@ -215,14 +233,14 @@ const BookingScreen = () => {
 
       } catch (emailError) {
         console.error('Email sending failed:', emailError);
-        
+
         // Still show success - booking is saved (no duplicate alert)
         console.log('Booking saved successfully, email notification failed but booking is confirmed');
       }
 
       setCompletedBooking(savedBooking);
       setBookingComplete(true);
-      
+
     } catch (error) {
       console.error('Booking failed:', error);
       alert('Booking failed. Please try again.');
@@ -249,7 +267,7 @@ const BookingScreen = () => {
             </div>
             <h1 style={styles.successTitle}>Booking Confirmed!</h1>
             <p style={styles.successMessage}>
-              Thank you for choosing JS ROOMS. Your reservation request has been received and 
+              Thank you for choosing JS ROOMS. Your reservation request has been received and
               a confirmation email with bank transfer details has been sent to your email address.
             </p>
             <div style={styles.bookingDetails}>
@@ -284,8 +302,8 @@ const BookingScreen = () => {
               </div>
             </div>
             <div style={styles.successActions}>
-              <button 
-                onClick={() => navigate('/home')} 
+              <button
+                onClick={() => navigate('/home')}
                 style={styles.dashboardBtn}
               >
                 Back to Home
@@ -300,506 +318,520 @@ const BookingScreen = () => {
   return (
     <div style={styles.container}>
       <Navbar />
-      
-      {/* Progress Steps */}
-      <section style={styles.progressSection}>
-        <div style={styles.progressContainer}>
-          <div style={styles.progressSteps} className="progressSteps">
-            {steps.map((step, index) => {
-              const IconComponent = step.icon;
-              return (
-                <div key={step.number} style={styles.progressStep} className="progressStep">
-                  <div style={{
-                    ...styles.stepCircle,
-                    ...(currentStep >= step.number ? styles.stepCircleActive : {}),
-                    ...(currentStep === step.number ? styles.stepCircleCurrent : {})
-                  }} className="stepCircle">
-                    <IconComponent style={styles.stepIcon} className="stepIcon" />
-                  </div>
-                  <div style={styles.stepInfo} className="stepInfo">
-                    <div style={styles.stepNumber} className="stepNumber">Step {step.number}</div>
-                    <div style={styles.stepTitle} className="stepTitle">{step.title}</div>
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div style={{
-                      ...styles.stepConnector,
-                      ...(currentStep > step.number ? styles.stepConnectorActive : {})
-                    }}></div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
-      <div style={styles.bookingContainer}>
-        <div style={styles.bookingGrid} className="bookingGrid">
-          {/* Main Booking Form */}
-          <div style={styles.bookingForm}>
-            {/* Step 1: Select Dates & Guests */}
-            {currentStep === 1 && (
-              <div style={styles.stepContent}>
-                <h2 style={styles.stepTitle}>Select Your Stay Details</h2>
-                
-                {/* Selected Room Display */}
-                <div style={styles.selectedRoomDisplay}>
-                  <h3 style={styles.sectionTitle}>Selected Room</h3>
-                  <div style={styles.selectedRoomCard} className="selectedRoomCard">
-                    <img src={selectedRoomData.images?.[0]?.url || 'https://via.placeholder.com/300x200'} alt={getRoomDisplayName(selectedRoomData)} style={styles.selectedRoomImage} className="selectedRoomImage" />
-                    <div style={styles.selectedRoomInfo}>
-                      <h4 style={styles.selectedRoomName}>{getRoomDisplayName(selectedRoomData)}</h4>
-                      <div style={styles.selectedRoomSpecs}>
-                        <span>{selectedRoomData.size}</span>
-                        <span>Max {selectedRoomData.guests} guests</span>
-                        <span>{selectedRoomData.beds}</span>
+      {roomsLoading ? (
+        <div style={{ padding: '6rem 2rem', textAlign: 'center' }}>
+          <p>Loading booking details...</p>
+        </div>
+      ) : !selectedRoomData ? (
+        <div style={{ padding: '6rem 2rem', textAlign: 'center' }}>
+          <h2>Room Not Found</h2>
+          <p>The room you are looking for is no longer available.</p>
+          <Link to="/rooms" style={{ color: '#D4AF37' }}>Back to Rooms</Link>
+        </div>
+      ) : (
+        <>
+          {/* Progress Steps */}
+          <section className="booking-progress-section" style={styles.progressSection}>
+            <div className="booking-progress-container" style={styles.progressContainer}>
+              <div style={styles.progressSteps} className="booking-progress-steps">
+                {steps.map((step, index) => {
+                  const IconComponent = step.icon;
+                  return (
+                    <div key={step.number} style={styles.progressStep} className="booking-progress-step">
+                      <div style={{
+                        ...styles.stepCircle,
+                        ...(currentStep >= step.number ? styles.stepCircleActive : {}),
+                        ...(currentStep === step.number ? styles.stepCircleCurrent : {})
+                      }} className="booking-step-circle">
+                        <IconComponent style={styles.stepIcon} className="booking-step-icon" />
                       </div>
-                      <div style={styles.selectedRoomPrice}>
-                        <span style={styles.currentPrice}>₹{selectedRoomData.price}</span>
-                        {selectedRoomData.originalPrice > selectedRoomData.price && (
-                          <span style={styles.originalPrice}>₹{selectedRoomData.originalPrice}</span>
-                        )}
-                        <span style={styles.perNight}>/night</span>
+                      <div style={styles.stepInfo} className="booking-step-info">
+                        <div style={styles.stepNumber} className="stepNumber">Step {step.number}</div>
+                        <div style={styles.stepTitle} className="stepTitle">{step.title}</div>
+                      </div>
+                      {index < steps.length - 1 && (
+                        <div style={{
+                          ...styles.stepConnector,
+                          ...(currentStep > step.number ? styles.stepConnectorActive : {})
+                        }}></div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          <div className="booking-booking-container" style={styles.bookingContainer}>
+            <div style={styles.bookingGrid} className="booking-booking-grid">
+              {/* Main Booking Form */}
+              <div style={styles.bookingForm}>
+                {/* Step 1: Select Dates & Guests */}
+                {currentStep === 1 && (
+                  <div style={styles.stepContent}>
+                    <h2 style={styles.stepTitle}>Select Your Stay Details</h2>
+
+                    {/* Selected Room Display */}
+                    <div className="booking-selected-room-display" style={styles.selectedRoomDisplay}>
+                      <h3 style={styles.sectionTitle}>Selected Room</h3>
+                      <div style={styles.selectedRoomCard} className="booking-selected-room-card">
+                        <img src={selectedRoomData.images?.[0]?.url || 'https://via.placeholder.com/300x200'} alt={getRoomDisplayName(selectedRoomData)} style={styles.selectedRoomImage} className="selectedRoomImage" />
+                        <div style={styles.selectedRoomInfo}>
+                          <h4 style={styles.selectedRoomName}>{getRoomDisplayName(selectedRoomData)}</h4>
+                          <div style={styles.selectedRoomSpecs}>
+                            <span>{selectedRoomData.size}</span>
+                            <span>Max {selectedRoomData.guests} guests</span>
+                            <span>{selectedRoomData.beds}</span>
+                          </div>
+                          <div style={styles.selectedRoomPrice}>
+                            <span style={styles.currentPrice}>₹{selectedRoomData.price}</span>
+                            {selectedRoomData.originalPrice > selectedRoomData.price && (
+                              <span style={styles.originalPrice}>₹{selectedRoomData.originalPrice}</span>
+                            )}
+                            <span style={styles.perNight}>Per Night</span>
+                          </div>
+                        </div>
+                        <Link to="/rooms" style={getTouchFriendlyStyle(styles.changeRoomBtn)}>
+                          Change Room
+                        </Link>
                       </div>
                     </div>
-                    <Link to="/rooms" style={getTouchFriendlyStyle(styles.changeRoomBtn)}>
-                      Change Room
-                    </Link>
-                  </div>
-                </div>
-                
-                <div style={styles.dateSelection} className="formGrid">
-                  <div style={styles.dateGroup}>
-                    <label style={styles.label}>Check-in Date</label>
-                    <input
-                      type="date"
-                      value={bookingData.checkIn}
-                      onChange={(e) => handleInputChange(null, 'checkIn', e.target.value)}
-                      style={getMobileInputStyle(styles.dateInput)}
-                      min={new Date().toISOString().split('T')[0]}
-                    />
-                  </div>
-                  <div style={styles.dateGroup}>
-                    <label style={styles.label}>Check-out Date</label>
-                    <input
-                      type="date"
-                      value={bookingData.checkOut}
-                      onChange={(e) => handleInputChange(null, 'checkOut', e.target.value)}
-                      style={getMobileInputStyle(styles.dateInput)}
-                      min={bookingData.checkIn || new Date().toISOString().split('T')[0]}
-                    />
-                  </div>
-                </div>
 
-                <div style={styles.guestSelection} className="formGrid">
-                  <div style={styles.guestGroup}>
-                    <label style={styles.label}>
-                      <FaUsers style={styles.labelIcon} />
-                      Guests
-                    </label>
-                    <select
-                      value={bookingData.guests}
-                      onChange={(e) => handleInputChange(null, 'guests', parseInt(e.target.value))}
-                      style={getMobileInputStyle(styles.selectInput)}
-                    >
-                      {[1,2,3,4,5,6].map(num => (
-                        <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div style={styles.guestGroup}>
-                    <label style={styles.label}>
-                      <FaBed style={styles.labelIcon} />
-                      Rooms
-                    </label>
-                    <select
-                      value={bookingData.rooms}
-                      onChange={(e) => handleInputChange(null, 'rooms', parseInt(e.target.value))}
-                      style={getMobileInputStyle(styles.selectInput)}
-                    >
-                      {[1,2,3,4].map(num => (
-                        <option key={num} value={num}>{num} Room{num > 1 ? 's' : ''}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            )}
+                    <div style={styles.dateSelection} className="booking-form-grid">
+                      <div className="booking-form-group" style={styles.dateGroup}>
+                        <label style={styles.label}>Check-in Date</label>
+                        <input
+                          type="date"
+                          value={bookingData.checkIn}
+                          onChange={(e) => handleInputChange(null, 'checkIn', e.target.value)}
+                          style={getMobileInputStyle(styles.dateInput)}
+                          min={new Date().toISOString().split('T')[0]}
+                        />
+                      </div>
+                      <div className="booking-form-group" style={styles.dateGroup}>
+                        <label style={styles.label}>Check-out Date</label>
+                        <input
+                          type="date"
+                          value={bookingData.checkOut}
+                          onChange={(e) => handleInputChange(null, 'checkOut', e.target.value)}
+                          style={getMobileInputStyle(styles.dateInput)}
+                          min={bookingData.checkIn || new Date().toISOString().split('T')[0]}
+                        />
+                      </div>
+                    </div>
 
-            {/* Step 2: Guest Information */}
-            {currentStep === 2 && (
-              <div style={styles.stepContent}>
-                <h2 style={styles.stepTitle}>Guest Information</h2>
-                
-                <div style={styles.formGrid}>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>First Name</label>
-                    <input
-                      type="text"
-                      value={bookingData.guestInfo.firstName}
-                      onChange={(e) => handleInputChange('guestInfo', 'firstName', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="Enter first name"
-                    />
+                    <div style={styles.guestSelection} className="booking-form-grid">
+                      <div className="booking-form-group" style={styles.guestGroup}>
+                        <label style={styles.label}>
+                          <FaUsers style={styles.labelIcon} />
+                          Guests
+                        </label>
+                        <select
+                          value={bookingData.guests}
+                          onChange={(e) => handleInputChange(null, 'guests', parseInt(e.target.value))}
+                          style={getMobileInputStyle(styles.selectInput)}
+                        >
+                          {[1, 2, 3, 4, 5, 6].map(num => (
+                            <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="booking-form-group" style={styles.guestGroup}>
+                        <label style={styles.label}>
+                          <FaBed style={styles.labelIcon} />
+                          Rooms
+                        </label>
+                        <select
+                          value={bookingData.rooms}
+                          onChange={(e) => handleInputChange(null, 'rooms', parseInt(e.target.value))}
+                          style={getMobileInputStyle(styles.selectInput)}
+                        >
+                          {[1, 2, 3, 4].map(num => (
+                            <option key={num} value={num}>{num} Room{num > 1 ? 's' : ''}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                   </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>Last Name</label>
-                    <input
-                      type="text"
-                      value={bookingData.guestInfo.lastName}
-                      onChange={(e) => handleInputChange('guestInfo', 'lastName', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="Enter last name"
-                    />
-                  </div>
-                    <div style={styles.formGroup}>
-                      <label style={styles.label}>
-                        <FaEnvelope style={styles.labelIcon} />
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        value={bookingData.guestInfo.email}
-                        onChange={(e) => handleInputChange('guestInfo', 'email', e.target.value)}
-                        style={styles.textInput}
-                        placeholder="your.email@example.com"
-                        required
+                )}
+
+                {/* Step 2: Guest Information */}
+                {currentStep === 2 && (
+                  <div className="booking-step-content" style={styles.stepContent}>
+                    <h2 style={styles.stepTitle}>Guest Information</h2>
+
+                    <div style={styles.formGrid} className="booking-form-grid">
+                      <div style={styles.formGroup} className="booking-form-group">
+                        <label style={styles.label}>First Name</label>
+                        <input
+                          type="text"
+                          value={bookingData.guestInfo.firstName}
+                          onChange={(e) => handleInputChange('guestInfo', 'firstName', e.target.value)}
+                          style={styles.textInput}
+                          placeholder="Enter first name"
+                        />
+                      </div>
+                      <div style={styles.formGroup}>
+                        <label style={styles.label}>Last Name</label>
+                        <input
+                          type="text"
+                          value={bookingData.guestInfo.lastName}
+                          onChange={(e) => handleInputChange('guestInfo', 'lastName', e.target.value)}
+                          style={styles.textInput}
+                          placeholder="Enter last name"
+                        />
+                      </div>
+                      <div style={styles.formGroup} className="booking-form-group">
+                        <label style={styles.label}>
+                          <FaEnvelope style={styles.labelIcon} />
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          value={bookingData.guestInfo.email}
+                          onChange={(e) => handleInputChange('guestInfo', 'email', e.target.value)}
+                          style={styles.textInput}
+                          placeholder="your.email@example.com"
+                          required
+                        />
+                      </div>
+                      <div style={styles.formGroup} className="booking-form-group">
+                        <label style={styles.label}>
+                          <FaPhone style={styles.labelIcon} />
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          value={bookingData.guestInfo.phone}
+                          onChange={(e) => handleInputChange('guestInfo', 'phone', e.target.value)}
+                          style={styles.textInput}
+                          placeholder="+91"
+                        />
+                      </div>
+                      <div style={styles.formGroup} className="booking-form-group">
+                        <label style={styles.label}>
+                          <FaMapMarkerAlt style={styles.labelIcon} />
+                          Address
+                        </label>
+                        <input
+                          type="text"
+                          value={bookingData.guestInfo.address}
+                          onChange={(e) => handleInputChange('guestInfo', 'address', e.target.value)}
+                          style={styles.textInput}
+                          placeholder="Street address"
+                        />
+                      </div>
+                      <div style={styles.formGroup} className="booking-form-group">
+                        <label style={styles.label}>City</label>
+                        <input
+                          type="text"
+                          value={bookingData.guestInfo.city}
+                          onChange={(e) => handleInputChange('guestInfo', 'city', e.target.value)}
+                          style={styles.textInput}
+                          placeholder="City"
+                        />
+                      </div>
+                      <div style={styles.formGroup} className="booking-form-group">
+                        <label style={styles.label}>Country</label>
+                        <select
+                          value={bookingData.guestInfo.country}
+                          onChange={(e) => handleInputChange('guestInfo', 'country', e.target.value)}
+                          style={styles.selectInput}
+                        >
+                          <option value="">Select Country</option>
+                          <option value="IN">India</option>
+                          <option value="US">United States</option>
+                          <option value="UK">United Kingdom</option>
+                          <option value="CA">Canada</option>
+                          <option value="AU">Australia</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style={styles.formGroup} className="booking-form-group">
+                      <label style={styles.label}>Special Requests (Optional)</label>
+                      <textarea
+                        value={bookingData.guestInfo.specialRequests}
+                        onChange={(e) => handleInputChange('guestInfo', 'specialRequests', e.target.value)}
+                        style={styles.textareaInput}
+                        placeholder="Any special requests or preferences..."
+                        rows="4"
                       />
                     </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>
-                      <FaPhone style={styles.labelIcon} />
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      value={bookingData.guestInfo.phone}
-                      onChange={(e) => handleInputChange('guestInfo', 'phone', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="+91"
-                    />
                   </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>
-                      <FaMapMarkerAlt style={styles.labelIcon} />
-                      Address
-                    </label>
-                    <input
-                      type="text"
-                      value={bookingData.guestInfo.address}
-                      onChange={(e) => handleInputChange('guestInfo', 'address', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="Street address"
-                    />
-                  </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>City</label>
-                    <input
-                      type="text"
-                      value={bookingData.guestInfo.city}
-                      onChange={(e) => handleInputChange('guestInfo', 'city', e.target.value)}
-                      style={styles.textInput}
-                      placeholder="City"
-                    />
-                  </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.label}>Country</label>
-                    <select
-                      value={bookingData.guestInfo.country}
-                      onChange={(e) => handleInputChange('guestInfo', 'country', e.target.value)}
-                      style={styles.selectInput}
-                    >
-                      <option value="">Select Country</option>
-                      <option value="IN">India</option>
-                      <option value="US">United States</option>
-                      <option value="UK">United Kingdom</option>
-                      <option value="CA">Canada</option>
-                      <option value="AU">Australia</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>Special Requests (Optional)</label>
-                  <textarea
-                    value={bookingData.guestInfo.specialRequests}
-                    onChange={(e) => handleInputChange('guestInfo', 'specialRequests', e.target.value)}
-                    style={styles.textareaInput}
-                    placeholder="Any special requests or preferences..."
-                    rows="4"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Bank Transfer Details */}
-            {currentStep === 3 && (
-              <div style={styles.stepContent}>
-                <h2 style={styles.stepTitle}>Bank Transfer Details</h2>
-                
-                <div style={styles.paymentSecurity}>
-                  <FaShieldAlt style={styles.securityIcon} />
-                  <div>
-                    <h4 style={styles.securityTitle}>Secure Bank Transfer</h4>
-                    <p style={styles.securityText}>Transfer the amount to our bank account to confirm your booking</p>
-                  </div>
-                </div>
-
-
-
-                {/* Bank Details Section */}
-                <div style={styles.bankDetailsSection}>
-                  <h3 style={styles.sectionTitle}>Bank Account Details</h3>
-                  <div style={styles.bankDetailsCard}>
-                    <div style={styles.bankDetailRow}>
-                      <span style={styles.bankDetailLabel}>Bank Name:</span>
-                      <span style={styles.bankDetailValue}>State Bank of India</span>
-                    </div>
-                    <div style={styles.bankDetailRow}>
-                      <span style={styles.bankDetailLabel}>Account Name:</span>
-                      <span style={styles.bankDetailValue}>JS ROOMS LUXURY LODGE</span>
-                    </div>
-                    <div style={styles.bankDetailRow}>
-                      <span style={styles.bankDetailLabel}>Account Number:</span>
-                      <span style={styles.bankDetailValue}>12345678901234</span>
-                    </div>
-                    <div style={styles.bankDetailRow}>
-                      <span style={styles.bankDetailLabel}>IFSC Code:</span>
-                      <span style={styles.bankDetailValue}>SBIN0001234</span>
-                    </div>
-                    <div style={styles.bankDetailRow}>
-                      <span style={styles.bankDetailLabel}>Branch:</span>
-                      <span style={styles.bankDetailValue}>Chennai Main Branch</span>
-                    </div>
-                    <div style={styles.bankDetailRow}>
-                      <span style={styles.bankDetailLabel}>Amount to Transfer:</span>
-                      <span style={styles.bankDetailValueHighlight}>₹{calculateTotal().total.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  <div style={styles.transferInstructions}>
-                    <h4 style={styles.instructionsTitle}>Transfer Instructions:</h4>
-                    <ul style={styles.instructionsList}>
-                      <li>Transfer the exact amount shown above to our bank account</li>
-                      <li>Use your booking reference as the transfer description</li>
-                      <li>Keep the transaction receipt for your records</li>
-                      <li>Your booking will be confirmed once we receive the payment</li>
-                      <li>For any queries, contact us at +91 98765 43210</li>
-                    </ul>
-                  </div>
-
-                  <div style={styles.paymentNote}>
-                    <FaCheckCircle style={styles.noteIcon} />
-                    <div>
-                      <p style={styles.noteText}>
-                        <strong>Important:</strong> Please complete the bank transfer within 24 hours to secure your booking. 
-                        We will send you a confirmation email once the payment is received and verified.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Confirmation */}
-            {currentStep === 4 && (
-              <div style={styles.stepContent}>
-                <h2 style={styles.stepTitle}>Review Your Booking</h2>
-                
-                <div style={styles.confirmationDetails}>
-                  <div style={styles.confirmationSection}>
-                    <h3>Stay Details</h3>
-                    <div style={styles.confirmationRow}>
-                      <span>Check-in:</span>
-                      <strong>{bookingData.checkIn}</strong>
-                    </div>
-                    <div style={styles.confirmationRow}>
-                      <span>Check-out:</span>
-                      <strong>{bookingData.checkOut}</strong>
-                    </div>
-                    <div style={styles.confirmationRow}>
-                      <span>Nights:</span>
-                      <strong>{calculateNights()}</strong>
-                    </div>
-                    <div style={styles.confirmationRow}>
-                      <span>Guests:</span>
-                      <strong>{bookingData.guests}</strong>
-                    </div>
-                    <div style={styles.confirmationRow}>
-                      <span>Rooms:</span>
-                      <strong>{bookingData.rooms}</strong>
-                    </div>
-                  </div>
-
-                  <div style={styles.confirmationSection}>
-                    <h3>Guest Information</h3>
-                    <div style={styles.confirmationRow}>
-                      <span>Name:</span>
-                      <strong>{bookingData.guestInfo.firstName} {bookingData.guestInfo.lastName}</strong>
-                    </div>
-                    <div style={styles.confirmationRow}>
-                      <span>Email:</span>
-                      <strong>{bookingData.guestInfo.email}</strong>
-                    </div>
-                    <div style={styles.confirmationRow}>
-                      <span>Phone:</span>
-                      <strong>{bookingData.guestInfo.phone}</strong>
-                    </div>
-                  </div>
-
-                  <div style={styles.confirmationSection}>
-                    <h3>Payment Details</h3>
-                    <div style={styles.confirmationRow}>
-                      <span>Payment Method:</span>
-                      <strong>Bank Transfer</strong>
-                    </div>
-                    <div style={styles.confirmationRow}>
-                      <span>Amount to Transfer:</span>
-                      <strong>₹{calculateTotal().total.toFixed(2)}</strong>
-                    </div>
-                    <div style={styles.confirmationRow}>
-                      <span>Total Booking Amount:</span>
-                      <strong>₹{calculateTotal().total.toFixed(2)}</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={styles.termsSection}>
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" style={styles.checkbox} required />
-                    <span>I agree to the <Link to="/terms" style={styles.link}>Terms & Conditions</Link> and <Link to="/privacy" style={styles.link}>Privacy Policy</Link></span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* Navigation Buttons */}
-            <div style={styles.navigationButtons}>
-              {currentStep > 1 && (
-                <button onClick={prevStep} style={getTouchFriendlyStyle(styles.prevButton)}>
-                  <FaArrowLeft style={styles.btnIcon} />
-                  Previous
-                </button>
-              )}
-              
-              {currentStep < 4 ? (
-                <button onClick={nextStep} style={getTouchFriendlyStyle(styles.nextButton)}>
-                  Next
-                  <FaArrowRight style={styles.btnIcon} />
-                </button>
-              ) : (
-                <button 
-                  onClick={handleBookingSubmit} 
-                  style={getTouchFriendlyStyle(styles.bookButton)}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Processing...' : 'Confirm Booking'}
-                  {!isLoading && <FaCheckCircle style={styles.btnIcon} />}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Booking Summary Sidebar */}
-          <div style={styles.bookingSummary} className="bookingSummary">
-            <div style={styles.summaryCard}>
-              <h3 style={styles.summaryTitle}>Booking Summary</h3>
-              
-              {selectedRoomData && (
-                <div style={styles.selectedRoom}>
-                  <img src={selectedRoomData.images?.[0]?.url || 'https://via.placeholder.com/300x200'} alt={getRoomDisplayName(selectedRoomData)} style={styles.summaryRoomImage} />
-                  <div style={styles.summaryRoomInfo}>
-                    <h4 style={styles.summaryRoomName}>{getRoomDisplayName(selectedRoomData)}</h4>
-                    <div style={styles.summaryRoomSpecs}>
-                      <span>{selectedRoomData.size}</span>
-                      <span>Max {selectedRoomData.guests} guests</span>
-                    </div>
-                    <div style={styles.summaryRoomPrice}>
-                      ₹{selectedRoomData.price}/night
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div style={styles.summaryDetails}>
-                {bookingData.checkIn && bookingData.checkOut && (
-                  <>
-                    <div style={styles.summaryRow}>
-                      <span>Check-in:</span>
-                      <span>{bookingData.checkIn}</span>
-                    </div>
-                    <div style={styles.summaryRow}>
-                      <span>Check-out:</span>
-                      <span>{bookingData.checkOut}</span>
-                    </div>
-                    <div style={styles.summaryRow}>
-                      <span>Nights:</span>
-                      <span>{calculateNights()}</span>
-                    </div>
-                  </>
                 )}
-                <div style={styles.summaryRow}>
-                  <span>Guests:</span>
-                  <span>{bookingData.guests}</span>
-                </div>
-                <div style={styles.summaryRow}>
-                  <span>Rooms:</span>
-                  <span>{bookingData.rooms}</span>
-                </div>
-              </div>
 
-              <div style={styles.priceBreakdown}>
-                <div style={styles.priceRow}>
-                  <span>Room Total:</span>
-                  <span>₹{calculateTotal().subtotal.toFixed(2)}</span>
-                </div>
-                <div style={styles.priceRow}>
-                  <span>Taxes & Fees:</span>
-                  <span>₹{calculateTotal().taxes.toFixed(2)}</span>
-                </div>
-                <div style={styles.priceRow}>
-                  <span>Service Fee:</span>
-                  <span>₹{calculateTotal().serviceFee.toFixed(2)}</span>
-                </div>
-                <div style={styles.totalRow}>
-                  <span>Total Amount:</span>
-                  <span>₹{calculateTotal().total.toFixed(2)}</span>
-                </div>
-                
-                {/* Transfer Amount Display */}
-                {currentStep >= 3 && (
-                  <>
-                    <div style={styles.paymentSummary}>
-                      <div style={styles.paymentRow}>
-                        <span style={styles.paymentLabel}>Transfer Amount:</span>
-                        <span style={styles.paymentAmountText}>₹{calculateTotal().total.toFixed(2)}</span>
+                {/* Step 3: Bank Transfer Details */}
+                {currentStep === 3 && (
+                  <div style={styles.stepContent}>
+                    <h2 style={styles.stepTitle}>Bank Transfer Details</h2>
+
+                    <div style={styles.paymentSecurity}>
+                      <FaShieldAlt style={styles.securityIcon} />
+                      <div>
+                        <h4 style={styles.securityTitle}>Secure Bank Transfer</h4>
+                        <p style={styles.securityText}>Transfer the amount to our bank account to confirm your booking</p>
                       </div>
                     </div>
-                  </>
+
+
+
+                    {/* Bank Details Section */}
+                    <div className="booking-bank-details" style={styles.bankDetailsSection}>
+                      <h3 style={styles.sectionTitle}>Bank Account Details</h3>
+                      <div style={styles.bankDetailsCard} className="booking-bank-card">
+                        <div style={styles.bankDetailRow}>
+                          <span style={styles.bankDetailLabel}>Bank Name:</span>
+                          <span style={styles.bankDetailValue}>State Bank of India</span>
+                        </div>
+                        <div style={styles.bankDetailRow}>
+                          <span style={styles.bankDetailLabel}>Account Name:</span>
+                          <span style={styles.bankDetailValue}>JS ROOMS LUXURY LODGE</span>
+                        </div>
+                        <div style={styles.bankDetailRow}>
+                          <span style={styles.bankDetailLabel}>Account Number:</span>
+                          <span style={styles.bankDetailValue}>12345678901234</span>
+                        </div>
+                        <div style={styles.bankDetailRow}>
+                          <span style={styles.bankDetailLabel}>IFSC Code:</span>
+                          <span style={styles.bankDetailValue}>SBIN0001234</span>
+                        </div>
+                        <div style={styles.bankDetailRow}>
+                          <span style={styles.bankDetailLabel}>Branch:</span>
+                          <span style={styles.bankDetailValue}>Chennai Main Branch</span>
+                        </div>
+                        <div style={styles.bankDetailRow}>
+                          <span style={styles.bankDetailLabel}>Amount to Transfer:</span>
+                          <span style={styles.bankDetailValueHighlight}>₹{calculateTotal().total.toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <div style={styles.transferInstructions}>
+                        <h4 style={styles.instructionsTitle}>Transfer Instructions:</h4>
+                        <ul style={styles.instructionsList}>
+                          <li>Transfer the exact amount shown above to our bank account</li>
+                          <li>Use your booking reference as the transfer description</li>
+                          <li>Keep the transaction receipt for your records</li>
+                          <li>Your booking will be confirmed once we receive the payment</li>
+                          <li>For any queries, contact us at +91 98765 43210</li>
+                        </ul>
+                      </div>
+
+                      <div style={styles.paymentNote}>
+                        <FaCheckCircle style={styles.noteIcon} />
+                        <div>
+                          <p style={styles.noteText}>
+                            <strong>Important:</strong> Please complete the bank transfer within 24 hours to secure your booking.
+                            We will send you a confirmation email once the payment is received and verified.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
+
+                {/* Step 4: Confirmation */}
+                {currentStep === 4 && (
+                  <div className="booking-step-content" style={styles.stepContent}>
+                    <h2 style={styles.stepTitle}>Review Your Booking</h2>
+
+                    <div className="booking-confirmation-details" style={styles.confirmationDetails}>
+                      <div className="booking-confirmation-section" style={styles.confirmationSection}>
+                        <h3>Stay Details</h3>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Check-in:</span>
+                          <strong>{bookingData.checkIn}</strong>
+                        </div>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Check-out:</span>
+                          <strong>{bookingData.checkOut}</strong>
+                        </div>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Nights:</span>
+                          <strong>{calculateNights()}</strong>
+                        </div>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Guests:</span>
+                          <strong>{bookingData.guests}</strong>
+                        </div>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Rooms:</span>
+                          <strong>{bookingData.rooms}</strong>
+                        </div>
+                      </div>
+
+                      <div className="booking-confirmation-section" style={styles.confirmationSection}>
+                        <h3>Guest Information</h3>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Name:</span>
+                          <strong>{bookingData.guestInfo.firstName} {bookingData.guestInfo.lastName}</strong>
+                        </div>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Email:</span>
+                          <strong>{bookingData.guestInfo.email}</strong>
+                        </div>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Phone:</span>
+                          <strong>{bookingData.guestInfo.phone}</strong>
+                        </div>
+                      </div>
+
+                      <div className="booking-confirmation-section" style={styles.confirmationSection}>
+                        <h3>Payment Details</h3>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Payment Method:</span>
+                          <strong>Bank Transfer</strong>
+                        </div>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Amount to Transfer:</span>
+                          <strong>₹{calculateTotal().total.toFixed(2)}</strong>
+                        </div>
+                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
+                          <span>Total Booking Amount:</span>
+                          <strong>₹{calculateTotal().total.toFixed(2)}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={styles.termsSection}>
+                      <label style={styles.checkboxLabel}>
+                        <input type="checkbox" style={styles.checkbox} required />
+                        <span>I agree to the <Link to="/terms" style={styles.link}>Terms & Conditions</Link> and <Link to="/privacy" style={styles.link}>Privacy Policy</Link></span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                {/* Navigation Buttons */}
+                <div style={styles.navigationButtons}>
+                  {currentStep > 1 && (
+                    <button onClick={prevStep} style={getTouchFriendlyStyle(styles.prevButton)}>
+                      <FaArrowLeft style={styles.btnIcon} />
+                      Previous
+                    </button>
+                  )}
+
+                  {currentStep < 4 ? (
+                    <button onClick={nextStep} style={getTouchFriendlyStyle(styles.nextButton)}>
+                      Next
+                      <FaArrowRight style={styles.btnIcon} />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleBookingSubmit}
+                      style={getTouchFriendlyStyle(styles.bookButton)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Processing...' : 'Confirm Booking'}
+                      {!isLoading && <FaCheckCircle style={styles.btnIcon} />}
+                    </button>
+                  )}
+                </div>
               </div>
 
-              <div style={styles.summaryFeatures}>
-                <h4>Included:</h4>
-                <div style={styles.featuresList}>
-                  <div style={styles.featureItem}>
-                    <FaCheckCircle style={styles.featureIcon} />
-                    <span>Free WiFi</span>
+              {/* Booking Summary Sidebar */}
+              <div style={styles.bookingSummary} className="booking-summary-sidebar">
+                <div style={styles.summaryCard} className="booking-summary-card">
+                  <h3 style={styles.summaryTitle}>Booking Summary</h3>
+
+                  {selectedRoomData && (
+                    <div style={styles.selectedRoom}>
+                      <img src={selectedRoomData.images?.[0]?.url || 'https://via.placeholder.com/300x200'} alt={getRoomDisplayName(selectedRoomData)} style={styles.summaryRoomImage} />
+                      <div style={styles.summaryRoomInfo}>
+                        <h4 style={styles.summaryRoomName}>{getRoomDisplayName(selectedRoomData)}</h4>
+                        <div style={styles.summaryRoomSpecs}>
+                          <span>{selectedRoomData.size}</span>
+                          <span>Max {selectedRoomData.guests} guests</span>
+                        </div>
+                        <div style={styles.summaryRoomPrice}>
+                          ₹{selectedRoomData.price} Per Night
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={styles.summaryDetails}>
+                    {bookingData.checkIn && bookingData.checkOut && (
+                      <>
+                        <div className="booking-summary-row" style={styles.summaryRow}>
+                          <span>Check-in:</span>
+                          <span>{bookingData.checkIn}</span>
+                        </div>
+                        <div className="booking-summary-row" style={styles.summaryRow}>
+                          <span>Check-out:</span>
+                          <span>{bookingData.checkOut}</span>
+                        </div>
+                        <div className="booking-summary-row" style={styles.summaryRow}>
+                          <span>Nights:</span>
+                          <span>{calculateNights()}</span>
+                        </div>
+                      </>
+                    )}
+                    <div className="booking-summary-row" style={styles.summaryRow}>
+                      <span>Guests:</span>
+                      <span>{bookingData.guests}</span>
+                    </div>
+                    <div className="booking-summary-row" style={styles.summaryRow}>
+                      <span>Rooms:</span>
+                      <span>{bookingData.rooms}</span>
+                    </div>
                   </div>
-                  <div style={styles.featureItem}>
-                    <FaCheckCircle style={styles.featureIcon} />
-                    <span>Free Cancellation</span>
+
+                  <div style={styles.priceBreakdown}>
+                    <div className="booking-price-row" style={styles.priceRow}>
+                      <span>Room Total:</span>
+                      <span>₹{calculateTotal().subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="booking-price-row" style={styles.priceRow}>
+                      <span>Taxes & Fees:</span>
+                      <span>₹{calculateTotal().taxes.toFixed(2)}</span>
+                    </div>
+                    <div className="booking-price-row" style={styles.priceRow}>
+                      <span>Service Fee:</span>
+                      <span>₹{calculateTotal().serviceFee.toFixed(2)}</span>
+                    </div>
+                    <div className="booking-price-row booking-total-row" style={styles.totalRow}>
+                      <span>Total Amount:</span>
+                      <span>₹{calculateTotal().total.toFixed(2)}</span>
+                    </div>
+
+                    {/* Transfer Amount Display */}
+                    {currentStep >= 3 && (
+                      <>
+                        <div className="booking-payment-summary" style={styles.paymentSummary}>
+                          <div className="booking-payment-row" style={styles.paymentRow}>
+                            <span style={styles.paymentLabel}>Transfer Amount:</span>
+                            <span style={styles.paymentAmountText}>₹{calculateTotal().total.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <div style={styles.featureItem}>
-                    <FaCheckCircle style={styles.featureIcon} />
-                    <span>24/7 Concierge</span>
+
+                  <div className="booking-summary-features" style={styles.summaryFeatures}>
+                    <h4>Included:</h4>
+                    <div className="booking-features-list" style={styles.featuresList}>
+                      <div style={styles.featureItem}>
+                        <FaCheckCircle style={styles.featureIcon} />
+                        <span>Free WiFi</span>
+                      </div>
+                      <div style={styles.featureItem}>
+                        <FaCheckCircle style={styles.featureIcon} />
+                        <span>Free Cancellation</span>
+                      </div>
+                      <div style={styles.featureItem}>
+                        <FaCheckCircle style={styles.featureIcon} />
+                        <span>24/7 Concierge</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
@@ -817,10 +849,6 @@ const styles = {
     backgroundColor: 'white',
     marginTop: '80px',
     borderBottom: '1px solid rgba(0,0,0,0.1)',
-    '@media (max-width: 768px)': {
-      padding: '1rem 1rem',
-      marginTop: '70px',
-    },
   },
 
   progressContainer: {
@@ -833,13 +861,6 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     position: 'relative',
-    '@media (max-width: 768px)': {
-      flexDirection: 'column',
-      gap: '1rem',
-    },
-    '@media (max-width: 480px)': {
-      gap: '0.75rem',
-    },
   },
 
   progressStep: {
@@ -848,13 +869,6 @@ const styles = {
     alignItems: 'center',
     position: 'relative',
     flex: 1,
-    '@media (max-width: 768px)': {
-      flex: 'none',
-      width: '100%',
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      gap: '1rem',
-    },
   },
 
   stepCircle: {
@@ -867,16 +881,6 @@ const styles = {
     justifyContent: 'center',
     marginBottom: '0.5rem',
     transition: 'all 0.3s ease',
-    '@media (max-width: 768px)': {
-      width: '40px',
-      height: '40px',
-      marginBottom: '0',
-      flexShrink: 0,
-    },
-    '@media (max-width: 480px)': {
-      width: '35px',
-      height: '35px',
-    },
   },
 
   stepCircleActive: {
@@ -892,29 +896,16 @@ const styles = {
 
   stepIcon: {
     fontSize: '20px',
-    '@media (max-width: 768px)': {
-      fontSize: '16px',
-    },
-    '@media (max-width: 480px)': {
-      fontSize: '14px',
-    },
   },
 
   stepInfo: {
     textAlign: 'center',
-    '@media (max-width: 768px)': {
-      textAlign: 'left',
-      flex: 1,
-    },
   },
 
   stepNumber: {
     fontSize: '12px',
     color: '#666',
     fontWeight: '500',
-    '@media (max-width: 480px)': {
-      fontSize: '11px',
-    },
   },
 
   stepTitle: {
@@ -922,9 +913,6 @@ const styles = {
     color: '#1A1A1A',
     fontWeight: '600',
     marginTop: '0.25rem',
-    '@media (max-width: 480px)': {
-      fontSize: '13px',
-    },
   },
 
   stepConnector: {
@@ -946,9 +934,6 @@ const styles = {
     maxWidth: '1200px',
     margin: '0 auto',
     padding: '2rem 1.5rem',
-    '@media (max-width: 768px)': {
-      padding: '1rem 1rem',
-    },
   },
 
   bookingGrid: {
@@ -956,10 +941,6 @@ const styles = {
     gridTemplateColumns: '2fr 1fr',
     gap: '3rem',
     alignItems: 'start',
-    '@media (max-width: 968px)': {
-      gridTemplateColumns: '1fr',
-      gap: '2rem',
-    },
   },
 
   // Booking Form
