@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import room1Image from '../Assets/room1.jpg';
+import room2Image from '../Assets/room2.jpg';
+import room3Image from '../Assets/room3.jpg';
 import {
   FaBed,
   FaWifi,
@@ -13,12 +16,6 @@ import {
   FaFacebookF,
   FaCheckCircle
 } from 'react-icons/fa';
-
-// Import images
-const heroBackground = 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80';
-const singleRoom = 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
-const doubleRoom = 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
-const mountainView = 'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80';
 
 function HomeScreen() {
 
@@ -100,7 +97,7 @@ function HomeScreen() {
           <div style={styles.roomsGrid}>
             <div style={styles.roomCard}>
               <div style={styles.roomImageContainer}>
-                <img src={doubleRoom} alt="Double Room" style={styles.roomImage} />
+                <img src={room2Image} alt="Double Room" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
                   <span style={styles.roomPrice}>₹499 Per Night</span>
                 </div>
@@ -130,7 +127,7 @@ function HomeScreen() {
 
             <div style={styles.roomCard}>
               <div style={styles.roomImageContainer}>
-                <img src={singleRoom} alt="Single Room" style={styles.roomImage} />
+                <img src={room1Image} alt="Single Room" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
                   <span style={styles.roomPrice}>₹299 Per Night</span>
                 </div>
@@ -199,7 +196,7 @@ function HomeScreen() {
               </div>
             </div>
             <div style={styles.experienceImage} className="experience-image">
-              <img src={mountainView} alt="Mountain View" style={styles.experienceImg} />
+              <img src={room3Image} alt="Luxury Experience" style={styles.experienceImg} />
             </div>
           </div>
         </section>
@@ -304,36 +301,28 @@ const styles = {
     flex: 1,
   },
 
-  // Then remove ALL marginTop from heroSection:
+  // Hero Section
   heroSection: {
     height: '90vh',
     minHeight: '600px',
-    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.8)), url(${heroBackground})`,
+    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.8)), url(${room1Image})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     display: 'flex',
     alignItems: 'center',
-    padding: '0 1.5rem', // No margin or padding-top needed
+    padding: '0 1.5rem',
+    marginTop: '80px', // Add margin-top to account for fixed navbar
     '@media (max-width: 768px)': {
       height: '70vh',
       minHeight: '500px',
       padding: '0 1rem',
+      marginTop: '80px',
     },
     '@media (max-width: 480px)': {
       height: '60vh',
       minHeight: '400px',
+      marginTop: '80px',
     },
-  },
-
-  container: {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
-    backgroundColor: '#FAF9F7',
-    color: '#1A1A1A',
-    overflowX: 'hidden',
-    paddingTop: '80px', // Add padding-top here to push everything down
   },
 
   heroContent: {
@@ -951,7 +940,7 @@ const styles = {
   // CTA Section
   ctaSection: {
     padding: '3rem 1.5rem',
-    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)), url(${mountainView})`,
+    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)), url(${room2Image})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     textAlign: 'center',

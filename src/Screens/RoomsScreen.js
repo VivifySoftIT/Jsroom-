@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import defaultRooms from '../data/defaultRooms';
-import dataService from '../services/dataService';
-
-import API_CONFIG from '../config/apiConfig';
+import room2Image from '../Assets/room2.jpg';
 import {
   FaBed,
   FaWifi,
@@ -31,7 +29,12 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaEdit,
-  FaSave
+  FaSave,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaInstagram,
+  FaTwitter,
+  FaFacebookF
 } from 'react-icons/fa';
 
 const RoomsScreen = () => {
@@ -57,20 +60,19 @@ const RoomsScreen = () => {
   };
 
   // Main function to load rooms
-
-
-  // ... (imports remain same)
-
-  // Main function to load rooms
-  const loadRooms = async () => {
+  const loadRooms = () => {
     setLoading(true);
     try {
-      console.log('📦 Loading rooms...');
-      const fetchedRooms = await dataService.getRooms();
-      setRooms(fetchedRooms);
+      console.log('📦 Loading default rooms and updating localStorage...');
+      
+      // Clear any old cached data and use fresh default rooms (3 rooms only)
+      localStorage.removeItem('rooms'); // Clear old data
+      setRooms(defaultRooms);
+      localStorage.setItem('rooms', JSON.stringify(defaultRooms));
+      console.log('✅ Loaded 3 default rooms and updated localStorage');
     } catch (err) {
       console.error("Error loading rooms:", err);
-      // dataService handles fallback, but double check
+      // Fallback to default rooms
       setRooms(defaultRooms);
     } finally {
       setLoading(false);
@@ -153,20 +155,7 @@ const RoomsScreen = () => {
     setNewPrice(currentPrice.toString());
   };
 
-  const handleSeedData = async () => {
-    if (window.confirm("This will overwrite Cloud data with Local defaults. Continue?")) {
-      try {
-        await dataService.seedDefaults();
-        alert("✅ Data uploaded to Firebase successfully!");
-        loadRooms(); // Reload to fetch from cloud
-      } catch (err) {
-        console.error("Seeding failed:", err);
-        alert("Failed to upload data. Check console/keys.");
-      }
-    }
-  };
-
-  const handlePriceSave = async (e, roomId) => {
+  const handlePriceSave = (e, roomId) => {
     if (e) e.stopPropagation();
     const price = parseFloat(newPrice);
     if (isNaN(price) || price <= 0) {
@@ -177,13 +166,14 @@ const RoomsScreen = () => {
     try {
       console.log(`🔄 Updating room (ID: ${roomId}) price to ₹${price}...`);
 
-      await dataService.updateRoomPrice(roomId, price);
-
-      // Optimistic update locally
+      // Update rooms in state
       const updatedRooms = rooms.map(room =>
         room.id === roomId ? { ...room, price: price } : room
       );
       setRooms(updatedRooms);
+
+      // Save to localStorage
+      localStorage.setItem('rooms', JSON.stringify(updatedRooms));
 
       alert(`✅ Updated price to ₹${price}`);
 
@@ -191,7 +181,7 @@ const RoomsScreen = () => {
       setNewPrice('');
     } catch (error) {
       console.error('❌ Error updating room price:', error);
-      alert('Failed to update price (Check console/Firebase keys)');
+      alert('Failed to update price');
     }
   };
 
@@ -202,48 +192,6 @@ const RoomsScreen = () => {
   };
 
 
-
-  // Error state
-  if (error) {
-    return (
-      <div style={styles.container}>
-        <Navbar />
-        <div style={styles.errorContainer}>
-          <h2 style={styles.errorTitle}>API Connection Error</h2>
-          <p style={styles.errorText}>{error}</p>
-
-          <div style={styles.solutionBox}>
-            <h3 style={styles.solutionTitle}>Possible Solutions:</h3>
-            <ul style={styles.solutionList}>
-              <li>1. Enable CORS on the backend server</li>
-              <li>2. Deploy React app to same domain as API</li>
-              <li>3. Use a CORS proxy in development</li>
-              <li>4. Run frontend on https://localhost</li>
-            </ul>
-          </div>
-
-          <div style={styles.buttonGroup}>
-            <button
-              onClick={loadRooms}
-              style={styles.retryBtn}
-            >
-              Retry Connection
-            </button>
-            <button
-              onClick={() => {
-                window.open('https://jsrooms.in/api/Rooms/Test', '_blank');
-              }}
-              style={styles.testBtn}
-            >
-              Test API in Browser
-            </button>
-          </div>
-
-          <p style={styles.fallbackText}>Using fallback room data for now.</p>
-        </div>
-      </div>
-    );
-  }
 
   // Loading state
   if (loading) {
@@ -706,26 +654,73 @@ const RoomsScreen = () => {
           </div>
         )
       }
+
+      {/* Footer */}
+      <footer style={styles.footer}>
+        <div style={styles.footerMain}>
+          <div style={styles.footerColumn}>
+            <div style={styles.footerLogo}>
+              <span style={styles.footerLogoText}>JS ROOMS</span>
+              <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
+            </div>
+            <p style={styles.footerDescription}>
+              Where elegance meets serenity. Experience premium hospitality
+              amidst nature's finest landscapes.
+            </p>
+            <div style={styles.socialLinks}>
+              <a href="#" style={styles.socialLink}>
+                <FaInstagram />
+              </a>
+              <a href="#" style={styles.socialLink}>
+                <FaTwitter />
+              </a>
+              <a href="#" style={styles.socialLink}>
+                <FaFacebookF />
+              </a>
+            </div>
+          </div>
+
+          <div style={styles.footerColumn}>
+            <h4 style={styles.footerTitle}>Quick Links</h4>
+            <Link to="/rooms" style={styles.footerLink}>
+              Rooms
+            </Link>
+            <Link to="/gallery" style={styles.footerLink}>
+              Gallery
+            </Link>
+            <Link to="/about" style={styles.footerLink}>
+              About Us
+            </Link>
+            <Link to="/contact" style={styles.footerLink}>
+              Contact
+            </Link>
+          </div>
+
+          <div style={styles.footerColumn}>
+            <h4 style={styles.footerTitle}>Contact</h4>
+            <div style={styles.contactItem}>
+              <FaMapMarkerAlt style={styles.contactIcon} />
+              <span>123 Luxury Lane, Mountain View, CA 94040</span>
+            </div>
+            <div style={styles.contactItem}>
+              <FaPhone style={styles.contactIcon} />
+              <span>+918947382799</span>
+            </div>
+            <div style={styles.contactItem}>
+              <FaEnvelope style={styles.contactIcon} />
+              <span>info@jsrooms.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={styles.footerBottom}>
+          <p style={styles.copyright}>
+            © 2026 JS ROOMS Luxury Lodge. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div >
   );
-  if (error) {
-    return (
-      <div style={styles.container}>
-        <Navbar />
-        <div style={styles.errorContainer}>
-          <h2 style={styles.errorTitle}>Connection Error</h2>
-          <p style={styles.errorText}>{error}</p>
-          <button
-            onClick={loadRooms}
-            style={styles.retryBtn}
-          >
-            Retry Connection
-          </button>
-          <p style={styles.fallbackText}>Using fallback room data for now.</p>
-        </div>
-      </div>
-    );
-  }
 
 };
 
@@ -816,7 +811,7 @@ const styles = {
   heroSection: {
     height: '60vh',
     minHeight: '400px',
-    backgroundImage: 'linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.8)), url(https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)',
+    backgroundImage: `linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.8)), url(${room2Image})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     display: 'flex',
@@ -1646,6 +1641,144 @@ const styles = {
     gap: '6px',
     transition: 'all 0.3s ease',
     transition: 'all 0.3s ease',
+  },
+
+  // Footer
+  footer: {
+    backgroundColor: '#0A0A0A',
+    color: 'white',
+    padding: '4rem 1.5rem 2rem',
+    '@media (max-width: 768px)': {
+      padding: '3rem 1rem 1.5rem',
+    },
+  },
+
+  footerMain: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '3rem',
+    marginBottom: '3rem',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '2rem',
+      marginBottom: '2rem',
+    },
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '1.5rem',
+      textAlign: 'center',
+    },
+  },
+
+  footerColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  footerLogo: {
+    marginBottom: '1.25rem',
+  },
+
+  footerLogoText: {
+    fontSize: '1.4rem',
+    fontWeight: '700',
+    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    display: 'block',
+  },
+
+  footerLogoSubtext: {
+    fontSize: '12px',
+    fontWeight: '600',
+    color: '#D4AF37',
+    letterSpacing: '2px',
+    textTransform: 'uppercase',
+    display: 'block',
+    marginTop: '2px',
+  },
+
+  footerDescription: {
+    fontSize: '14px',
+    color: '#999',
+    lineHeight: '1.6',
+    marginBottom: '1.5rem',
+  },
+
+  socialLinks: {
+    display: 'flex',
+    gap: '12px',
+  },
+
+  socialLink: {
+    width: '36px',
+    height: '36px',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white',
+    textDecoration: 'none',
+    fontSize: '14px',
+    transition: 'all 0.3s ease',
+  },
+
+  footerTitle: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    marginBottom: '1.25rem',
+    color: 'white',
+  },
+
+  footerLink: {
+    color: '#999',
+    textDecoration: 'none',
+    fontSize: '14px',
+    marginBottom: '10px',
+    transition: 'all 0.3s ease',
+    textAlign: 'left',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+
+  contactItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '10px',
+    fontSize: '14px',
+    color: '#999',
+    marginBottom: '12px',
+    lineHeight: '1.5',
+  },
+
+  contactIcon: {
+    fontSize: '14px',
+    opacity: 0.7,
+    marginTop: '2px',
+  },
+
+  footerBottom: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    paddingTop: '2rem',
+    borderTop: '1px solid rgba(255,255,255,0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '1rem',
+  },
+
+  copyright: {
+    fontSize: '13px',
+    color: '#999',
+    textAlign: 'center',
+    margin: 0,
   },
 };
 

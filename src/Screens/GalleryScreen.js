@@ -1,83 +1,76 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import room1Image from '../Assets/room1.jpg';
+import room2Image from '../Assets/room2.jpg';
+import room3Image from '../Assets/room3.jpg';
 import { 
   FaImages, 
   FaExpand,
   FaTimes,
   FaChevronLeft,
   FaChevronRight,
-  FaPlay,
   FaCalendarAlt,
   FaArrowRight,
   FaFilter,
-  FaSearch
+  FaSearch,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaInstagram,
+  FaTwitter,
+  FaFacebookF
 } from 'react-icons/fa';
 
-// Gallery images from Unsplash
+// Gallery images using local images
 const galleryImages = [
   {
     id: 1,
-    url: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    url: room2Image,
     category: 'rooms',
     title: 'Double AC Room',
     description: 'Spacious double bedroom with city views',
     featured: true
   },
   {
-    id: 3,
-    url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'amenities',
-    title: 'Fitness Center',
-    description: 'State-of-the-art gym facilities',
-    featured: false
-  },{
-    id: 4,
-    url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'rooms',
-    title: 'Triple AC Room',
-    description: 'Spacious triple bedroom with modern amenities',
-    featured: false
-  },
-  {
-    id: 5,
-    url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'rooms',
-    title: 'Single Non-AC Room',
-    description: 'Comfortable single bedroom with natural ventilation',
-    featured: false
-  },
-  {
-    id: 6,
-    url: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'rooms',
-    title: 'Double Non-AC Room',
-    description: 'Cozy double bedroom with ceiling fans',
-    featured: false
-  },
-  {
-    id: 7,
-    url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    category: 'rooms',
-    title: 'Triple Non-AC Room',
-    description: 'Affordable triple bedroom accommodation',
-    featured: false
-  },
-  {
-    id: 8,
-    url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    id: 2,
+    url: room1Image,
     category: 'rooms',
     title: 'Single AC Room',
     description: 'Modern single bedroom with air conditioning',
     featured: false
   },
   {
-    id: 10,
-    url: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+    id: 3,
+    url: room3Image,
+    category: 'rooms',
+    title: 'Triple AC Room',
+    description: 'Spacious triple bedroom with modern amenities',
+    featured: true
+  },
+  {
+    id: 4,
+    url: room1Image,
+    category: 'amenities',
+    title: 'Premium Amenities',
+    description: 'State-of-the-art facilities and services',
+    featured: false
+  },
+  {
+    id: 5,
+    url: room2Image,
     category: 'exterior',
     title: 'Hotel Exterior',
     description: 'Stunning architectural design',
     featured: true
+  },
+  {
+    id: 6,
+    url: room3Image,
+    category: 'amenities',
+    title: 'Luxury Facilities',
+    description: 'Premium comfort and modern conveniences',
+    featured: false
   }
 ];
 
@@ -281,50 +274,6 @@ const GalleryScreen = () => {
         </div>
       )}
 
-      {/* Virtual Tour CTA */}
-      <section style={styles.virtualTourSection}>
-        <div style={styles.virtualTourContent}>
-          <div style={styles.tourInfo}>
-            <span style={styles.tourBadge}>VIRTUAL EXPERIENCE</span>
-            <h2 style={styles.tourTitle}>Take a Virtual Tour</h2>
-            <p style={styles.tourDescription}>
-              Experience JS ROOMS from the comfort of your home with our immersive 360° virtual tour. 
-              Explore our rooms, amenities, and facilities in stunning detail.
-            </p>
-            <div style={styles.tourFeatures}>
-              <div style={styles.tourFeature}>
-                <FaPlay style={styles.tourIcon} />
-                <span>360° Room Views</span>
-              </div>
-              <div style={styles.tourFeature}>
-                <FaImages style={styles.tourIcon} />
-                <span>Interactive Gallery</span>
-              </div>
-              <div style={styles.tourFeature}>
-                <FaExpand style={styles.tourIcon} />
-                <span>Full Screen Experience</span>
-              </div>
-            </div>
-            <button style={styles.tourBtn}>
-              <FaPlay style={styles.btnIcon} />
-              Start Virtual Tour
-            </button>
-          </div>
-          <div style={styles.tourPreview}>
-            <div style={styles.tourVideoContainer}>
-              <img 
-                src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80" 
-                alt="Virtual Tour Preview" 
-                style={styles.tourPreviewImage}
-              />
-              <div style={styles.playOverlay}>
-                <FaPlay style={styles.playIcon} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section style={styles.ctaSection}>
         <div style={styles.ctaContent}>
@@ -344,6 +293,71 @@ const GalleryScreen = () => {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer style={styles.footer}>
+        <div style={styles.footerMain}>
+          <div style={styles.footerColumn}>
+            <div style={styles.footerLogo}>
+              <span style={styles.footerLogoText}>JS ROOMS</span>
+              <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
+            </div>
+            <p style={styles.footerDescription}>
+              Where elegance meets serenity. Experience premium hospitality
+              amidst nature's finest landscapes.
+            </p>
+            <div style={styles.socialLinks}>
+              <a href="#" style={styles.socialLink}>
+                <FaInstagram />
+              </a>
+              <a href="#" style={styles.socialLink}>
+                <FaTwitter />
+              </a>
+              <a href="#" style={styles.socialLink}>
+                <FaFacebookF />
+              </a>
+            </div>
+          </div>
+
+          <div style={styles.footerColumn}>
+            <h4 style={styles.footerTitle}>Quick Links</h4>
+            <Link to="/rooms" style={styles.footerLink}>
+              Rooms
+            </Link>
+            <Link to="/gallery" style={styles.footerLink}>
+              Gallery
+            </Link>
+            <Link to="/about" style={styles.footerLink}>
+              About Us
+            </Link>
+            <Link to="/contact" style={styles.footerLink}>
+              Contact
+            </Link>
+          </div>
+
+          <div style={styles.footerColumn}>
+            <h4 style={styles.footerTitle}>Contact</h4>
+            <div style={styles.contactItem}>
+              <FaMapMarkerAlt style={styles.contactIcon} />
+              <span>123 Luxury Lane, Mountain View, CA 94040</span>
+            </div>
+            <div style={styles.contactItem}>
+              <FaPhone style={styles.contactIcon} />
+              <span>+918947382799</span>
+            </div>
+            <div style={styles.contactItem}>
+              <FaEnvelope style={styles.contactIcon} />
+              <span>info@jsrooms.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={styles.footerBottom}>
+          <p style={styles.copyright}>
+            © 2026 JS ROOMS Luxury Lodge. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
@@ -358,7 +372,7 @@ const styles = {
 heroSection: {
   height: '60vh',
   minHeight: '400px',
-  backgroundImage: 'linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.8)), url(https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)',
+  backgroundImage: `linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.8)), url(${room3Image})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   display: 'flex',
@@ -969,8 +983,11 @@ heroSection: {
   // CTA Section
   ctaSection: {
     padding: '4rem 1.5rem',
-    backgroundColor: '#FAF9F7',
+    backgroundImage: `linear-gradient(rgba(26, 26, 26, 0.8), rgba(26, 26, 26, 0.8)), url(${room1Image})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
     textAlign: 'center',
+    color: 'white',
   },
 
   ctaContent: {
@@ -981,13 +998,13 @@ heroSection: {
   ctaTitle: {
     fontSize: '2rem',
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: 'white',
     marginBottom: '1rem',
   },
 
   ctaText: {
     fontSize: '1.1rem',
-    color: '#666',
+    color: 'rgba(255,255,255,0.8)',
     marginBottom: '2rem',
     lineHeight: '1.6',
   },
@@ -1030,6 +1047,144 @@ heroSection: {
 
   btnIcon: {
     fontSize: '14px',
+  },
+
+  // Footer
+  footer: {
+    backgroundColor: '#0A0A0A',
+    color: 'white',
+    padding: '4rem 1.5rem 2rem',
+    '@media (max-width: 768px)': {
+      padding: '3rem 1rem 1.5rem',
+    },
+  },
+
+  footerMain: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '3rem',
+    marginBottom: '3rem',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '2rem',
+      marginBottom: '2rem',
+    },
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '1.5rem',
+      textAlign: 'center',
+    },
+  },
+
+  footerColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  footerLogo: {
+    marginBottom: '1.25rem',
+  },
+
+  footerLogoText: {
+    fontSize: '1.4rem',
+    fontWeight: '700',
+    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    display: 'block',
+  },
+
+  footerLogoSubtext: {
+    fontSize: '12px',
+    fontWeight: '600',
+    color: '#D4AF37',
+    letterSpacing: '2px',
+    textTransform: 'uppercase',
+    display: 'block',
+    marginTop: '2px',
+  },
+
+  footerDescription: {
+    fontSize: '14px',
+    color: '#999',
+    lineHeight: '1.6',
+    marginBottom: '1.5rem',
+  },
+
+  socialLinks: {
+    display: 'flex',
+    gap: '12px',
+  },
+
+  socialLink: {
+    width: '36px',
+    height: '36px',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white',
+    textDecoration: 'none',
+    fontSize: '14px',
+    transition: 'all 0.3s ease',
+  },
+
+  footerTitle: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    marginBottom: '1.25rem',
+    color: 'white',
+  },
+
+  footerLink: {
+    color: '#999',
+    textDecoration: 'none',
+    fontSize: '14px',
+    marginBottom: '10px',
+    transition: 'all 0.3s ease',
+    textAlign: 'left',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+
+  contactItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '10px',
+    fontSize: '14px',
+    color: '#999',
+    marginBottom: '12px',
+    lineHeight: '1.5',
+  },
+
+  contactIcon: {
+    fontSize: '14px',
+    opacity: 0.7,
+    marginTop: '2px',
+  },
+
+  footerBottom: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    paddingTop: '2rem',
+    borderTop: '1px solid rgba(255,255,255,0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '1rem',
+  },
+
+  copyright: {
+    fontSize: '13px',
+    color: '#999',
+    textAlign: 'center',
+    margin: 0,
   },
 };
 

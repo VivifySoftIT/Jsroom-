@@ -1,4 +1,9 @@
-// Default Rooms Data - Hard-coded rooms for the website
+// Import local images
+import room1Image from '../Assets/room1.jpg';
+import room2Image from '../Assets/room2.jpg';
+import room3Image from '../Assets/room3.jpg';
+
+// Default Rooms Data - Hard-coded rooms for the website (Only 3 rooms)
 export const defaultRooms = [
   {
     id: 1,
@@ -7,12 +12,12 @@ export const defaultRooms = [
     roomNumber: 'S101',
     images: [
       { 
-        url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80', 
+        url: room1Image, 
         alt: 'Single AC Room',
         isPrimary: true 
       }
     ],
-    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    image: room1Image,
     beds: '1 Single Bed',
     rating: 4.5,
     reviews: 23,
@@ -34,12 +39,12 @@ export const defaultRooms = [
     roomNumber: 'D201',
     images: [
       { 
-        url: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80', 
+        url: room2Image, 
         alt: 'Double AC Room',
         isPrimary: true 
       }
     ],
-    image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    image: room2Image,
     beds: '1 Double Bed',
     rating: 4.7,
     reviews: 45,
@@ -61,12 +66,12 @@ export const defaultRooms = [
     roomNumber: 'T301',
     images: [
       { 
-        url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80', 
+        url: room3Image, 
         alt: 'Triple AC Room',
         isPrimary: true 
       }
     ],
-    image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
+    image: room3Image,
     beds: '1 Double Bed + 1 Single Bed',
     rating: 4.6,
     reviews: 32,
@@ -78,60 +83,6 @@ export const defaultRooms = [
     originalPrice: 749,
     popular: false,
     acType: 'ac',
-    view: 'Garden View',
-    status: 'Available'
-  },
-  {
-    id: 4,
-    name: 'Single Non-AC Room',
-    category: 'single',
-    roomNumber: 'S102',
-    images: [
-      { 
-        url: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80', 
-        alt: 'Single Non-AC Room',
-        isPrimary: true 
-      }
-    ],
-    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    beds: '1 Single Bed',
-    rating: 4.2,
-    reviews: 18,
-    amenities: ['Free WiFi', 'Fan', 'TV', 'Room Service'],
-    guests: 2,
-    size: '20 m²',
-    description: 'Budget-friendly single room with essential amenities.',
-    price: 199, // This can be edited through the website
-    originalPrice: 249,
-    popular: false,
-    acType: 'non-ac',
-    view: 'City View',
-    status: 'Available'
-  },
-  {
-    id: 5,
-    name: 'Double Non-AC Room',
-    category: 'double',
-    roomNumber: 'D202',
-    images: [
-      { 
-        url: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80', 
-        alt: 'Double Non-AC Room',
-        isPrimary: true 
-      }
-    ],
-    image: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-    beds: '1 Double Bed',
-    rating: 4.3,
-    reviews: 27,
-    amenities: ['Free WiFi', 'Fan', 'TV', 'Room Service'],
-    guests: 3,
-    size: '30 m²',
-    description: 'Comfortable double room with natural ventilation and good amenities.',
-    price: 349, // This can be edited through the website
-    originalPrice: 399,
-    popular: false,
-    acType: 'non-ac',
     view: 'Garden View',
     status: 'Available'
   }

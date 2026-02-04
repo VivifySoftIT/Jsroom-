@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import room1Image from '../Assets/room1.jpg';
+import room2Image from '../Assets/room2.jpg';
+import room3Image from '../Assets/room3.jpg';
 import { 
   FaStar, 
   FaUsers,
@@ -9,15 +12,14 @@ import {
   FaShieldAlt,
   FaCalendarAlt,
   FaArrowRight,
-  FaQuoteLeft
+  FaQuoteLeft,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaInstagram,
+  FaTwitter,
+  FaFacebookF
 } from 'react-icons/fa';
-
-// Company images from Unsplash
-const aboutImages = {
-  hero: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-  story: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80',
-  sustainability: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1067&q=80'
-};
 
 const AboutScreen = () => {
   const stats = [
@@ -131,7 +133,7 @@ const AboutScreen = () => {
               </p>
             </div>
             <div style={styles.storyImage}>
-              <img src={aboutImages.story} alt="Our Story" style={styles.storyImg} />
+              <img src={room2Image} alt="Our Story" style={styles.storyImg} />
             </div>
           </div>
         </div>
@@ -214,6 +216,71 @@ const AboutScreen = () => {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer style={styles.footer}>
+        <div style={styles.footerMain}>
+          <div style={styles.footerColumn}>
+            <div style={styles.footerLogo}>
+              <span style={styles.footerLogoText}>JS ROOMS</span>
+              <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
+            </div>
+            <p style={styles.footerDescription}>
+              Where elegance meets serenity. Experience premium hospitality
+              amidst nature's finest landscapes.
+            </p>
+            <div style={styles.socialLinks}>
+              <a href="#" style={styles.socialLink}>
+                <FaInstagram />
+              </a>
+              <a href="#" style={styles.socialLink}>
+                <FaTwitter />
+              </a>
+              <a href="#" style={styles.socialLink}>
+                <FaFacebookF />
+              </a>
+            </div>
+          </div>
+
+          <div style={styles.footerColumn}>
+            <h4 style={styles.footerTitle}>Quick Links</h4>
+            <Link to="/rooms" style={styles.footerLink}>
+              Rooms
+            </Link>
+            <Link to="/gallery" style={styles.footerLink}>
+              Gallery
+            </Link>
+            <Link to="/about" style={styles.footerLink}>
+              About Us
+            </Link>
+            <Link to="/contact" style={styles.footerLink}>
+              Contact
+            </Link>
+          </div>
+
+          <div style={styles.footerColumn}>
+            <h4 style={styles.footerTitle}>Contact</h4>
+            <div style={styles.contactItem}>
+              <FaMapMarkerAlt style={styles.contactIcon} />
+              <span>123 Luxury Lane, Mountain View, CA 94040</span>
+            </div>
+            <div style={styles.contactItem}>
+              <FaPhone style={styles.contactIcon} />
+              <span>+918947382799</span>
+            </div>
+            <div style={styles.contactItem}>
+              <FaEnvelope style={styles.contactIcon} />
+              <span>info@jsrooms.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={styles.footerBottom}>
+          <p style={styles.copyright}>
+            © 2026 JS ROOMS Luxury Lodge. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
@@ -229,7 +296,7 @@ const styles = {
   heroSection: {
     height: '70vh',
     minHeight: '500px',
-    backgroundImage: `linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.8)), url(${aboutImages.hero})`,
+    backgroundImage: `linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.8)), url(${room1Image})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     display: 'flex',
@@ -826,6 +893,144 @@ const styles = {
 
   btnIcon: {
     fontSize: '14px',
+  },
+
+  // Footer
+  footer: {
+    backgroundColor: '#0A0A0A',
+    color: 'white',
+    padding: '4rem 1.5rem 2rem',
+    '@media (max-width: 768px)': {
+      padding: '3rem 1rem 1.5rem',
+    },
+  },
+
+  footerMain: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '3rem',
+    marginBottom: '3rem',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '2rem',
+      marginBottom: '2rem',
+    },
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '1.5rem',
+      textAlign: 'center',
+    },
+  },
+
+  footerColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  footerLogo: {
+    marginBottom: '1.25rem',
+  },
+
+  footerLogoText: {
+    fontSize: '1.4rem',
+    fontWeight: '700',
+    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    display: 'block',
+  },
+
+  footerLogoSubtext: {
+    fontSize: '12px',
+    fontWeight: '600',
+    color: '#D4AF37',
+    letterSpacing: '2px',
+    textTransform: 'uppercase',
+    display: 'block',
+    marginTop: '2px',
+  },
+
+  footerDescription: {
+    fontSize: '14px',
+    color: '#999',
+    lineHeight: '1.6',
+    marginBottom: '1.5rem',
+  },
+
+  socialLinks: {
+    display: 'flex',
+    gap: '12px',
+  },
+
+  socialLink: {
+    width: '36px',
+    height: '36px',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white',
+    textDecoration: 'none',
+    fontSize: '14px',
+    transition: 'all 0.3s ease',
+  },
+
+  footerTitle: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    marginBottom: '1.25rem',
+    color: 'white',
+  },
+
+  footerLink: {
+    color: '#999',
+    textDecoration: 'none',
+    fontSize: '14px',
+    marginBottom: '10px',
+    transition: 'all 0.3s ease',
+    textAlign: 'left',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+
+  contactItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '10px',
+    fontSize: '14px',
+    color: '#999',
+    marginBottom: '12px',
+    lineHeight: '1.5',
+  },
+
+  contactIcon: {
+    fontSize: '14px',
+    opacity: 0.7,
+    marginTop: '2px',
+  },
+
+  footerBottom: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    paddingTop: '2rem',
+    borderTop: '1px solid rgba(255,255,255,0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '1rem',
+  },
+
+  copyright: {
+    fontSize: '13px',
+    color: '#999',
+    textAlign: 'center',
+    margin: 0,
   },
 };
 
