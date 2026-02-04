@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import useScrollToTop from './Hooks/useScrollToTop'; 
 import HomeScreen from "./Screens/HomeScreen";
@@ -22,14 +22,14 @@ function App() {
   return (
     <div className="main-content">
       <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="/" element={<HomeScreen />} />
         <Route path="/home" element={<HomeScreen />} />
         <Route path="/rooms" element={<RoomsScreen />} />
         <Route path="/gallery" element={<GalleryScreen />} />
         <Route path="/about" element={<AboutScreen />} />
         <Route path="/contact" element={<ContactScreen />} />
         <Route path="/booking" element={<BookingScreen />} />
-        <Route path="*" element={<Navigate to="/home" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
   );

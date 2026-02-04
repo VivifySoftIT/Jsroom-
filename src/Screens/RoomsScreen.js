@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import defaultRooms from '../data/defaultRooms';
+import dataService from '../services/dataService';
+import room1Image from '../Assets/room1.jpg';
 import room2Image from '../Assets/room2.jpg';
+import room3Image from '../Assets/room3.jpg';
 import {
   FaBed,
   FaWifi,
@@ -59,20 +62,34 @@ const RoomsScreen = () => {
     return 'single';
   };
 
-  // Main function to load rooms
-  const loadRooms = () => {
+  // Main function to load rooms from Firebase
+  const loadRooms = async () => {
     setLoading(true);
     try {
-      console.log('📦 Loading default rooms and updating localStorage...');
+      console.log('🔥 Loading rooms from Firebase...');
       
-      // Clear any old cached data and use fresh default rooms (3 rooms only)
-      localStorage.removeItem('rooms'); // Clear old data
-      setRooms(defaultRooms);
-      localStorage.setItem('rooms', JSON.stringify(defaultRooms));
-      console.log('✅ Loaded 3 default rooms and updated localStorage');
+      // Load rooms from Firebase using dataService
+      const firebaseRooms = await dataService.getRooms();
+      
+      // Add local images to the rooms
+      const roomsWithImages = firebaseRooms.map(room => ({
+        ...room,
+        image: room.id === 1 ? room1Image : room.id === 2 ? room2Image : room3Image,
+        images: [
+          { 
+            url: room.id === 1 ? room1Image : room.id === 2 ? room2Image : room3Image, 
+            alt: room.name,
+            isPrimary: true 
+          }
+        ]
+      }));
+      
+      setRooms(roomsWithImages);
+      console.log('✅ Loaded rooms from Firebase:', roomsWithImages.length);
+      
     } catch (err) {
-      console.error("Error loading rooms:", err);
-      // Fallback to default rooms
+      console.error("Error loading rooms from Firebase:", err);
+      console.log('📦 Using default rooms as fallback...');
       setRooms(defaultRooms);
     } finally {
       setLoading(false);
@@ -155,7 +172,7 @@ const RoomsScreen = () => {
     setNewPrice(currentPrice.toString());
   };
 
-  const handlePriceSave = (e, roomId) => {
+  const handlePriceSave = async (e, roomId) => {
     if (e) e.stopPropagation();
     const price = parseFloat(newPrice);
     if (isNaN(price) || price <= 0) {
@@ -164,24 +181,32 @@ const RoomsScreen = () => {
     }
 
     try {
-      console.log(`🔄 Updating room (ID: ${roomId}) price to ₹${price}...`);
+      console.log(`🔄 Updating room (ID: ${roomId}) price to ₹${price} in Firebase...`);
 
-      // Update rooms in state
+      // Update price in Firebase
+      await dataService.updateRoomPrice(roomId, price);
+
+      // Update rooms in state immediately (optimistic update)
       const updatedRooms = rooms.map(room =>
         room.id === roomId ? { ...room, price: price } : room
       );
       setRooms(updatedRooms);
 
-      // Save to localStorage
-      localStorage.setItem('rooms', JSON.stringify(updatedRooms));
+      // Simple success message
+      alert(`✅ Price updated to ₹${price}`);
 
-      alert(`✅ Updated price to ₹${price}`);
-
+      // Clear editing state
       setEditingPrice(null);
       setNewPrice('');
+
+      console.log('✅ Price updated successfully in Firebase');
+
     } catch (error) {
-      console.error('❌ Error updating room price:', error);
-      alert('Failed to update price');
+      console.error('❌ Error updating room price in Firebase:', error);
+      alert('Failed to update price. Please check your internet connection.');
+      
+      // Reload rooms from Firebase to get the current state
+      loadRooms();
     }
   };
 
@@ -235,7 +260,7 @@ const RoomsScreen = () => {
           marginTop: '80px',
           borderBottom: '1px solid #FFEEBA'
         }}>
-          <span>🔧 <strong>Admin Mode</strong></span>
+          <span>🔥 <strong>Firebase Mode</strong> - Real-time price updates for all users</span>
         </div>
       )}
 
