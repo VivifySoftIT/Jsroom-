@@ -147,7 +147,8 @@ const RoomsScreen = () => {
   };
 
   // Price editing function
-  const handlePriceEdit = (roomId, currentPrice) => {
+  const handlePriceEdit = (e, roomId, currentPrice) => {
+    if (e) e.stopPropagation();
     setEditingPrice(roomId);
     setNewPrice(currentPrice.toString());
   };
@@ -165,7 +166,8 @@ const RoomsScreen = () => {
     }
   };
 
-  const handlePriceSave = async (roomId) => {
+  const handlePriceSave = async (e, roomId) => {
+    if (e) e.stopPropagation();
     const price = parseFloat(newPrice);
     if (isNaN(price) || price <= 0) {
       alert('Please enter a valid price');
@@ -193,7 +195,8 @@ const RoomsScreen = () => {
     }
   };
 
-  const handlePriceCancel = () => {
+  const handlePriceCancel = (e) => {
+    if (e) e.stopPropagation();
     setEditingPrice(null);
     setNewPrice('');
   };
@@ -390,24 +393,28 @@ const RoomsScreen = () => {
                   <div style={styles.roomOverlay}>
                     <div style={styles.priceContainer}>
                       {editingPrice === room.id ? (
-                        <div style={styles.priceEditContainer}>
+                        <div
+                          style={styles.priceEditContainer}
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <input
                             type="number"
                             value={newPrice}
                             onChange={(e) => setNewPrice(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
                             style={styles.priceInput}
                             placeholder="Enter price"
                             min="0"
                             step="1"
                           />
                           <button
-                            onClick={() => handlePriceSave(room.id)}
+                            onClick={(e) => handlePriceSave(e, room.id)}
                             style={styles.priceSaveBtn}
                           >
                             <FaSave />
                           </button>
                           <button
-                            onClick={handlePriceCancel}
+                            onClick={(e) => handlePriceCancel(e)}
                             style={styles.priceCancelBtn}
                           >
                             <FaTimes />
@@ -418,7 +425,7 @@ const RoomsScreen = () => {
                           <span style={styles.currentPrice}>₹{room.price}</span>
                           {isAdmin && (
                             <button
-                              onClick={() => handlePriceEdit(room.id, room.price)}
+                              onClick={(e) => handlePriceEdit(e, room.id, room.price)}
                               style={styles.priceEditBtn}
                               title="Edit price"
                             >
