@@ -2,31 +2,28 @@ const emailService = {
     sendBookingConfirmation: async (details) => {
         try {
             // Reverting to FormSubmit.co for the blue-header table layout
-            const response = await fetch('https://formsubmit.co/ajax/atchayakannan03@gmail.com', {
+            const response = await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    _subject: `New Booking Request: ${details.bookingNumber}`,
-                    _template: "table",
-                    _captcha: "false",
-                    "Booking_Number": details.bookingNumber,
-                    "Customer_Name": details.guestName,
-                    "Customer_Email": details.guestEmail,
-                    "Customer_Phone": details.guestPhone,
-                    "Customer_Address": details.guestAddress,
-                    "Room_Type": details.roomName,
-                    "Room_Number": details.roomNumber,
-                    "Check_In": details.checkIn,
-                    "Check_Out": details.checkOut,
-                    "Nights": details.nights,
-                    "Guests": details.guests,
-                    "Total_Amount": `₹${details.amount}`,
-                    "Payment_Method": details.paymentMethod,
-                    "Special_Requests": details.specialRequests,
-                    "Submitted_At": new Date().toLocaleString()
+                    access_key: "6828e5a3-4a2c-4f63-83e1-ae68229de047",
+                    subject: `BOOKING REFERENCE: ${details.bookingNumber}`,
+                    _from_name: "JSROOMS Website",
+                    _cc: "jsroomsarni@gmail.com",
+                    "━━━━━━━━━━━━━━━": "🔹",
+                    "CUSTOMER_NAME": details.guestName,
+                    "CUSTOMER_EMAIL": details.guestEmail,
+                    "CUSTOMER_PHONE": details.guestPhone,
+                    "ROOM_TYPE": details.roomName,
+                    "STAY_PERIOD": `${details.checkIn} to ${details.checkOut}`,
+                    "NUMBER_OF_NIGHTS": details.nights,
+                    "TOTAL_AMOUNT": `₹${details.amount}`,
+                    "SPECIAL_REQUESTS": details.specialRequests || "None",
+                    "━━━━━━━━━━━━━━━": "✅",
+                    "SUBMITTED_AT": new Date().toLocaleString()
                 })
             });
 

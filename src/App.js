@@ -10,6 +10,7 @@ import BookingScreen from "./Screens/BookingScreen";
 import { initResponsive } from './utils/mobileUtils';
 import './responsive.css';
 
+
 function App() {
   useScrollToTop();
   

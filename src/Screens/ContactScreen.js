@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import contactEmailService from '../services/contactEmailService';
-import room3Image from '../Assets/room3.jpg';
 import { 
   FaPhone, 
   FaEnvelope,
   FaMapMarkerAlt,
-  FaClock,
   FaFacebookF,
   FaTwitter,
   FaInstagram,
@@ -20,6 +18,8 @@ import {
   FaHeadset,
   FaQuestionCircle
 } from 'react-icons/fa';
+
+const room3Image = '/assets/IMG_1423.jpg';
 
 const ContactScreen = () => {
   const [formData, setFormData] = useState({
@@ -87,27 +87,22 @@ const ContactScreen = () => {
     {
       icon: FaPhone,
       title: 'Phone',
-      details: ['+91 894 738 2799', '+91 894 738 2800'],
-      description: 'Available 24/7 for reservations and assistance'
+      details: ['+91 93604 15495', '+91 99523 59955'],
+      description: 'Expert reservations and guest assistance'
     },
     {
       icon: FaEnvelope,
       title: 'Email',
-      details: ['info@jsrooms.com', 'reservations@jsrooms.com'],
-      description: 'We respond within 2 hours during business hours'
+      details: ['jsroomsarni@gmail.com'],
+      description: 'We respond to all inquiries promptly'
     },
     {
       icon: FaMapMarkerAlt,
       title: 'Address',
-      details: ['123 Anna Salai', 'Chennai, Tamil Nadu 600002', 'India'],
-      description: 'Located in the heart of Chennai'
+      details: ['2043, S.M. Road', 'Arni to Cheyyar Road', 'Pudhupettai, S.V. Nagaram'],
+      description: 'Located on Arni to Cheyyar Road, Pudhupettai'
     },
-    {
-      icon: FaClock,
-      title: 'Business Hours',
-      details: ['Mon - Sun: 24/7', 'Front Desk: Always Open', 'Concierge: 6 AM - 11 PM'],
-      description: 'Our team is here whenever you need us'
-    }
+
   ];
 
   const inquiryTypes = [
@@ -119,16 +114,14 @@ const ContactScreen = () => {
   const departments = [
     {
       name: 'Reservations',
-      phone: '+91 894 738 2799',
-      email: 'reservations@jsrooms.com',
-      hours: '24/7',
+      phone: '+91 93604 15495',
+      email: 'jsroomsarni@gmail.com',
       description: 'Book your stay or modify existing reservations'
     },
     {
       name: 'Guest Services',
-      phone: '+91 894 738 2800',
-      email: 'guestservices@jsrooms.com',
-      hours: '6 AM - 11 PM',
+      phone: '+91 99523 59955',
+      email: 'jsroomsarni@gmail.com',
       description: 'Assistance during your stay and special requests'
     }
   ];
@@ -320,10 +313,7 @@ const ContactScreen = () => {
                         <FaEnvelope style={styles.methodIcon} />
                         <span>{dept.email}</span>
                       </div>
-                      <div style={styles.contactMethod}>
-                        <FaClock style={styles.methodIcon} />
-                        <span>{dept.hours}</span>
-                      </div>
+
                     </div>
                   </div>
                 ))}
@@ -335,41 +325,7 @@ const ContactScreen = () => {
         </div>
       </section>
 
-      {/* Map Section */}
-      <section style={styles.mapSection}>
-        <div style={styles.mapContainer}>
-          <div style={styles.mapContent}>
-            <div style={styles.mapInfo}>
-              <h3 style={styles.mapTitle}>Visit Us</h3>
-              <p style={styles.mapDescription}>
-                Located in the heart of the city with easy access to major attractions, 
-                shopping districts, and business centers.
-              </p>
-              <div style={styles.mapAddress}>
-                <FaMapMarkerAlt style={styles.mapIcon} />
-                <div>
-                  <div style={styles.addressLine}>123 Anna Salai</div>
-                  <div style={styles.addressLine}>Chennai, Tamil Nadu 600002</div>
-                  <div style={styles.addressLine}>India</div>
-                </div>
-              </div>
-              <div style={styles.mapActions}>
-                <button style={styles.directionsBtn}>
-                  <FaMapMarkerAlt style={styles.btnIcon} />
-                  Get Directions
-                </button>
-              </div>
-            </div>
-            <div style={styles.mapPlaceholder}>
-              <div style={styles.mapPlaceholderContent}>
-                <FaMapMarkerAlt style={styles.mapPlaceholderIcon} />
-                <p>Interactive Map</p>
-                <small>Click to view full map</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* CTA Section */}
       <section style={styles.ctaSection}>
@@ -433,15 +389,15 @@ const ContactScreen = () => {
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
               <FaMapMarkerAlt style={styles.contactIcon} />
-              <span>123 Luxury Lane, Mountain View, CA 94040</span>
+              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram</span>
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
-              <span>+918947382799</span>
+              <span>93604 15495 / 99523 59955</span>
             </div>
             <div style={styles.contactItem}>
               <FaEnvelope style={styles.contactIcon} />
-              <span>info@jsrooms.com</span>
+              <span>jsroomsarni@gmail.com</span>
             </div>
           </div>
         </div>

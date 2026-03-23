@@ -1,0 +1,673 @@
+import asset_image_jpg_0 from '../Assets/image.jpg';
+import asset_image_png_1 from '../Assets/image.png';
+import asset_IMG_1339_MOV_2 from '../Assets/IMG_1339.MOV';
+import asset_IMG_1340_MOV_3 from '../Assets/IMG_1340.MOV';
+import asset_IMG_1346_MOV_4 from '../Assets/IMG_1346.MOV';
+import asset_IMG_1347_MOV_5 from '../Assets/IMG_1347.MOV';
+import asset_IMG_1381_MOV_6 from '../Assets/IMG_1381.MOV';
+import asset_IMG_1391_jpg_7 from '../Assets/IMG_1391.jpg';
+import asset_IMG_1392_jpg_8 from '../Assets/IMG_1392.jpg';
+import asset_IMG_1393_jpg_9 from '../Assets/IMG_1393.jpg';
+import asset_IMG_1394_jpg_10 from '../Assets/IMG_1394.jpg';
+import asset_IMG_1395_jpg_11 from '../Assets/IMG_1395.jpg';
+import asset_IMG_1396_jpg_12 from '../Assets/IMG_1396.jpg';
+import asset_IMG_1397_jpg_13 from '../Assets/IMG_1397.jpg';
+import asset_IMG_1398_jpg_14 from '../Assets/IMG_1398.jpg';
+import asset_IMG_1399_jpg_15 from '../Assets/IMG_1399.jpg';
+import asset_IMG_1400_jpg_16 from '../Assets/IMG_1400.jpg';
+import asset_IMG_1401_jpg_17 from '../Assets/IMG_1401.jpg';
+import asset_IMG_1402_jpg_18 from '../Assets/IMG_1402.jpg';
+import asset_IMG_1403_jpg_19 from '../Assets/IMG_1403.jpg';
+import asset_IMG_1404_jpg_20 from '../Assets/IMG_1404.jpg';
+import asset_IMG_1405_jpg_21 from '../Assets/IMG_1405.jpg';
+import asset_IMG_1406_jpg_22 from '../Assets/IMG_1406.jpg';
+import asset_IMG_1407_jpg_23 from '../Assets/IMG_1407.jpg';
+import asset_IMG_1409_jpg_24 from '../Assets/IMG_1409.jpg';
+import asset_IMG_1410_jpg_25 from '../Assets/IMG_1410.jpg';
+import asset_IMG_1411_jpg_26 from '../Assets/IMG_1411.jpg';
+import asset_IMG_1412_jpg_27 from '../Assets/IMG_1412.jpg';
+import asset_IMG_1413_jpg_28 from '../Assets/IMG_1413.jpg';
+import asset_IMG_1414_jpg_29 from '../Assets/IMG_1414.jpg';
+import asset_IMG_1415_jpg_30 from '../Assets/IMG_1415.jpg';
+import asset_IMG_1416_jpg_31 from '../Assets/IMG_1416.jpg';
+import asset_IMG_1417_jpg_32 from '../Assets/IMG_1417.jpg';
+import asset_IMG_1418_jpg_33 from '../Assets/IMG_1418.jpg';
+import asset_IMG_1419_jpg_34 from '../Assets/IMG_1419.jpg';
+import asset_IMG_1420_jpg_35 from '../Assets/IMG_1420.jpg';
+import asset_IMG_1421_jpg_36 from '../Assets/IMG_1421.jpg';
+import asset_IMG_1422_jpg_37 from '../Assets/IMG_1422.jpg';
+import asset_IMG_1423_jpg_38 from '../Assets/IMG_1423.jpg';
+import asset_IMG_1424_jpg_39 from '../Assets/IMG_1424.jpg';
+import asset_IMG_1425_jpg_40 from '../Assets/IMG_1425.jpg';
+import asset_IMG_1426_jpg_41 from '../Assets/IMG_1426.jpg';
+import asset_IMG_1427_jpg_42 from '../Assets/IMG_1427.jpg';
+import asset_IMG_1428_jpg_43 from '../Assets/IMG_1428.jpg';
+import asset_IMG_1429_jpg_44 from '../Assets/IMG_1429.jpg';
+import asset_IMG_1430_jpg_45 from '../Assets/IMG_1430.jpg';
+import asset_IMG_1431_jpg_46 from '../Assets/IMG_1431.jpg';
+import asset_IMG_1432_jpg_47 from '../Assets/IMG_1432.jpg';
+import asset_IMG_1433_jpg_48 from '../Assets/IMG_1433.jpg';
+import asset_IMG_1434_jpg_49 from '../Assets/IMG_1434.jpg';
+import asset_IMG_1435_jpg_50 from '../Assets/IMG_1435.jpg';
+import asset_IMG_1437_jpg_51 from '../Assets/IMG_1437.jpg';
+import asset_IMG_1438_jpg_52 from '../Assets/IMG_1438.jpg';
+import asset_IMG_1439_jpg_53 from '../Assets/IMG_1439.jpg';
+import asset_IMG_1440_jpg_54 from '../Assets/IMG_1440.jpg';
+import asset_IMG_1441_jpg_55 from '../Assets/IMG_1441.jpg';
+import asset_IMG_1443_jpg_56 from '../Assets/IMG_1443.jpg';
+import asset_IMG_1444_jpg_57 from '../Assets/IMG_1444.jpg';
+import asset_IMG_1445_jpg_58 from '../Assets/IMG_1445.jpg';
+import asset_IMG_1446_jpg_59 from '../Assets/IMG_1446.jpg';
+import asset_IMG_1447_jpg_60 from '../Assets/IMG_1447.jpg';
+import asset_room_1_jpg_61 from '../Assets/room 1.jpg';
+import asset_room_2_jpg_62 from '../Assets/room 2.jpg';
+import asset_room_3_jpg_63 from '../Assets/room 3.jpg';
+import asset_room1_jpg_64 from '../Assets/room1.jpg';
+import asset_room2_jpg_65 from '../Assets/room2.jpg';
+import asset_room3_jpg_66 from '../Assets/room3.jpg';
+
+const galleryImages = [
+  {
+    id: 1,
+    url: asset_image_jpg_0,
+    category: 'amenities',
+    title: 'JS Room Visual 1',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: true,
+    type: 'image'
+  },
+  {
+    id: 2,
+    url: asset_image_png_1,
+    category: 'exterior',
+    title: 'JS Room Visual 2',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: true,
+    type: 'image'
+  },
+  {
+    id: 3,
+    url: asset_IMG_1339_MOV_2,
+    category: 'tour',
+    title: 'JS Room Visual 3',
+    description: 'Breathtaking view of our luxury JS Rooms video.',
+    featured: true,
+    type: 'video'
+  },
+  {
+    id: 4,
+    url: asset_IMG_1340_MOV_3,
+    category: 'tour',
+    title: 'JS Room Visual 4',
+    description: 'Breathtaking view of our luxury JS Rooms video.',
+    featured: true,
+    type: 'video'
+  },
+  {
+    id: 5,
+    url: asset_IMG_1346_MOV_4,
+    category: 'tour',
+    title: 'JS Room Visual 5',
+    description: 'Breathtaking view of our luxury JS Rooms video.',
+    featured: true,
+    type: 'video'
+  },
+  {
+    id: 6,
+    url: asset_IMG_1347_MOV_5,
+    category: 'tour',
+    title: 'JS Room Visual 6',
+    description: 'Breathtaking view of our luxury JS Rooms video.',
+    featured: true,
+    type: 'video'
+  },
+  {
+    id: 7,
+    url: asset_IMG_1381_MOV_6,
+    category: 'tour',
+    title: 'JS Room Visual 7',
+    description: 'Breathtaking view of our luxury JS Rooms video.',
+    featured: true,
+    type: 'video'
+  },
+  {
+    id: 8,
+    url: asset_IMG_1391_jpg_7,
+    category: 'exterior',
+    title: 'JS Room Visual 8',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: true,
+    type: 'image'
+  },
+  {
+    id: 9,
+    url: asset_IMG_1392_jpg_8,
+    category: 'rooms',
+    title: 'JS Room Visual 9',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 10,
+    url: asset_IMG_1393_jpg_9,
+    category: 'amenities',
+    title: 'JS Room Visual 10',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 11,
+    url: asset_IMG_1394_jpg_10,
+    category: 'exterior',
+    title: 'JS Room Visual 11',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 12,
+    url: asset_IMG_1395_jpg_11,
+    category: 'rooms',
+    title: 'JS Room Visual 12',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 13,
+    url: asset_IMG_1396_jpg_12,
+    category: 'amenities',
+    title: 'JS Room Visual 13',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 14,
+    url: asset_IMG_1397_jpg_13,
+    category: 'exterior',
+    title: 'JS Room Visual 14',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 15,
+    url: asset_IMG_1398_jpg_14,
+    category: 'rooms',
+    title: 'JS Room Visual 15',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 16,
+    url: asset_IMG_1399_jpg_15,
+    category: 'amenities',
+    title: 'JS Room Visual 16',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 17,
+    url: asset_IMG_1400_jpg_16,
+    category: 'exterior',
+    title: 'JS Room Visual 17',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 18,
+    url: asset_IMG_1401_jpg_17,
+    category: 'rooms',
+    title: 'JS Room Visual 18',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 19,
+    url: asset_IMG_1402_jpg_18,
+    category: 'amenities',
+    title: 'JS Room Visual 19',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 20,
+    url: asset_IMG_1403_jpg_19,
+    category: 'exterior',
+    title: 'JS Room Visual 20',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 21,
+    url: asset_IMG_1404_jpg_20,
+    category: 'rooms',
+    title: 'JS Room Visual 21',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 22,
+    url: asset_IMG_1405_jpg_21,
+    category: 'amenities',
+    title: 'JS Room Visual 22',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 23,
+    url: asset_IMG_1406_jpg_22,
+    category: 'exterior',
+    title: 'JS Room Visual 23',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 24,
+    url: asset_IMG_1407_jpg_23,
+    category: 'rooms',
+    title: 'JS Room Visual 24',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 25,
+    url: asset_IMG_1409_jpg_24,
+    category: 'amenities',
+    title: 'JS Room Visual 25',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 26,
+    url: asset_IMG_1410_jpg_25,
+    category: 'exterior',
+    title: 'JS Room Visual 26',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 27,
+    url: asset_IMG_1411_jpg_26,
+    category: 'rooms',
+    title: 'JS Room Visual 27',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 28,
+    url: asset_IMG_1412_jpg_27,
+    category: 'amenities',
+    title: 'JS Room Visual 28',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 29,
+    url: asset_IMG_1413_jpg_28,
+    category: 'exterior',
+    title: 'JS Room Visual 29',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 30,
+    url: asset_IMG_1414_jpg_29,
+    category: 'rooms',
+    title: 'JS Room Visual 30',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 31,
+    url: asset_IMG_1415_jpg_30,
+    category: 'amenities',
+    title: 'JS Room Visual 31',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 32,
+    url: asset_IMG_1416_jpg_31,
+    category: 'exterior',
+    title: 'JS Room Visual 32',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 33,
+    url: asset_IMG_1417_jpg_32,
+    category: 'rooms',
+    title: 'JS Room Visual 33',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 34,
+    url: asset_IMG_1418_jpg_33,
+    category: 'amenities',
+    title: 'JS Room Visual 34',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 35,
+    url: asset_IMG_1419_jpg_34,
+    category: 'exterior',
+    title: 'JS Room Visual 35',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 36,
+    url: asset_IMG_1420_jpg_35,
+    category: 'rooms',
+    title: 'JS Room Visual 36',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 37,
+    url: asset_IMG_1421_jpg_36,
+    category: 'amenities',
+    title: 'JS Room Visual 37',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 38,
+    url: asset_IMG_1422_jpg_37,
+    category: 'exterior',
+    title: 'JS Room Visual 38',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 39,
+    url: asset_IMG_1423_jpg_38,
+    category: 'rooms',
+    title: 'JS Room Visual 39',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 40,
+    url: asset_IMG_1424_jpg_39,
+    category: 'amenities',
+    title: 'JS Room Visual 40',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 41,
+    url: asset_IMG_1425_jpg_40,
+    category: 'exterior',
+    title: 'JS Room Visual 41',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 42,
+    url: asset_IMG_1426_jpg_41,
+    category: 'rooms',
+    title: 'JS Room Visual 42',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 43,
+    url: asset_IMG_1427_jpg_42,
+    category: 'amenities',
+    title: 'JS Room Visual 43',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 44,
+    url: asset_IMG_1428_jpg_43,
+    category: 'exterior',
+    title: 'JS Room Visual 44',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 45,
+    url: asset_IMG_1429_jpg_44,
+    category: 'rooms',
+    title: 'JS Room Visual 45',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 46,
+    url: asset_IMG_1430_jpg_45,
+    category: 'amenities',
+    title: 'JS Room Visual 46',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 47,
+    url: asset_IMG_1431_jpg_46,
+    category: 'exterior',
+    title: 'JS Room Visual 47',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 48,
+    url: asset_IMG_1432_jpg_47,
+    category: 'rooms',
+    title: 'JS Room Visual 48',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 49,
+    url: asset_IMG_1433_jpg_48,
+    category: 'amenities',
+    title: 'JS Room Visual 49',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 50,
+    url: asset_IMG_1434_jpg_49,
+    category: 'exterior',
+    title: 'JS Room Visual 50',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 51,
+    url: asset_IMG_1435_jpg_50,
+    category: 'rooms',
+    title: 'JS Room Visual 51',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 52,
+    url: asset_IMG_1437_jpg_51,
+    category: 'amenities',
+    title: 'JS Room Visual 52',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 53,
+    url: asset_IMG_1438_jpg_52,
+    category: 'exterior',
+    title: 'JS Room Visual 53',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 54,
+    url: asset_IMG_1439_jpg_53,
+    category: 'rooms',
+    title: 'JS Room Visual 54',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 55,
+    url: asset_IMG_1440_jpg_54,
+    category: 'amenities',
+    title: 'JS Room Visual 55',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 56,
+    url: asset_IMG_1441_jpg_55,
+    category: 'exterior',
+    title: 'JS Room Visual 56',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 57,
+    url: asset_IMG_1443_jpg_56,
+    category: 'rooms',
+    title: 'JS Room Visual 57',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 58,
+    url: asset_IMG_1444_jpg_57,
+    category: 'amenities',
+    title: 'JS Room Visual 58',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 59,
+    url: asset_IMG_1445_jpg_58,
+    category: 'exterior',
+    title: 'JS Room Visual 59',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 60,
+    url: asset_IMG_1446_jpg_59,
+    category: 'rooms',
+    title: 'JS Room Visual 60',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 61,
+    url: asset_IMG_1447_jpg_60,
+    category: 'amenities',
+    title: 'JS Room Visual 61',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 62,
+    url: asset_room_1_jpg_61,
+    category: 'exterior',
+    title: 'JS Room Visual 62',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 63,
+    url: asset_room_2_jpg_62,
+    category: 'rooms',
+    title: 'JS Room Visual 63',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 64,
+    url: asset_room_3_jpg_63,
+    category: 'amenities',
+    title: 'JS Room Visual 64',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 65,
+    url: asset_room1_jpg_64,
+    category: 'exterior',
+    title: 'JS Room Visual 65',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 66,
+    url: asset_room2_jpg_65,
+    category: 'rooms',
+    title: 'JS Room Visual 66',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  },
+  {
+    id: 67,
+    url: asset_room3_jpg_66,
+    category: 'amenities',
+    title: 'JS Room Visual 67',
+    description: 'Breathtaking view of our luxury JS Rooms image.',
+    featured: false,
+    type: 'image'
+  }
+];

@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fa';
 import localforage from "localforage";
 
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

@@ -1,9 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
-import room1Image from '../Assets/room1.jpg';
-import room2Image from '../Assets/room2.jpg';
-import room3Image from '../Assets/room3.jpg';
 import { 
   FaStar, 
   FaUsers,
@@ -20,6 +17,10 @@ import {
   FaTwitter,
   FaFacebookF
 } from 'react-icons/fa';
+
+const room1Image = '/assets/IMG_1392.jpg';
+const room2Image = '/assets/IMG_1411.jpg';
+const room3Image = '/assets/IMG_1423.jpg';
 
 const AboutScreen = () => {
   const stats = [
@@ -262,15 +263,15 @@ const AboutScreen = () => {
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
               <FaMapMarkerAlt style={styles.contactIcon} />
-              <span>123 Luxury Lane, Mountain View, CA 94040</span>
+              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram</span>
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
-              <span>+918947382799</span>
+              <span>93604 15495 / 99523 59955</span>
             </div>
             <div style={styles.contactItem}>
               <FaEnvelope style={styles.contactIcon} />
-              <span>info@jsrooms.com</span>
+              <span>jsroomsarni@gmail.com</span>
             </div>
           </div>
         </div>

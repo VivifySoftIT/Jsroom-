@@ -3,9 +3,6 @@ import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import defaultRooms from '../data/defaultRooms';
 import dataService from '../services/dataService';
-import room1Image from '../Assets/room1.jpg';
-import room2Image from '../Assets/room2.jpg';
-import room3Image from '../Assets/room3.jpg';
 import {
   FaBed,
   FaWifi,
@@ -39,6 +36,10 @@ import {
   FaTwitter,
   FaFacebookF
 } from 'react-icons/fa';
+
+const room1Image = '/assets/IMG_1392.jpg';
+const room2Image = '/assets/IMG_1411.jpg';
+const room3Image = '/assets/IMG_1403.jpg';
 
 const RoomsScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -725,15 +726,15 @@ const RoomsScreen = () => {
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
               <FaMapMarkerAlt style={styles.contactIcon} />
-              <span>123 Luxury Lane, Mountain View, CA 94040</span>
+              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram</span>
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
-              <span>+918947382799</span>
+              <span>93604 15495 / 99523 59955</span>
             </div>
             <div style={styles.contactItem}>
               <FaEnvelope style={styles.contactIcon} />
-              <span>info@jsrooms.com</span>
+              <span>jsroomsarni@gmail.com</span>
             </div>
           </div>
         </div>
@@ -1604,10 +1605,6 @@ const styles = {
     maxHeight: 'calc(90vh - 350px)',
     scrollbarWidth: 'thin',
     scrollbarColor: '#D4AF37 #F0F0F0',
-    '@media (max-width: 768px)': {
-      maxHeight: 'calc(95vh - 200px)',
-      padding: '0 1rem',
-    }
   },
 
   amenitiesSection: {
@@ -1673,9 +1670,6 @@ const styles = {
     backgroundColor: '#0A0A0A',
     color: 'white',
     padding: '4rem 1.5rem 2rem',
-    '@media (max-width: 768px)': {
-      padding: '3rem 1rem 1.5rem',
-    },
   },
 
   footerMain: {
@@ -1685,16 +1679,6 @@ const styles = {
     gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
     gap: '3rem',
     marginBottom: '3rem',
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: '2rem',
-      marginBottom: '2rem',
-    },
-    '@media (max-width: 480px)': {
-      gridTemplateColumns: '1fr',
-      gap: '1.5rem',
-      textAlign: 'center',
-    },
   },
 
   footerColumn: {

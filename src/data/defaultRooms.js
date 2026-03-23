@@ -1,7 +1,7 @@
 // Import local images
-import room1Image from '../Assets/room1.jpg';
-import room2Image from '../Assets/room2.jpg';
-import room3Image from '../Assets/room3.jpg';
+const room1Image = '/assets/IMG_1392.jpg';
+const room2Image = '/assets/IMG_1411.jpg';
+const room3Image = '/assets/IMG_1403.jpg';
 
 // Default Rooms Data - Hard-coded rooms for the website (Only 3 rooms)
 export const defaultRooms = [

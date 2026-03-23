@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import emailService from '../services/emailService';
 import contactEmailService from '../services/contactEmailService';
 
+
 const EmailTestComponent = () => {
   const [testResults, setTestResults] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +78,7 @@ const EmailTestComponent = () => {
         <div style={styles.testCard}>
           <h3 style={styles.testTitle}>🏨 Booking Email Test</h3>
           <p style={styles.testDescription}>
-            Tests booking confirmation email sent to atchayakannan03@gmail.com
+            Tests booking confirmation email sent to jsroomsarni@gmail.com
           </p>
           <button 
             onClick={testBookingEmail} 
@@ -105,7 +106,7 @@ const EmailTestComponent = () => {
         <div style={styles.testCard}>
           <h3 style={styles.testTitle}>💬 Contact Email Test</h3>
           <p style={styles.testDescription}>
-            Tests contact form email sent to atchayakannan03@gmail.com
+            Tests contact form email sent to jsroomsarni@gmail.com
           </p>
           <button 
             onClick={testContactEmail} 
@@ -134,7 +135,7 @@ const EmailTestComponent = () => {
       <div style={styles.infoSection}>
         <h4 style={styles.infoTitle}>📋 Test Information</h4>
         <ul style={styles.infoList}>
-          <li>All test emails are sent to: <strong>atchayakannan03@gmail.com</strong></li>
+          <li>All test emails are sent to: <strong>jsroomsarni@gmail.com</strong> (via secure token)</li>
           <li>Test emails use FormSubmit service for reliable delivery</li>
           <li>Check your email inbox and spam folder</li>
           <li>If FormSubmit fails, mailto will open your email client</li>

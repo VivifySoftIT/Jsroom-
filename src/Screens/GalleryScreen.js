@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
-import room1Image from '../Assets/room1.jpg';
-import room2Image from '../Assets/room2.jpg';
-import room3Image from '../Assets/room3.jpg';
 import { 
   FaImages, 
   FaExpand,
@@ -22,55 +19,472 @@ import {
   FaFacebookF
 } from 'react-icons/fa';
 
+const room1Image = '/assets/IMG_1392.jpg';
+const room2Image = '/assets/IMG_1411.jpg';
+const room3Image = '/assets/IMG_1423.jpg';
+
 // Gallery images using local images
 const galleryImages = [
   {
-    id: 1,
-    url: room2Image,
-    category: 'rooms',
-    title: 'Double AC Room',
-    description: 'Spacious double bedroom with city views',
-    featured: true
+    "id": 1,
+    "url": "/assets/image.jpg",
+    "category": "amenities",
+    "title": "JS Room Visual 1",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": true,
+    "type": "image"
   },
   {
-    id: 2,
-    url: room1Image,
-    category: 'rooms',
-    title: 'Single AC Room',
-    description: 'Modern single bedroom with air conditioning',
-    featured: false
+    "id": 2,
+    "url": "/assets/image.png",
+    "category": "exterior",
+    "title": "JS Room Visual 2",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": true,
+    "type": "image"
   },
   {
-    id: 3,
-    url: room3Image,
-    category: 'rooms',
-    title: 'Triple AC Room',
-    description: 'Spacious triple bedroom with modern amenities',
-    featured: true
+    "id": 3,
+    "url": "/assets/IMG_1391.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 8",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": true,
+    "type": "image"
   },
   {
-    id: 4,
-    url: room1Image,
-    category: 'amenities',
-    title: 'Premium Amenities',
-    description: 'State-of-the-art facilities and services',
-    featured: false
+    "id": 4,
+    "url": "/assets/IMG_1392.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 9",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
   },
   {
-    id: 5,
-    url: room2Image,
-    category: 'exterior',
-    title: 'Hotel Exterior',
-    description: 'Stunning architectural design',
-    featured: true
+    "id": 5,
+    "url": "/assets/IMG_1393.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 10",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
   },
   {
-    id: 6,
-    url: room3Image,
-    category: 'amenities',
-    title: 'Luxury Facilities',
-    description: 'Premium comfort and modern conveniences',
-    featured: false
+    "id": 6,
+    "url": "/assets/IMG_1394.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 11",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 7,
+    "url": "/assets/IMG_1395.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 12",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 8,
+    "url": "/assets/IMG_1396.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 13",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 9,
+    "url": "/assets/IMG_1397.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 14",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 10,
+    "url": "/assets/IMG_1398.jpg",
+    "category": "bathroom",
+    "title": "JS Room Visual 15",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 11,
+    "url": "/assets/IMG_1399.jpg",
+    "category": "bathroom",
+    "title": "JS Room Visual 16",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 12,
+    "url": "/assets/IMG_1401.jpg",
+    "category": "bathroom",
+    "title": "JS Room Visual 18",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 13,
+    "url": "/assets/IMG_1402.jpg",
+    "category": "bathroom",
+    "title": "JS Room Visual 19",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 14,
+    "url": "/assets/IMG_1403.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 20",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 15,
+    "url": "/assets/IMG_1404.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 21",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 16,
+    "url": "/assets/IMG_1405.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 22",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 17,
+    "url": "/assets/IMG_1406.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 23",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 18,
+    "url": "/assets/IMG_1407.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 24",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 19,
+    "url": "/assets/IMG_1409.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 25",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 20,
+    "url": "/assets/IMG_1410.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 26",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 21,
+    "url": "/assets/IMG_1411.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 27",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 22,
+    "url": "/assets/IMG_1412.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 28",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 23,
+    "url": "/assets/IMG_1413.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 29",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 24,
+    "url": "/assets/IMG_1414.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 30",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 25,
+    "url": "/assets/IMG_1415.jpg",
+    "category": "rooms",
+    "title": "JS Room Visual 31",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 26,
+    "url": "/assets/IMG_1416.jpg",
+    "category": "wing",
+    "title": "JS Room Visual 32",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 27,
+    "url": "/assets/IMG_1417.jpg",
+    "category": "wing",
+    "title": "JS Room Visual 33",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 28,
+    "url": "/assets/IMG_1418.jpg",
+    "category": "wing",
+    "title": "JS Room Visual 34",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 29,
+    "url": "/assets/IMG_1419.jpg",
+    "category": "wing",
+    "title": "JS Room Visual 35",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 30,
+    "url": "/assets/IMG_1420.jpg",
+    "category": "wing",
+    "title": "JS Room Visual 36",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 31,
+    "url": "/assets/IMG_1421.jpg",
+    "category": "wing",
+    "title": "JS Room Visual 37",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 32,
+    "url": "/assets/IMG_1423.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 39",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 33,
+    "url": "/assets/IMG_1424.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 40",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 34,
+    "url": "/assets/IMG_1425.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 41",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 35,
+    "url": "/assets/IMG_1426.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 42",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 36,
+    "url": "/assets/IMG_1427.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 43",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 37,
+    "url": "/assets/IMG_1428.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 44",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 38,
+    "url": "/assets/IMG_1429.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 45",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 39,
+    "url": "/assets/IMG_1430.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 46",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 40,
+    "url": "/assets/IMG_1431.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 47",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 41,
+    "url": "/assets/IMG_1432.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 48",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 42,
+    "url": "/assets/IMG_1433.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 49",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 43,
+    "url": "/assets/IMG_1434.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 50",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 44,
+    "url": "/assets/IMG_1435.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 51",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 45,
+    "url": "/assets/IMG_1437.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 52",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 46,
+    "url": "/assets/IMG_1438.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 53",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 47,
+    "url": "/assets/IMG_1439.jpg",
+    "category": "reception_outdoor",
+    "title": "JS Room Visual 54",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 48,
+    "url": "/assets/room 1.jpg",
+    "category": "exterior",
+    "title": "JS Room Visual 62",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+
+  {
+    "id": 50,
+    "url": "/assets/room 3.jpg",
+    "category": "amenities",
+    "title": "JS Room Visual 64",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+  {
+    "id": 51,
+    "url": "/assets/room1.jpg",
+    "category": "exterior",
+    "title": "JS Room Visual 65",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
+  },
+
+  {
+    "id": 53,
+    "url": "/assets/room3.jpg",
+    "category": "amenities",
+    "title": "JS Room Visual 67",
+    "description": "Breathtaking view of our luxury JS Rooms image.",
+    "featured": false,
+    "type": "image"
   }
 ];
 
@@ -83,8 +497,9 @@ const GalleryScreen = () => {
   const categories = [
     { id: 'all', name: 'All Photos', count: galleryImages.length },
     { id: 'rooms', name: 'Rooms', count: galleryImages.filter(img => img.category === 'rooms').length },
-    { id: 'amenities', name: 'Amenities', count: galleryImages.filter(img => img.category === 'amenities').length },
-    { id: 'exterior', name: 'Exterior & Views', count: galleryImages.filter(img => img.category === 'exterior').length }
+    { id: 'wing', name: 'Wing', count: galleryImages.filter(img => img.category === 'wing').length },
+    { id: 'bathroom', name: 'Bathroom', count: galleryImages.filter(img => img.category === 'bathroom').length },
+    { id: 'reception_outdoor', name: 'Reception & Outdoor', count: galleryImages.filter(img => img.category === 'reception_outdoor').length }
   ];
 
   const filteredImages = galleryImages.filter(image => {
@@ -174,7 +589,7 @@ const GalleryScreen = () => {
           <div style={styles.featuredContainer}>
             <h2 style={styles.featuredTitle}>Featured Photos</h2>
             <div style={styles.featuredGrid}>
-              {galleryImages.filter(img => img.featured).slice(0, 4).map(image => (
+              {galleryImages.filter(img => img.category === 'rooms').slice(0, 3).map(image => (
                 <div key={image.id} style={styles.featuredCard} onClick={() => openLightbox(image)}>
                   <img src={image.url} alt={image.title} style={styles.featuredImage} />
                   <div style={styles.featuredOverlay}>
@@ -193,37 +608,65 @@ const GalleryScreen = () => {
         </section>
       )}
 
-      {/* Main Gallery Grid */}
+            {/* Main Gallery Grid */}
       <section style={styles.gallerySection}>
         <div style={styles.galleryContainer}>
-          <div style={styles.galleryHeader}>
-            <h2 style={styles.galleryTitle}>
-              {selectedCategory === 'all' ? 'All Photos' : categories.find(cat => cat.id === selectedCategory)?.name}
-            </h2>
-            <span style={styles.imageCount}>{filteredImages.length} photos</span>
-          </div>
-
-          <div style={styles.galleryGrid}>
-            {filteredImages.map(image => (
-              <div 
-                key={image.id} 
-                style={styles.galleryItem}
-                onClick={() => openLightbox(image)}
-              >
-                <img src={image.url} alt={image.title} style={styles.galleryImage} />
-                <div style={styles.galleryOverlay}>
-                  <div style={styles.galleryContent}>
-                    <h4 style={styles.galleryImageTitle}>{image.title}</h4>
-                    <p style={styles.galleryImageDesc}>{image.description}</p>
-                    {image.featured && (
-                      <span style={styles.featuredBadge}>Featured</span>
-                    )}
+          {selectedCategory === 'all' ? (
+            categories.filter(c => c.id !== 'all').map(category => {
+              const categoryImages = galleryImages.filter(img => img.category === category.id && (
+                img.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                img.description.toLowerCase().includes(searchTerm.toLowerCase())
+              ));
+              if (categoryImages.length === 0) return null;
+              return (
+                <div key={category.id} style={{ marginBottom: '4rem' }}>
+                  <div style={styles.galleryHeader}>
+                    <h2 style={{...styles.galleryTitle, fontSize: '1.8rem', color: '#1A1A1A'}}>
+                      {category.name}
+                    </h2>
+                    <span style={styles.imageCount}>{categoryImages.length} photos</span>
+                  </div>
+                  <div style={styles.galleryGrid}>
+                    {categoryImages.map(image => (
+                      <div key={image.id} style={styles.galleryItem} onClick={() => openLightbox(image)}>
+                        <img src={encodeURI(image.url)} alt={image.title} style={styles.galleryImage} />
+                        <div style={styles.galleryOverlay}>
+                          <div style={styles.galleryContent}>
+                            <h4 style={styles.galleryImageTitle}>{image.title}</h4>
+                            <p style={styles.galleryImageDesc}>{image.description}</p>
+                            {image.featured && <span style={styles.featuredBadge}>Featured</span>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
+              );
+            })
+          ) : (
+            <>
+              <div style={styles.galleryHeader}>
+                <h2 style={styles.galleryTitle}>
+                  {categories.find(cat => cat.id === selectedCategory)?.name}
+                </h2>
+                <span style={styles.imageCount}>{filteredImages.length} photos</span>
               </div>
-            ))}
-          </div>
-
+              <div style={styles.galleryGrid}>
+                {filteredImages.map(image => (
+                  <div key={image.id} style={styles.galleryItem} onClick={() => openLightbox(image)}>
+                    <img src={encodeURI(image.url)} alt={image.title} style={styles.galleryImage} />
+                    <div style={styles.galleryOverlay}>
+                      <div style={styles.galleryContent}>
+                        <h4 style={styles.galleryImageTitle}>{image.title}</h4>
+                        <p style={styles.galleryImageDesc}>{image.description}</p>
+                        {image.featured && <span style={styles.featuredBadge}>Featured</span>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
           {filteredImages.length === 0 && (
             <div style={styles.noResults}>
               <FaImages style={styles.noResultsIcon} />
@@ -232,9 +675,7 @@ const GalleryScreen = () => {
             </div>
           )}
         </div>
-      </section>
-
-      {/* Lightbox Modal */}
+      </section>\n\n      {/* Lightbox Modal */}
       {selectedImage && (
         <div style={styles.lightboxOverlay} onClick={closeLightbox}>
           <div style={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
@@ -339,15 +780,15 @@ const GalleryScreen = () => {
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
               <FaMapMarkerAlt style={styles.contactIcon} />
-              <span>123 Luxury Lane, Mountain View, CA 94040</span>
+              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram</span>
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
-              <span>+918947382799</span>
+              <span>93604 15495 / 99523 59955</span>
             </div>
             <div style={styles.contactItem}>
               <FaEnvelope style={styles.contactIcon} />
-              <span>info@jsrooms.com</span>
+              <span>jsroomsarni@gmail.com</span>
             </div>
           </div>
         </div>

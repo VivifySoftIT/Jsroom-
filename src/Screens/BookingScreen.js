@@ -19,6 +19,7 @@ import {
   FaMapMarkerAlt
 } from 'react-icons/fa';
 
+
 const BookingScreen = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -147,7 +148,7 @@ const BookingScreen = () => {
       }
     }
 
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -177,7 +178,7 @@ const BookingScreen = () => {
         amount: calculateTotal().total,
         paymentStatus: 'pending',
         paymentType: 'full',
-        paymentMethod: 'Bank Transfer',
+        paymentMethod: 'Pay on Arrival / As Agreed',
         specialRequests: bookingData.guestInfo.specialRequests || 'None',
         bookingSource: 'Website',
         guestInfo: bookingData.guestInfo
@@ -190,7 +191,7 @@ const BookingScreen = () => {
       console.log('=== BOOKING CONFIRMATION ===');
       console.log('Booking saved successfully:', savedBooking);
       console.log('Guest Email:', bookingDetails.guestEmail);
-      console.log('Admin Email: atchayakannan03@gmail.com');
+      console.log('Admin Email: jsroomsarni@gmail.com');
       console.log('Booking Details:', bookingDetails);
       console.log('============================');
 
@@ -228,8 +229,13 @@ const BookingScreen = () => {
 
         console.log('JS ROOMS admin email result:', emailResult);
 
-        // Show only our simple success message
-        alert('✅ Booking Confirmed');
+        // Show result alert
+        if (emailResult.success) {
+          alert('✅ Booking Confirmed & Notification Sent');
+        } else {
+          // If FormSubmit/Formspree returns success: false it usually means activation is needed
+          alert(`⚠️ Booking Saved, but: ${emailResult.message || 'Email activation pending. Please check jsroomsarni@gmail.com inbox for an activation email!'}`);
+        }
 
       } catch (emailError) {
         console.error('Email sending failed:', emailError);
@@ -252,8 +258,7 @@ const BookingScreen = () => {
   const steps = [
     { number: 1, title: 'Select Dates & Guests', icon: FaCalendarAlt },
     { number: 2, title: 'Guest Information', icon: FaUser },
-    { number: 3, title: 'Bank Transfer Details', icon: FaCreditCard },
-    { number: 4, title: 'Confirmation', icon: FaCheckCircle }
+    { number: 3, title: 'Confirmation', icon: FaCheckCircle }
   ];
 
   if (bookingComplete && completedBooking) {
@@ -267,8 +272,9 @@ const BookingScreen = () => {
             </div>
             <h1 style={styles.successTitle}>Booking Confirmed!</h1>
             <p style={styles.successMessage}>
-              Thank you for choosing JS ROOMS. Your reservation request has been received and
-              a confirmation email with bank transfer details has been sent to your email address.
+            Thank you for choosing JS ROOMS. Your reservation request has been received.
+              Our team will contact you shortly on the phone number you provided to confirm
+              your booking and discuss payment details.
             </p>
             <div style={styles.bookingDetails}>
               <h3>Booking Details</h3>
@@ -293,12 +299,8 @@ const BookingScreen = () => {
                 <strong>₹{completedBooking.amount.toFixed(2)}</strong>
               </div>
               <div style={styles.detailRow}>
-                <span>Amount to Transfer:</span>
-                <strong>₹{completedBooking.amount.toFixed(2)}</strong>
-              </div>
-              <div style={styles.detailRow}>
-                <span>Payment Status:</span>
-                <strong>Pending Bank Transfer</strong>
+                <span>Status:</span>
+                <strong>Booking Received — We'll contact you</strong>
               </div>
             </div>
             <div style={styles.successActions}>
@@ -562,77 +564,9 @@ const BookingScreen = () => {
                   </div>
                 )}
 
-                {/* Step 3: Bank Transfer Details */}
+
+                {/* Step 3: Confirmation */}
                 {currentStep === 3 && (
-                  <div style={styles.stepContent}>
-                    <h2 style={styles.stepTitle}>Bank Transfer Details</h2>
-
-                    <div style={styles.paymentSecurity}>
-                      <FaShieldAlt style={styles.securityIcon} />
-                      <div>
-                        <h4 style={styles.securityTitle}>Secure Bank Transfer</h4>
-                        <p style={styles.securityText}>Transfer the amount to our bank account to confirm your booking</p>
-                      </div>
-                    </div>
-
-
-
-                    {/* Bank Details Section */}
-                    <div className="booking-bank-details" style={styles.bankDetailsSection}>
-                      <h3 style={styles.sectionTitle}>Bank Account Details</h3>
-                      <div style={styles.bankDetailsCard} className="booking-bank-card">
-                        <div style={styles.bankDetailRow}>
-                          <span style={styles.bankDetailLabel}>Bank Name:</span>
-                          <span style={styles.bankDetailValue}>State Bank of India</span>
-                        </div>
-                        <div style={styles.bankDetailRow}>
-                          <span style={styles.bankDetailLabel}>Account Name:</span>
-                          <span style={styles.bankDetailValue}>JS ROOMS LUXURY LODGE</span>
-                        </div>
-                        <div style={styles.bankDetailRow}>
-                          <span style={styles.bankDetailLabel}>Account Number:</span>
-                          <span style={styles.bankDetailValue}>12345678901234</span>
-                        </div>
-                        <div style={styles.bankDetailRow}>
-                          <span style={styles.bankDetailLabel}>IFSC Code:</span>
-                          <span style={styles.bankDetailValue}>SBIN0001234</span>
-                        </div>
-                        <div style={styles.bankDetailRow}>
-                          <span style={styles.bankDetailLabel}>Branch:</span>
-                          <span style={styles.bankDetailValue}>Chennai Main Branch</span>
-                        </div>
-                        <div style={styles.bankDetailRow}>
-                          <span style={styles.bankDetailLabel}>Amount to Transfer:</span>
-                          <span style={styles.bankDetailValueHighlight}>₹{calculateTotal().total.toFixed(2)}</span>
-                        </div>
-                      </div>
-
-                      <div style={styles.transferInstructions}>
-                        <h4 style={styles.instructionsTitle}>Transfer Instructions:</h4>
-                        <ul style={styles.instructionsList}>
-                          <li>Transfer the exact amount shown above to our bank account</li>
-                          <li>Use your booking reference as the transfer description</li>
-                          <li>Keep the transaction receipt for your records</li>
-                          <li>Your booking will be confirmed once we receive the payment</li>
-                          <li>For any queries, contact us at +91 98765 43210</li>
-                        </ul>
-                      </div>
-
-                      <div style={styles.paymentNote}>
-                        <FaCheckCircle style={styles.noteIcon} />
-                        <div>
-                          <p style={styles.noteText}>
-                            <strong>Important:</strong> Please complete the bank transfer within 24 hours to secure your booking.
-                            We will send you a confirmation email once the payment is received and verified.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 4: Confirmation */}
-                {currentStep === 4 && (
                   <div className="booking-step-content" style={styles.stepContent}>
                     <h2 style={styles.stepTitle}>Review Your Booking</h2>
 
@@ -678,18 +612,14 @@ const BookingScreen = () => {
                       </div>
 
                       <div className="booking-confirmation-section" style={styles.confirmationSection}>
-                        <h3>Payment Details</h3>
+                        <h3>Price Summary</h3>
                         <div className="booking-confirmation-row" style={styles.confirmationRow}>
-                          <span>Payment Method:</span>
-                          <strong>Bank Transfer</strong>
-                        </div>
-                        <div className="booking-confirmation-row" style={styles.confirmationRow}>
-                          <span>Amount to Transfer:</span>
+                          <span>Total Amount:</span>
                           <strong>₹{calculateTotal().total.toFixed(2)}</strong>
                         </div>
                         <div className="booking-confirmation-row" style={styles.confirmationRow}>
-                          <span>Total Booking Amount:</span>
-                          <strong>₹{calculateTotal().total.toFixed(2)}</strong>
+                          <span>Payment:</span>
+                          <strong>Our team will contact you to process payment</strong>
                         </div>
                       </div>
                     </div>
@@ -712,7 +642,7 @@ const BookingScreen = () => {
                     </button>
                   )}
 
-                  {currentStep < 4 ? (
+                  {currentStep < 3 ? (
                     <button onClick={nextStep} style={getTouchFriendlyStyle(styles.nextButton)}>
                       Next
                       <FaArrowRight style={styles.btnIcon} />
@@ -796,17 +726,6 @@ const BookingScreen = () => {
                       <span>₹{calculateTotal().total.toFixed(2)}</span>
                     </div>
 
-                    {/* Transfer Amount Display */}
-                    {currentStep >= 3 && (
-                      <>
-                        <div className="booking-payment-summary" style={styles.paymentSummary}>
-                          <div className="booking-payment-row" style={styles.paymentRow}>
-                            <span style={styles.paymentLabel}>Transfer Amount:</span>
-                            <span style={styles.paymentAmountText}>₹{calculateTotal().total.toFixed(2)}</span>
-                          </div>
-                        </div>
-                      </>
-                    )}
                   </div>
 
                   <div className="booking-summary-features" style={styles.summaryFeatures}>
