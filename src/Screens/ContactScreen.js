@@ -6,10 +6,6 @@ import {
   FaPhone, 
   FaEnvelope,
   FaMapMarkerAlt,
-  FaFacebookF,
-  FaTwitter,
-  FaInstagram,
-  FaLinkedin,
   FaCalendarAlt,
   FaArrowRight,
   FaCheckCircle,
@@ -356,17 +352,7 @@ const ContactScreen = () => {
               Where elegance meets serenity. Experience premium hospitality
               amidst nature's finest landscapes.
             </p>
-            <div style={styles.socialLinks}>
-              <a href="#" style={styles.socialLink}>
-                <FaInstagram />
-              </a>
-              <a href="#" style={styles.socialLink}>
-                <FaTwitter />
-              </a>
-              <a href="#" style={styles.socialLink}>
-                <FaFacebookF />
-              </a>
-            </div>
+
           </div>
 
           <div style={styles.footerColumn}>
@@ -777,25 +763,7 @@ const styles = {
     marginBottom: '1rem',
   },
 
-  socialLinks: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '12px',
-  },
 
-  socialLink: {
-    width: '40px',
-    height: '40px',
-    backgroundColor: '#D4AF37',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#1A1A1A',
-    textDecoration: 'none',
-    fontSize: '16px',
-    transition: 'all 0.3s ease',
-  },
 
   // Map Section
   mapSection: {

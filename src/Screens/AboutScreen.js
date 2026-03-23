@@ -12,10 +12,7 @@ import {
   FaQuoteLeft,
   FaPhone,
   FaEnvelope,
-  FaMapMarkerAlt,
-  FaInstagram,
-  FaTwitter,
-  FaFacebookF
+  FaMapMarkerAlt
 } from 'react-icons/fa';
 
 const room1Image = '/assets/IMG_1392.jpg';
@@ -230,17 +227,7 @@ const AboutScreen = () => {
               Where elegance meets serenity. Experience premium hospitality
               amidst nature's finest landscapes.
             </p>
-            <div style={styles.socialLinks}>
-              <a href="#" style={styles.socialLink}>
-                <FaInstagram />
-              </a>
-              <a href="#" style={styles.socialLink}>
-                <FaTwitter />
-              </a>
-              <a href="#" style={styles.socialLink}>
-                <FaFacebookF />
-              </a>
-            </div>
+
           </div>
 
           <div style={styles.footerColumn}>
@@ -578,24 +565,7 @@ const styles = {
     transition: 'all 0.3s ease',
   },
 
-  socialLinks: {
-    display: 'flex',
-    gap: '1rem',
-  },
 
-  socialLink: {
-    width: '40px',
-    height: '40px',
-    backgroundColor: 'rgba(212, 175, 55, 0.9)',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#1A1A1A',
-    textDecoration: 'none',
-    fontSize: '16px',
-    transition: 'all 0.3s ease',
-  },
 
   teamInfo: {
     padding: '1.5rem',

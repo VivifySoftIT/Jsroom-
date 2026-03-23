@@ -8,9 +8,6 @@ import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaArrowRight,
-  FaInstagram,
-  FaTwitter,
-  FaFacebookF,
   FaCheckCircle
 } from 'react-icons/fa';
 
@@ -230,17 +227,7 @@ function HomeScreen() {
               Where elegance meets serenity. Experience premium hospitality
               amidst nature's finest landscapes.
             </p>
-            <div style={styles.socialLinks}>
-              <a href="#" style={styles.socialLink}>
-                <FaInstagram />
-              </a>
-              <a href="#" style={styles.socialLink}>
-                <FaTwitter />
-              </a>
-              <a href="#" style={styles.socialLink}>
-                <FaFacebookF />
-              </a>
-            </div>
+
           </div>
 
           <div style={styles.footerColumn}>
@@ -1050,24 +1037,7 @@ const styles = {
     marginBottom: '1.5rem',
   },
 
-  socialLinks: {
-    display: 'flex',
-    gap: '12px',
-  },
 
-  socialLink: {
-    width: '36px',
-    height: '36px',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '14px',
-    transition: 'all 0.3s ease',
-  },
 
   footerTitle: {
     fontSize: '1rem',
