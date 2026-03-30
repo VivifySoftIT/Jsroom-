@@ -36,3 +36,33 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #A0522D;
 }
+/* Perfect Grid Layout for Rooms */
+.perfect-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 2.5rem !important;
+}
+
+.room-card-fixed {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+.room-content-fixed {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.room-description-fixed {
+  flex: 1 !important;
+  min-height: 60px;
+}
+
+@media (max-width: 992px) {
+  .perfect-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}

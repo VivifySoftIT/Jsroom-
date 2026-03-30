@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import logo from '../Assets/logo-main.png';
+import hero_bg from '../Assets/hero_bg.jpg';
 import {
   FaBed,
   FaWifi,
@@ -12,8 +14,10 @@ import {
 } from 'react-icons/fa';
 
 const room1Image = '/assets/IMG_1392.jpg';
-const room2Image = '/assets/IMG_1411.jpg';
-const room3Image = '/assets/IMG_1423.jpg';
+const room2Image = '/assets/IMG_1405.jpg'; // Matches Triple Non-AC
+const room3Image = '/assets/IMG_1403.jpg';
+const room4Image = '/assets/IMG_1391.jpg';
+const room5Image = '/assets/IMG_1405.jpg';
 
 function HomeScreen() {
 
@@ -92,23 +96,22 @@ function HomeScreen() {
             <h2 style={styles.sectionTitle}>Our Premium Rooms</h2>
           </div>
 
-          <div style={styles.roomsGrid}>
-            <div style={styles.roomCard}>
+          <div className="perfect-grid" style={styles.roomsGrid}>
+            <div className="room-card-fixed" style={styles.roomCard}>
               <div style={styles.roomImageContainer}>
-                <img src={room2Image} alt="Double Room" style={styles.roomImage} />
+                <img src={room2Image} alt="Double AC Room" style={styles.roomImage} />
                 <div style={styles.roomOverlay}>
-                  <span style={styles.roomPrice}>₹499 Per Night</span>
+                  <span style={styles.roomPrice}>₹2200 Per Night</span>
                 </div>
               </div>
-              <div style={styles.roomContent}>
-                <h3 style={styles.roomTitle}>Double AC Room</h3>
-                <p style={styles.roomDescription}>
-                  Spacious double bedroom perfect for couples with city views
-                </p>
+                <div className="room-content-fixed" style={styles.roomContent}>
+                  <h3 style={styles.roomTitle}>Double AC Room</h3>
+                  <p className="room-description-fixed" style={styles.roomDescription}>
+                    Spacious double bedroom perfect for couples with city views
+                  </p>
                 <div style={styles.roomFeatures}>
-                  <span style={styles.roomFeature}>65 m²</span>
-                  <span style={styles.roomFeature}>Max: 3 Guests</span>
-                  <span style={styles.roomFeature}>Free Breakfast</span>
+                  <span style={styles.roomFeature}>35 m²</span>
+                  <span style={styles.roomFeature}>Max: 2 Guests</span>
                 </div>
                 <div style={styles.roomBenefits}>
                   <div style={styles.benefitItem}>
@@ -123,31 +126,88 @@ function HomeScreen() {
               </div>
             </div>
 
-            <div style={styles.roomCard}>
-              <div style={styles.roomImageContainer}>
-                <img src={room1Image} alt="Single Room" style={styles.roomImage} />
-                <div style={styles.roomOverlay}>
-                  <span style={styles.roomPrice}>₹299 Per Night</span>
+              <div className="room-card-fixed" style={styles.roomCard}>
+                <div style={styles.roomImageContainer}>
+                  <img src={room3Image} alt="Triple AC Room" style={styles.roomImage} />
+                  <div style={styles.roomOverlay}>
+                    <span style={styles.roomPrice}>₹2700 Per Night</span>
+                  </div>
                 </div>
-              </div>
-              <div style={styles.roomContent}>
-                <h3 style={styles.roomTitle}>Single AC Room</h3>
-                <p style={styles.roomDescription}>
-                  Comfortable room with premium amenities and stunning views
-                </p>
+                <div className="room-content-fixed" style={styles.roomContent}>
+                  <h3 style={styles.roomTitle}>Triple AC Room</h3>
+                  <p className="room-description-fixed" style={styles.roomDescription}>
+                    Large triple room ideal for families or groups with extra space
+                  </p>
                 <div style={styles.roomFeatures}>
                   <span style={styles.roomFeature}>45 m²</span>
-                  <span style={styles.roomFeature}>Max: 2 Guests</span>
-                  <span style={styles.roomFeature}>City View</span>
+                  <span style={styles.roomFeature}>Max: 3 Guests</span>
                 </div>
                 <div style={styles.roomBenefits}>
                   <div style={styles.benefitItem}>
                     <FaCheckCircle style={styles.checkIcon} />
-                    <span>Queen Size Bed</span>
+                    <span>King & Single Bed</span>
                   </div>
                   <div style={styles.benefitItem}>
                     <FaCheckCircle style={styles.checkIcon} />
                     <span>Work Desk</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+              <div className="room-card-fixed" style={styles.roomCard}>
+                <div style={styles.roomImageContainer}>
+                  <img src={room4Image} alt="Double Non-AC Room" style={styles.roomImage} />
+                  <div style={styles.roomOverlay}>
+                    <span style={styles.roomPrice}>₹1500 Per Night</span>
+                  </div>
+                </div>
+                <div className="room-content-fixed" style={styles.roomContent}>
+                  <h3 style={styles.roomTitle}>Double Non-AC Room</h3>
+                  <p className="room-description-fixed" style={styles.roomDescription}>
+                    Comfortable and affordable double room with standard amenities
+                  </p>
+                <div style={styles.roomFeatures}>
+                  <span style={styles.roomFeature}>30 m²</span>
+                  <span style={styles.roomFeature}>Max: 2 Guests</span>
+                </div>
+                <div style={styles.roomBenefits}>
+                  <div style={styles.benefitItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Double Bed</span>
+                  </div>
+                  <div style={styles.benefitItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Standard View</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+              <div className="room-card-fixed" style={styles.roomCard}>
+                <div style={styles.roomImageContainer}>
+                  <img src={room5Image} alt="Triple Non-AC Room" style={styles.roomImage} />
+                  <div style={styles.roomOverlay}>
+                    <span style={styles.roomPrice}>₹1800 Per Night</span>
+                  </div>
+                </div>
+                <div className="room-content-fixed" style={styles.roomContent}>
+                  <h3 style={styles.roomTitle}>Triple Non-AC Room</h3>
+                  <p className="room-description-fixed" style={styles.roomDescription}>
+                    Spacious triple room for family stays on a budget
+                  </p>
+                <div style={styles.roomFeatures}>
+                  <span style={styles.roomFeature}>40 m²</span>
+                  <span style={styles.roomFeature}>Max: 3 Guests</span>
+                </div>
+                <div style={styles.roomBenefits}>
+                  <div style={styles.benefitItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Double & Single Bed</span>
+                  </div>
+                  <div style={styles.benefitItem}>
+                    <FaCheckCircle style={styles.checkIcon} />
+                    <span>Budget Friendly</span>
                   </div>
                 </div>
               </div>
@@ -220,8 +280,7 @@ function HomeScreen() {
         <div style={styles.footerMain}>
           <div style={styles.footerColumn}>
             <div style={styles.footerLogo}>
-              <span style={styles.footerLogoText}>JS ROOMS</span>
-              <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
+              <img src={logo} alt="JS Rooms Logo" style={styles.footerLogoImage} />
             </div>
             <p style={styles.footerDescription}>
               Where elegance meets serenity. Experience premium hospitality
@@ -250,7 +309,7 @@ function HomeScreen() {
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
               <FaMapMarkerAlt style={styles.contactIcon} />
-              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram</span>
+              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram, Arni, Thiruvannamalai Dist.</span>
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
@@ -291,11 +350,13 @@ const styles = {
 
   // Hero Section
   heroSection: {
-    height: '90vh',
+    height: '100vh', // Full viewport height for a premium feel
     minHeight: '600px',
-    backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.8)), url(${room1Image})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${hero_bg})`,
+    backgroundColor: '#1a1a1a', 
+    backgroundSize: 'auto 98%', // Very slightly increased from 95% to fill the section more naturally
+    backgroundPosition: 'center', // Balanced centering for the building photo
+    backgroundRepeat: 'no-repeat',
     display: 'flex',
     alignItems: 'center',
     padding: '0 1.5rem',
@@ -491,15 +552,10 @@ const styles = {
     maxWidth: '1200px',
     margin: '0 auto 3rem',
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gridTemplateColumns: 'repeat(2, 1fr)', // Force 2x2 on desktop
     gap: '2rem',
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-      gap: '1.5rem',
-    },
-    '@media (max-width: 480px)': {
-      gridTemplateColumns: '1fr',
-      gap: '1rem',
+    '@media (max-width: 992px)': {
+      gridTemplateColumns: '1fr', // Stack to 1 column on smaller tablets and mobile
     },
   },
 
@@ -1010,24 +1066,10 @@ const styles = {
     marginBottom: '1.25rem',
   },
 
-  footerLogoText: {
-    fontSize: '1.4rem',
-    fontWeight: '700',
-    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-    display: 'block',
-  },
-
-  footerLogoSubtext: {
-    fontSize: '12px',
-    fontWeight: '600',
-    color: '#D4AF37',
-    letterSpacing: '2px',
-    textTransform: 'uppercase',
-    display: 'block',
-    marginTop: '2px',
+  footerLogoImage: {
+    height: '70px',
+    width: 'auto',
+    objectFit: 'contain',
   },
 
   footerDescription: {

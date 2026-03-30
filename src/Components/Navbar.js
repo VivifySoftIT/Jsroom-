@@ -7,6 +7,8 @@ import {
 import localforage from "localforage";
 
 
+import logo from '../Assets/logo-main.png';
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -69,24 +71,22 @@ const Navbar = () => {
 
   return (
     <nav style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 1000,
-      backgroundColor: '#1A1A1A',
-      backdropFilter: 'blur(20px)',
-      padding: '1rem 0',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+      ...styles.navbar,
+      backgroundColor: isScrolled ? '#111' : 'rgba(26, 26, 26, 0.95)',
+      padding: isScrolled ? '0.5rem 0' : '1rem 0',
+      boxShadow: isScrolled ? '0 5px 20px rgba(0,0,0,0.3)' : 'none',
     }}>
       <div style={styles.navContainer}>
         {/* Logo */}
         <Link to="/home" style={styles.logo} onClick={closeMobileMenu}>
-          <div style={styles.logoIcon}>JS</div>
-          <div>
-            <div style={styles.logoText}>JS ROOMS</div>
-            <div style={styles.logoSubtext}>LUXURY HOTEL</div>
-          </div>
+          <img 
+            src={logo} 
+            alt="JS Rooms Logo" 
+            style={{
+              ...styles.logoImage,
+              height: isScrolled ? '55px' : '85px',
+            }} 
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -157,21 +157,23 @@ const Navbar = () => {
             </div>
           ) : (
             <div style={styles.rightSection}>
-              <button
-                onClick={() => {
-                  const pwd = prompt("Enter Admin Password:");
-                  if (pwd === "admin123") {
-                    localStorage.setItem('isAdmin', 'true');
-                    setUserData({ name: 'Admin' });
-                    window.location.reload(); // Refresh to update UI components
-                  } else if (pwd) {
-                    alert("Incorrect Password");
-                  }
-                }}
-                style={{ ...styles.navLink, background: 'none', border: 'none', cursor: 'pointer' }}
-              >
-                <FaUser style={styles.navIcon} />
-              </button>
+          {/* Admin Login - Hidden for now
+          <button
+            onClick={() => {
+              const pwd = prompt("Enter Admin Password:");
+              if (pwd === "admin123") {
+                localStorage.setItem('isAdmin', 'true');
+                setUserData({ name: 'Admin' });
+                window.location.reload(); // Refresh to update UI components
+              } else if (pwd) {
+                alert("Incorrect Password");
+              }
+            }}
+            style={{ ...styles.navLink, background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            <FaUser style={styles.navIcon} />
+          </button>
+          */}
               <Link to="/rooms" style={styles.bookingBtn}>
                 <FaCalendarAlt style={{ marginRight: '8px' }} />
                 <span>Book Now</span>
@@ -291,44 +293,27 @@ const styles = {
     backdropFilter: 'blur(20px)',
   },
   navContainer: {
-    maxWidth: '1200px',
-    margin: '0 auto',
+    width: '100%',
+    margin: '0',
     padding: '0 1.5rem',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    height: 'auto',
+    minHeight: '85px',
   },
   logo: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
     textDecoration: 'none',
-    transition: 'transform 0.3s ease',
+    transition: 'all 0.3s ease',
   },
-  logoIcon: {
-    width: '45px',
-    height: '45px',
-    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
-    borderRadius: '12px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '18px',
-    fontWeight: '700',
-    color: '#0A0A0A',
-  },
-  logoText: {
-    fontSize: '1.4rem',
-    fontWeight: '700',
-    color: 'white',
-    lineHeight: '1',
-  },
-  logoSubtext: {
-    fontSize: '10px',
-    fontWeight: '600',
-    color: '#D4AF37',
-    letterSpacing: '1.5px',
-    lineHeight: '1',
+  logoImage: {
+    height: '85px',
+    width: 'auto',
+    objectFit: 'contain',
+    transition: 'all 0.3s ease',
   },
   navLinks: {
     display: 'flex',

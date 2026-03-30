@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import logo from '../Assets/logo-main.png';
 import defaultRooms from '../data/defaultRooms';
 import dataService from '../services/dataService';
 import {
@@ -35,8 +36,10 @@ import {
 } from 'react-icons/fa';
 
 const room1Image = '/assets/IMG_1392.jpg';
-const room2Image = '/assets/IMG_1411.jpg';
+const room2Image = '/assets/IMG_1405.jpg'; // Changed to match Triple Non-AC as requested
 const room3Image = '/assets/IMG_1403.jpg';
+const room4Image = '/assets/IMG_1391.jpg';
+const room5Image = '/assets/IMG_1405.jpg';
 
 const RoomsScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -49,7 +52,7 @@ const RoomsScreen = () => {
   const [editingPrice, setEditingPrice] = useState(null);
   const [newPrice, setNewPrice] = useState('');
   const [error, setError] = useState(null);
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  const isAdmin = false; // Forced to false to hide admin controls: localStorage.getItem('isAdmin') === 'true';
 
   // Helper function to get category from room number
   const getCategoryFromRoomNumber = (roomNumber) => {
@@ -69,18 +72,33 @@ const RoomsScreen = () => {
       // Load rooms from Firebase using dataService
       const firebaseRooms = await dataService.getRooms();
       
+      // Helper to get local image for a room ID
+      const getLocalImage = (id) => {
+        switch(id) {
+          case 1: return room1Image;
+          case 2: return room2Image;
+          case 3: return room3Image;
+          case 4: return room4Image;
+          case 5: return room5Image;
+          default: return room2Image;
+        }
+      };
+
       // Add local images to the rooms
-      const roomsWithImages = firebaseRooms.map(room => ({
-        ...room,
-        image: room.id === 1 ? room1Image : room.id === 2 ? room2Image : room3Image,
-        images: [
-          { 
-            url: room.id === 1 ? room1Image : room.id === 2 ? room2Image : room3Image, 
-            alt: room.name,
-            isPrimary: true 
-          }
-        ]
-      }));
+      const roomsWithImages = firebaseRooms.map(room => {
+        const primaryImage = getLocalImage(room.id);
+        return {
+          ...room,
+          image: primaryImage,
+          images: [
+            { 
+              url: primaryImage, 
+              alt: room.name,
+              isPrimary: true 
+            }
+          ]
+        };
+      });
       
       setRooms(roomsWithImages);
       console.log('✅ Loaded rooms from Firebase:', roomsWithImages.length);
@@ -120,21 +138,16 @@ const RoomsScreen = () => {
   const transformedRooms = rooms;
 
   const categories = [
-    { id: 'all', name: 'All Rooms', count: transformedRooms.length },
-    {
-      id: 'single',
-      name: 'Single',
-      count: transformedRooms.filter(r => r.category === 'single').length
-    },
+    { id: 'all', name: 'All Rooms', count: transformedRooms.filter(r => r.status === 'Available').length },
     {
       id: 'double',
       name: 'Double',
-      count: transformedRooms.filter(r => r.category === 'double').length
+      count: transformedRooms.filter(r => r.category === 'double' && r.status === 'Available').length
     },
     {
       id: 'triple',
       name: 'Triple',
-      count: transformedRooms.filter(r => r.category === 'triple').length
+      count: transformedRooms.filter(r => r.category === 'triple' && r.status === 'Available').length
     }
   ];
 
@@ -143,9 +156,9 @@ const RoomsScreen = () => {
 
     const matchesCategory = selectedCategory === 'all' || room.category === selectedCategory;
     const matchesPrice = priceRange === 'all' ||
-      (priceRange === 'budget' && room.price <= 200) ||
-      (priceRange === 'mid' && room.price > 200 && room.price <= 350) ||
-      (priceRange === 'luxury' && room.price > 350);
+      (priceRange === 'budget' && room.price <= 1800) ||
+      (priceRange === 'luxury' && room.price > 1800);
+    const isAvailable = room.status === 'Available';
 
     const safeName = room.name || '';
     const safeDescription = room.description || '';
@@ -155,7 +168,7 @@ const RoomsScreen = () => {
       safeName.toLowerCase().includes(safeSearchTerm.toLowerCase()) ||
       safeDescription.toLowerCase().includes(safeSearchTerm.toLowerCase());
 
-    return matchesCategory && matchesPrice && matchesSearch;
+    return matchesCategory && matchesPrice && matchesSearch && isAvailable;
   });
 
   const handleRoomSelect = (room) => {
@@ -310,20 +323,7 @@ const RoomsScreen = () => {
               ))}
             </div>
 
-            {/* Price Filter */}
-            <div style={styles.priceFilter}>
-              <FaFilter style={styles.filterIcon} />
-              <select
-                value={priceRange}
-                onChange={(e) => setPriceRange(e.target.value)}
-                style={styles.priceSelect}
-              >
-                <option value="all">All Prices</option>
-                <option value="budget">Budget (≤₹200)</option>
-                <option value="mid">Mid-range (₹200-350)</option>
-                <option value="luxury">Luxury (₹350+)</option>
-              </select>
-            </div>
+            {/* Removed Price Filter as requested */}
           </div>
         </div>
       </section>
@@ -331,9 +331,9 @@ const RoomsScreen = () => {
       {/* Rooms Grid */}
       <section style={styles.roomsSection}>
         <div style={styles.roomsContainer}>
-          <div style={styles.roomsGrid}>
+          <div className="perfect-grid" style={styles.roomsGrid}>
             {filteredRooms.map(room => (
-              <div key={room.id} style={styles.roomCard}>
+              <div key={room.id} className="room-card-fixed" style={styles.roomCard}>
                 <div
                   style={styles.roomImageContainer}
                   onClick={() => handleRoomSelect(room)}
@@ -411,7 +411,7 @@ const RoomsScreen = () => {
                   </div>
                 </div>
 
-                <div style={styles.roomContent}>
+                <div className="room-content-fixed" style={styles.roomContent}>
                   <div style={styles.roomHeader}>
                     <h3 style={styles.roomName}>{room.name}</h3>
                     <div style={styles.roomRating}>
@@ -421,7 +421,7 @@ const RoomsScreen = () => {
                     </div>
                   </div>
 
-                  <p style={styles.roomDescription}>{room.description}</p>
+                  <p className="room-description-fixed" style={styles.roomDescription}>{room.description}</p>
 
                   <div style={styles.roomSpecs}>
                     <div style={styles.specItem}>
@@ -683,8 +683,7 @@ const RoomsScreen = () => {
         <div style={styles.footerMain}>
           <div style={styles.footerColumn}>
             <div style={styles.footerLogo}>
-              <span style={styles.footerLogoText}>JS ROOMS</span>
-              <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
+              <img src={logo} alt="JS Rooms Logo" style={styles.footerLogoImage} />
             </div>
             <p style={styles.footerDescription}>
               Where elegance meets serenity. Experience premium hospitality
@@ -713,7 +712,7 @@ const RoomsScreen = () => {
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
               <FaMapMarkerAlt style={styles.contactIcon} />
-              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram</span>
+              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram, Arni, Thiruvannamalai Dist.</span>
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
@@ -1020,8 +1019,8 @@ const styles = {
 
   roomsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '2rem',
+    gridTemplateColumns: 'repeat(2, 1fr)', // Force exactly 2 columns for a perfect 2x2 grid
+    gap: '2.5rem',
   },
 
   roomCard: {
@@ -1677,24 +1676,10 @@ const styles = {
     marginBottom: '1.25rem',
   },
 
-  footerLogoText: {
-    fontSize: '1.4rem',
-    fontWeight: '700',
-    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-    display: 'block',
-  },
-
-  footerLogoSubtext: {
-    fontSize: '12px',
-    fontWeight: '600',
-    color: '#D4AF37',
-    letterSpacing: '2px',
-    textTransform: 'uppercase',
-    display: 'block',
-    marginTop: '2px',
+  footerLogoImage: {
+    height: '70px',
+    width: 'auto',
+    objectFit: 'contain',
   },
 
   footerDescription: {

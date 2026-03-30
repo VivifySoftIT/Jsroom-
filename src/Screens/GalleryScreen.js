@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import logo from '../Assets/logo-main.png';
 import { 
   FaImages, 
   FaExpand,
@@ -692,8 +693,7 @@ const GalleryScreen = () => {
         <div style={styles.footerMain}>
           <div style={styles.footerColumn}>
             <div style={styles.footerLogo}>
-              <span style={styles.footerLogoText}>JS ROOMS</span>
-              <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
+              <img src={logo} alt="JS Rooms Logo" style={styles.footerLogoImage} />
             </div>
             <p style={styles.footerDescription}>
               Where elegance meets serenity. Experience premium hospitality
@@ -713,7 +713,7 @@ const GalleryScreen = () => {
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
               <FaMapMarkerAlt style={styles.contactIcon} />
-              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram</span>
+              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram, Arni, Thiruvannamalai Dist.</span>
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
@@ -1045,16 +1045,10 @@ const styles = {
   footerLogo: {
     marginBottom: '1rem',
   },
-  footerLogoText: {
-    fontSize: '1.5rem',
-    fontWeight: '700',
-    color: '#D4AF37',
-  },
-  footerLogoSubtext: {
-    fontSize: '10px',
-    letterSpacing: '2px',
-    color: '#D4AF37',
-    display: 'block',
+  footerLogoImage: {
+    height: '70px',
+    width: 'auto',
+    objectFit: 'contain',
   },
   footerDescription: {
     fontSize: '14px',

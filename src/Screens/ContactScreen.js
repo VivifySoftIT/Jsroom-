@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import logo from '../Assets/logo-main.png';
 import contactEmailService from '../services/contactEmailService';
 import { 
   FaPhone, 
@@ -95,8 +96,8 @@ const ContactScreen = () => {
     {
       icon: FaMapMarkerAlt,
       title: 'Address',
-      details: ['2043, S.M. Road', 'Arni to Cheyyar Road', 'Pudhupettai, S.V. Nagaram'],
-      description: 'Located on Arni to Cheyyar Road, Pudhupettai'
+      details: ['2043, S.M. Road', 'Arni to Cheyyar Road', 'Pudhupettai, S.V. Nagaram', 'Arni, Thiruvannamalai Dist.'],
+      description: 'Located in Arni, Thiruvannamalai District'
     },
 
   ];
@@ -345,8 +346,7 @@ const ContactScreen = () => {
         <div style={styles.footerMain}>
           <div style={styles.footerColumn}>
             <div style={styles.footerLogo}>
-              <span style={styles.footerLogoText}>JS ROOMS</span>
-              <span style={styles.footerLogoSubtext}>LUXURY LODGE</span>
+              <img src={logo} alt="JS Rooms Logo" style={styles.footerLogoImage} />
             </div>
             <p style={styles.footerDescription}>
               Where elegance meets serenity. Experience premium hospitality
@@ -375,7 +375,7 @@ const ContactScreen = () => {
             <h4 style={styles.footerTitle}>Contact</h4>
             <div style={styles.contactItem}>
               <FaMapMarkerAlt style={styles.contactIcon} />
-              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram</span>
+              <span>2043, S.M. Road, Arni to Cheyyar Road, Pudhupettai, S.V. Nagaram, Arni, Thiruvannamalai Dist.</span>
             </div>
             <div style={styles.contactItem}>
               <FaPhone style={styles.contactIcon} />
@@ -970,24 +970,10 @@ const styles = {
     marginBottom: '1.25rem',
   },
 
-  footerLogoText: {
-    fontSize: '1.4rem',
-    fontWeight: '700',
-    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-    display: 'block',
-  },
-
-  footerLogoSubtext: {
-    fontSize: '12px',
-    fontWeight: '600',
-    color: '#D4AF37',
-    letterSpacing: '2px',
-    textTransform: 'uppercase',
-    display: 'block',
-    marginTop: '2px',
+  footerLogoImage: {
+    height: '70px',
+    width: 'auto',
+    objectFit: 'contain',
   },
 
   footerDescription: {
@@ -997,24 +983,7 @@ const styles = {
     marginBottom: '1.5rem',
   },
 
-  socialLinks: {
-    display: 'flex',
-    gap: '12px',
-  },
 
-  socialLink: {
-    width: '36px',
-    height: '36px',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '14px',
-    transition: 'all 0.3s ease',
-  },
 
   footerTitle: {
     fontSize: '1rem',
