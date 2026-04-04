@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import logo from '../Assets/logo-main.png';
-import hero_bg from '../Assets/hero_bg.jpg';
+import hero_bg from '../Assets/New folder/hero_bg.jpg';
 import {
   FaBed,
   FaWifi,
